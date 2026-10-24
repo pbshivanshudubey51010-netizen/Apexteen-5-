@@ -1,7 +1,107 @@
-<div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3">
-<button class="text-[#7c5cff] flex flex-col items-center text-xs font-bold">🏠<span>Home</span></button>
-<button class="flex flex-col items-center text-xs">🔍<span>Explore</span></button>
-<button onclick="document.getElementById('createBox').classList.toggle('hidden')" class="flex flex-col items-center text-xs"><span class="bg-[#7c5cff] text-white rounded-full w-8 h-8 flex items-center justify-center">+</span>Create</button>
-<button class="flex flex-col items-center text-xs">🔔<span>Notifications</span></button>
-<button class="flex flex-col items-center text-xs">👤<span>Profile</span></button>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApexTeen - World Teen Hub</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<style>
+body{font-family:Arial;margin:0;background:#f5f7ff}
+header{background:#6c5ce7;color:white;padding:12px;display:flex;justify-content:space-between;align-items:center}
+button{background:#6c5ce7;color:white;border:none;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer}
+#map{height:300px;border-radius:12px;margin:10px}
+.card{background:white;margin:10px;padding:15px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+select,input,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
+</style>
+</head>
+<body>
+<header>
+<b>🚀 ApexTeen-5</b>
+<div id="userBox"><button onclick="login()">Login with Google</button></div>
+</header>
+
+<div class="card">
+<h3>📍 Real Google Map</h3>
+<div id="map"></div>
+<p>Vindhyanagar, MP - Live Location</p>
 </div>
+
+<div class="card">
+<h3>🌍 World Location</h3>
+<select id="country" onchange="loadStates()"><option>Loading Countries...</option></select>
+<select id="state" onchange="loadCities()"><option>Select State</option></select>
+<select id="city"><option>Select District/City</option></select>
+</div>
+
+<div class="card">
+<h3>💡 Post Your Teen Idea</h3>
+<input id="title" placeholder="Idea Title">
+<textarea id="desc" placeholder="Describe your idea..."></textarea>
+<button onclick="postIdea()">Post Idea</button>
+<div id="ideas"></div>
+</div>
+
+<script>
+// Firebase - Tumhara Project
+const firebaseConfig = {
+  apiKey: "AIzaSyC9bSj1yB4o5nqX1k5e9g5a7b2c3d4e5f6g",
+  authDomain: "apexteen-5.firebaseapp.com",
+  projectId: "apexteen-5",
+};
+firebase.initializeApp(firebaseConfig);
+
+function login(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider).then(r=>{
+    document.getElementById('userBox').innerHTML = `<img src="${r.user.photoURL}" width="30" style="border-radius:50%"> ${r.user.displayName}`;
+  }).catch(e=>alert(e.message));
+}
+
+// Map
+const map = L.map('map').setView([24.07, 82.64], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.marker([24.07, 82.64]).addTo(map).bindPopup("Vindhyanagar, You are here!").openPopup();
+
+// World Countries
+let cscData = [];
+fetch('https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries%2Bstates%2Bcities.json')
+.then(r=>r.json()).then(data=>{
+  cscData = data;
+  const cSel = document.getElementById('country');
+  cSel.innerHTML = '<option>Select Country</option>';
+  data.forEach(c=>{ cSel.innerHTML+=`<option value="${c.id}">${c.name}</option>` });
+  // Default India
+  cSel.value = 101;
+  loadStates();
+});
+
+function loadStates(){
+  const cid = document.getElementById('country').value;
+  const country = cscData.find(c=>c.id==cid);
+  const sSel = document.getElementById('state');
+  sSel.innerHTML='<option>Select State</option>';
+  if(country) country.states.forEach(s=>{ sSel.innerHTML+=`<option value="${s.id}">${s.name}</option>` });
+}
+function loadCities(){
+  const cid = document.getElementById('country').value;
+  const sid = document.getElementById('state').value;
+  const country = cscData.find(c=>c.id==cid);
+  const state = country?.states.find(s=>s.id==sid);
+  const citySel = document.getElementById('city');
+  citySel.innerHTML='<option>Select District</option>';
+  if(state) state.cities.forEach(ct=>{ citySel.innerHTML+=`<option>${ct.name}</option>` });
+}
+
+function postIdea(){
+  const t=document.getElementById('title').value;
+  const d=document.getElementById('desc').value;
+  if(!t) return alert('Title likho!');
+  document.getElementById('ideas').innerHTML += `<div class="card"><b>${t}</b><br>${d}</div>`;
+  alert('Idea Posted!');
+}
+</script>
+</body>
+</html>
