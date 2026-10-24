@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ApexTeen5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:sans-serif;text-align:center;padding:20px;background:#f5f5f5}
+h1{color:#111}
+input{padding:12px;width:85%;border:1px solid #ccc;border-radius:8px}
+button{padding:12px 25px;background:black;color:white;border:none;border-radius:8px;margin:10px;font-weight:bold}
+.card{background:white;padding:10px;margin:10px;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>ApexTeen5 🚀</h1>
+<p>Apna Idea Share Karo</p>
+<input id="ideaInput" placeholder="Yaha Idea likho...">
+<br>
+<button onclick="saveIdea()">Post Idea</button>
+<div id="ideasList"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, Timestamp, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",
+  authDomain: "apexteen-5.firebaseapp.com",
+  projectId: "apexteen-5",
+  storageBucket: "apexteen-5.firebasestorage.app",
+  messagingSenderId: "428961039333",
+  appId: "1:428961039333:web:5dc05aae6f4fbe6c60250c"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window.saveIdea = async () => {
+  const text = document.getElementById("ideaInput").value;
+  if(!text) return alert("Pehle idea likho!");
+  await addDoc(collection(db, "ideas_vault"), { idea: text, timestamp: Timestamp.now() });
+  alert("Saved!");
+  document.getElementById("ideaInput").value="";
+  loadIdeas();
+}
+async function loadIdeas(){
+  const q = query(collection(db, "ideas_vault"), orderBy("timestamp","desc"));
+  const snap = await getDocs(q);
+  let html = "";
+  snap.forEach(doc => { html += `<div class=card>💡 ${doc.data().idea}</div>`; });
+  document.getElementById("ideasList").innerHTML = html;
+}
+loadIdeas();
+</script>
+</body>
+</html>
