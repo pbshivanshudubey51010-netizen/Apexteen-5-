@@ -90,25 +90,26 @@ body{background:#f8f7ff;max-width:480px;margin:0 auto;min-height:100vh;padding-b
 </div></div>
 <div id="toast" class="toast"></div>
 <script>
+// TUMHARA ASLI FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyC-Your-Key-Here",
+  apiKey: "AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",
   authDomain: "apexteen-5.firebaseapp.com",
   projectId: "apexteen-5",
-  storageBucket: "apexteen-5.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456:web:abcdef"
+  storageBucket: "apexteen-5.firebasestorage.app",
+  messagingSenderId: "428961039333",
+  appId: "1:428961039333:web:5dc05aae6f4fbe6c60250c"
 };
-try{firebase.initializeApp(firebaseConfig)}catch(e){}
-const auth = firebase.auth ? firebase.auth() : null;
-const db = firebase.firestore ? firebase.firestore() : null;
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 let currentUser=null;let mainFilter='today';let catFilter='all';
 let ideas=[
  {id:'1',user:'Alex',time:'2h ago',verified:true,title:'AI Study Buddy for Teens',desc:'An AI tutor that helps teens study smarter with quiz mode, flashcards, and 24/7 homework help.',cat:'AI',tags:['AI','EdTech'],up:42,comments:12,collab:5,img:'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200',liked:false},
  {id:'2',user:'Maya',time:'5h ago',verified:true,title:'Local Study Group Finder',desc:'Connect with teens nearby for in-person study sessions at libraries, cafes, or parks.',cat:'Social',tags:['Social','Community'],up:28,comments:9,collab:7,img:'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=200',liked:false}
 ];
 let activeCommentId=null;let commentsData={'1':[{user:'Sam',text:'This is amazing!'}],'2':[]};
-if(auth){auth.onAuthStateChanged(u=>{currentUser=u;document.getElementById('loginBtn').innerText=u?(u.displayName?.split(' ')[0]||'Profile'):'Login'})}
-function handleAuth(){if(!auth){toast('Add Firebase config');return} if(currentUser){if(confirm('Logout?'))auth.signOut()}else{auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast(e.message))}}
+auth.onAuthStateChanged(u=>{currentUser=u;document.getElementById('loginBtn').innerText=u?(u.displayName?.split(' ')[0]||'Profile'):'Login'});
+function handleAuth(){if(currentUser){if(confirm('Logout?'))auth.signOut()}else{auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast(e.message))}}
 function setMainFilter(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');mainFilter=el.dataset.f;render()}
 function setCat(el){document.querySelectorAll('.subchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');catFilter=el.dataset.c;render()}
 function render(){
@@ -119,7 +120,7 @@ function render(){
  if(mainFilter=='trending')list.sort((a,b)=>b.up-a.up);
  const feed=document.getElementById('feed');feed.innerHTML='';
  list.forEach((idea,idx)=>{
-   if(idx==1)feed.innerHTML+=`<div class="map-card" onclick="toast('Map view coming soon')">🗺️ Nearby Study Spots</div>`;
+   if(idx==1)feed.innerHTML+=`<div class="map-card">🗺️ Nearby Study Spots</div>`;
    feed.innerHTML+=`<div class="card"><div class="card-top"><div class="avatar">${idea.user[0]}</div><div><b style="font-size:14px">${idea.user} • ${idea.time} ${idea.verified?'<span class=badge>✓ Parent Verified</span>':''}</b></div></div>${idea.img?`<img class="card-img" src="${idea.img}">`:''}<h2>${idea.title}</h2><p>${idea.desc}</p><div class="tags">${idea.tags.map(t=>`<span class=tag>#${t}</span>`).join('')}</div><div class="clear"></div><div class="stats"><span>👍 ${idea.up} upvotes</span><span>💬 ${idea.comments} comments</span><span>👥 ${idea.collab} collaborators</span></div><div class="actions"><button class="btn ${idea.liked?'liked':''}" onclick="upvote('${idea.id}')">${idea.liked?'♥':'↑'} Upvote</button><button class="btn" onclick="openComment('${idea.id}')">Comment</button><button class="btn primary" onclick="joinTeam('${idea.id}')">Join Team</button></div></div>`;
  });
 }
