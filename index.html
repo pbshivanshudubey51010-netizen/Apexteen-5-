@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen5</title>
+<title>ApexTeen5 - Final</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -7,98 +7,125 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}body{background:#f8f7ff;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:90px}
 .header{position:sticky;top:0;background:#fff;z-index:20;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}
-.header h1{font-size:22px;font-weight:800}.login{font-size:13px;background:#7c5cff;color:#fff;padding:8px 14px;border-radius:20px;border:none;font-weight:600}
-.filters{display:flex;gap:8px;overflow-x:auto;padding:8px 16px}.chip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid #e5e7eb;background:#fff;font-size:13px;font-weight:600}.chip.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
-.card{background:#fff;margin:12px 16px;border-radius:20px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.06);cursor:pointer}
-.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#a78bfa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
-.badge{font-size:10px;background:#eef2ff;color:#4338ca;padding:3px 7px;border-radius:10px;font-weight:700}
-.card h2{font-size:16px;margin:12px 0 6px;font-weight:700}.card p{font-size:13.5px;color:#4b5563;line-height:1.4}
+.header h1{font-size:22px;font-weight:800}.login{font-size:13px;background:#7c5cff;color:#fff;padding:8px 14px;border-radius:20px;border:none;font-weight:600;cursor:pointer}
+.search-wrap{padding:10px 16px;position:sticky;top:56px;background:#f8f7ff;z-index:10}.search{width:100%;background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:12px 16px;display:flex;gap:8px}
+.search input{border:none;outline:none;width:100%;font-size:14px}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:6px 16px}.chip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid #e5e7eb;background:#fff;font-size:13px;font-weight:600;cursor:pointer}.chip.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
+.card{background:#fff;margin:12px 16px;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06);cursor:pointer}
+.card img.banner{width:100%;height:160px;object-fit:cover}.card-inner{padding:14px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#a78bfa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.tagline{font-size:17px;font-weight:800;margin:8px 0 4px}.desc{font-size:13px;color:#4b5563}.watermark{font-size:10px;color:#9ca3af;margin-top:6px;font-weight:600}
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tag{font-size:11px;background:#f3f0ff;color:#6d5acd;padding:4px 8px;border-radius:8px}
-.stats{display:flex;gap:14px;margin-top:12px;font-size:12px;color:#6b7280;font-weight:600}
+.stats{display:flex;gap:14px;margin-top:10px;font-size:12px;color:#6b7280;font-weight:600}
 .bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:8px 0 14px;z-index:30}
-.nav-item{text-align:center;font-size:11px;color:#9ca3af;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px}.nav-item.active{color:#7c5cff}.plus{width:54px;height:54px;background:#5b21b6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}.modal.open{display:flex}
-.modal-box{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px 16px 30px;max-height:88vh;overflow-y:auto}
-.detail-box{background:#fff;width:100%;max-width:480px;height:100vh;overflow-y:auto;padding-bottom:20px}
-.detail-box img.head{width:100%;height:180px;object-fit:cover}.pad{padding:16px}
-.btn{padding:10px 14px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-size:13px}.btn.primary{background:#7c5cff;color:#fff;border-color:#7c5cff;width:100%;margin-top:10px;padding:14px}
+.nav-item{text-align:center;font-size:11px;color:#9ca3af;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 14px;border-radius:12px;cursor:pointer}.nav-item.active{color:#7c5cff;background:#f3f0ff}.plus{width:54px;height:54px;background:#5b21b6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-end;justify-content:center}.modal.open{display:flex}
+.modal-box{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px 16px 30px;max-height:92vh;overflow-y:auto}
+.detail-box{background:#fff;width:100%;max-width:480px;height:100vh;overflow-y:auto}
+.btn{padding:10px 14px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-size:13px;cursor:pointer}.btn.primary{background:#7c5cff;color:#fff;border-color:#7c5cff;width:100%;margin-top:10px;padding:14px}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;font-size:13px;z-index:100;display:none}
 input,textarea,select{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;margin:8px 0;font-size:14px;outline:none}
-.row{display:flex;gap:8px;align-items:center}
+.item{padding:12px;border:1px solid #eee;border-radius:12px;margin:8px 0;display:flex;gap:10px;align-items:center;background:#fff;cursor:pointer}
+.loading{text-align:center;padding:40px;color:#9ca3af}
 </style></head><body>
 <div class="header"><h1>ApexTeen5</h1><button id="loginBtn" class="login" onclick="handleAuth()">Login</button></div>
+<div class="search-wrap"><div class="search">🔍<input id="searchInput" placeholder="Search tagline, ideas..." oninput="render()"></div></div>
 <div class="filters"><button class="chip active" data-f="today" onclick="setF(this)">Today</button><button class="chip" data-f="trending" onclick="setF(this)">Trending</button><button class="chip" data-f="my" onclick="setF(this)">My Ideas</button></div>
-<div id="feed"></div>
-<div class="bottom"><div class="nav-item active">🏠 Home</div><div class="nav-item" onclick="toast('Explore soon')">🧭 Explore</div><div class="nav-item" onclick="openCreate()"><div class="plus">+</div>Create</div><div class="nav-item" onclick="toast('No notifications')">🔔 Alerts</div><div class="nav-item" onclick="handleAuth()">👤 Profile</div></div>
+<div id="feed"><div class="loading">Loading ideas from Firestore...</div></div>
+<div class="bottom">
+<div class="nav-item active" id="navHome" onclick="goHome()">🏠<span>Home</span></div>
+<div class="nav-item" id="navExplore" onclick="openExplore()">🧭<span>Explore</span></div>
+<div class="nav-item" onclick="openCreate()"><div class="plus">+</div><span>Create</span></div>
+<div class="nav-item" id="navAlerts" onclick="openAlerts()">🔔<span>Alerts</span></div>
+<div class="nav-item" id="navProfile" onclick="openProfileView()">👤<span>Profile</span></div>
+</div>
 
 <!-- CREATE -->
-<div id="createM" class="modal" onclick="if(event.target==this)closeCreate()"><div class="modal-box"><h3>Create New Idea 💡</h3><input id="cTitle" placeholder="Title"><textarea id="cDesc" placeholder="Describe"></textarea><select id="cCat"><option>AI Projects</option><option>Tech</option><option>Gaming</option><option>Social</option></select><input id="cTags" placeholder="Tags"><button class="btn primary" onclick="createIdea()">Post Idea</button></div></div>
+<div id="createM" class="modal" onclick="if(event.target==this)closeCreate()"><div class="modal-box">
+<h3>Create Idea with Poster 🚀</h3>
+<input id="cTagline" placeholder="Main Tagline (Bada dikhega) *">
+<textarea id="cDesc" placeholder="Full Description *"></textarea>
+<select id="cCat"><option>AI Projects</option><option>Tech</option><option>Gaming</option><option>Social</option></select>
+<input id="cTags" placeholder="Tags - AI, Study">
+<label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Upload Banner</label>
+<input type="file" id="cBanner" accept="image/*" onchange="previewBanner(event)">
+<img id="bannerPrev" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-top:8px;display:none">
+<button class="btn primary" id="postBtn" onclick="createIdea()">Post to Firestore</button>
+</div></div>
 
-<!-- PROFILE SETUP -->
-<div id="profileM" class="modal"><div class="modal-box"><h3>Setup Your Profile</h3><p style="font-size:13px;color:#6b7280;margin:6px 0">Pehli baar login ke baad profile banao</p><input id="pName" placeholder="Full Name"><input id="pClass" placeholder="Class - e.g. 11th"><input id="pInterest" placeholder="Interest - e.g. AI, Coding"><button class="btn primary" onclick="saveProfile()">Save Profile & Continue</button></div></div>
+<!-- PROFILE -->
+<div id="profileM" class="modal"><div class="modal-box"><h3>Setup Profile</h3><input id="pName" placeholder="Full Name"><input id="pClass" placeholder="Class"><input id="pInterest" placeholder="Interest"><button class="btn primary" onclick="saveProfile()">Save</button></div></div>
+<div id="profileViewM" class="modal" onclick="if(event.target==this)closeProfileView()"><div class="modal-box">
+<div style="text-align:center"><div class="avatar" style="width:70px;height:70px;font-size:24px;margin:0 auto" id="pvAvatar">S</div><h3 id="pvName" style="margin-top:10px">Guest</h3><div id="pvClass" style="font-size:13px;color:#6b7280"></div></div>
+<div style="margin-top:16px;background:#f9fafb;padding:12px;border-radius:12px;display:flex;gap:16px"><div><b id="pvIdeas">0</b><div style="font-size:11px">Ideas</div></div><div><b id="pvJoined">0</b><div style="font-size:11px">Joined</div></div></div>
+<input id="pvEditName" placeholder="Edit Name" style="margin-top:12px"><input id="pvEditClass" placeholder="Edit Class"><button class="btn primary" onclick="updateProfile()">Update</button><button class="btn" style="width:100%;margin-top:8px" onclick="logout()">Logout</button>
+</div></div>
 
-<!-- DETAIL - Meetup Style -->
+<!-- EXPLORE / ALERTS -->
+<div id="exploreM" class="modal" onclick="if(event.target==this)closeExplore()"><div class="modal-box"><h3>Explore 🧭</h3><input id="exploreSearch" placeholder="Search..." oninput="renderExplore()"><div id="exploreList" style="margin-top:12px"></div></div></div>
+<div id="alertsM" class="modal" onclick="if(event.target==this)closeAlerts()"><div class="modal-box"><h3>Notifications 🔔</h3><div id="alertsList" style="margin-top:12px"></div></div></div>
+
+<!-- DETAIL -->
 <div id="detailM" class="modal" style="align-items:flex-start"><div class="detail-box">
-<div style="position:sticky;top:0;background:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;z-index:2"><b id="dTitle">Idea</b><span onclick="closeDetail()" style="font-size:22px;cursor:pointer">✕</span></div>
-<div class="pad">
-<div style="background:#fff3cd;padding:10px;border-radius:12px;font-size:13px;font-weight:600">💡 Free Online Session for Teens</div>
-<h2 id="dMainTitle" style="margin:14px 0 8px;font-size:20px;font-weight:800"></h2>
-<div style="font-size:13px;color:#6b7280">🕒 <span id="dTime"></span> • Online Event</div>
-<div class="row" style="margin-top:14px"><div class="avatar" id="dAvatar"></div><div><b id="dUser" style="font-size:14px"></b><div style="font-size:12px;color:#6b7280" id="dRole">Creative Writer, UP</div></div></div>
-
-<div style="margin-top:18px;background:#f9fafb;padding:12px;border-radius:12px"><b style="font-size:14px">Event chat</b><p style="font-size:13px;color:#4b5563;margin-top:6px">Attend to join the conversation and connect with other attendees before the event starts.</p><button class="btn primary" id="dJoinBtn" onclick="joinFromDetail()">Attend Online</button></div>
-
-<div style="margin-top:18px"><b>About this idea</b><p id="dDesc" style="font-size:13.5px;color:#374151;margin-top:8px;line-height:1.5"></p></div>
-
-<div style="margin-top:18px"><b>Learn more about attendees</b><div style="display:flex;gap:12px;margin-top:10px"><div style="background:#f3f4f6;padding:10px;border-radius:12px;flex:1"><div style="font-size:12px;color:#6b7280">Members attending first time</div><b id="dFirst">42%</b></div><div style="background:#f3f4f6;padding:10px;border-radius:12px;flex:1"><div style="font-size:12px;color:#6b7280">Gender</div><b>55% Male 42% Female</b></div></div></div>
-
-<div style="margin-top:18px"><b>Comments</b><div id="dComments" style="margin-top:10px"></div><div class="row" style="margin-top:10px"><input id="dCommentInput" placeholder="Write a comment..."><button class="btn primary" style="width:auto" onclick="postDetailComment()">Send</button></div></div>
-
-<div style="margin-top:18px"><b>Photos from idea</b><div style="display:flex;gap:8px;overflow-x:auto;margin-top:8px"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=120" style="width:100px;height:80px;border-radius:10px;object-fit:cover"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=120" style="width:100px;height:80px;border-radius:10px;object-fit:cover"></div></div>
+<div style="position:sticky;top:0;background:#fff;padding:12px 16px;display:flex;justify-content:space-between;border-bottom:1px solid #eee;z-index:2"><b id="dTitle" style="font-size:14px"></b><span onclick="closeDetail()" style="font-size:22px;cursor:pointer">✕</span></div>
+<img id="dBanner" style="width:100%;height:200px;object-fit:cover;display:none"><div style="padding:16px"><div id="dCat" style="background:#fff3cd;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700"></div><h2 id="dMainTitle" style="margin:12px 0;font-size:22px;font-weight:800"></h2><div style="font-size:12px;color:#6b7280">By <b id="dUser"></b> • <span id="dTime"></span> • <span style="color:#7c5cff">Protected</span></div><p id="dDesc" style="font-size:14px;color:#374151;margin-top:14px;line-height:1.6"></p>
+<div style="display:flex;gap:8px;margin-top:12px"><button class="btn primary" id="dJoinBtn" onclick="joinFromDetail()" style="flex:1">Join</button><button class="btn" id="dDelBtn" onclick="deleteIdea()" style="display:none;color:#ef4444;border-color:#fecaca">Delete</button></div>
+<div style="margin-top:16px"><b>Comments</b><div id="dComments" style="margin-top:8px"></div><div style="display:flex;gap:8px;margin-top:10px"><input id="dCommentInput" placeholder="Write comment..."><button class="btn primary" style="width:auto" onclick="postDetailComment()">Send</button></div></div>
 </div></div></div>
 
 <div id="toast" class="toast"></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",authDomain:"apexteen-5.firebaseapp.com",projectId:"apexteen-5",storageBucket:"apexteen-5.firebasestorage.app",messagingSenderId:"428961039333",appId:"1:428961039333:web:5dc05aae6f4fbe6c60250c"};
-firebase.initializeApp(firebaseConfig);const auth=firebase.auth();
-let currentUser=null,profile=null,mainF='today',detailIdea=null;
-let ideas=[{id:'1',user:'Alex',time:'2h ago',verified:true,title:'AI Study Buddy for Teens',desc:'I can help you learn a simple and reliable way to earn money online for your basic needs. In this 30-45 minute session I will explain how to use general online platforms, what you need, and how you can get started through by completing tasks.',cat:'AI',tags:['AI','EdTech'],up:42,comments:12,collab:5,joinedUsers:[],commentsList:[{user:'anitha',text:'Wow useful!'},{user:'sanjay',text:'Join this group for excitement'}]},
-{id:'2',user:'Maya',time:'5h ago',verified:true,title:'Local Study Group Finder',desc:'Connect with teens nearby for in-person study sessions at libraries, cafes, or parks.',cat:'Social',tags:['Social'],up:28,comments:9,collab:7,joinedUsers:[],commentsList:[]}];
+firebase.initializeApp(firebaseConfig);const auth=firebase.auth();const db=firebase.firestore();
+let currentUser=null,profile=null,mainF='today',detailIdea=null,bannerData='',notifications=[],ideas=[];
 
 auth.onAuthStateChanged(u=>{
- currentUser=u;
- document.getElementById('loginBtn').innerText=u?(u.displayName?.split(' ')[0]||'Profile'):'Login';
- if(u){
-   let saved=localStorage.getItem('apex_profile_'+u.uid);
-   if(saved){profile=JSON.parse(saved)}else{document.getElementById('pName').value=u.displayName||'';document.getElementById('profileM').classList.add('open')}
- }render();
+ currentUser=u;document.getElementById('loginBtn').innerText=u?(u.displayName?.split(' ')[0]||'Profile'):'Login';
+ if(u){let s=localStorage.getItem('apex_profile_'+u.uid);if(s){profile=JSON.parse(s)}else{document.getElementById('pName').value=u.displayName||'';document.getElementById('profileM').classList.add('open')}}
+ loadIdeas();
 });
 
-function saveProfile(){
- let n=document.getElementById('pName').value.trim(),c=document.getElementById('pClass').value.trim(),i=document.getElementById('pInterest').value.trim();
- if(!n){toast('Name likho');return}
- profile={name:n,class:c,interest:i};
- localStorage.setItem('apex_profile_'+currentUser.uid,JSON.stringify(profile));
- document.getElementById('profileM').classList.remove('open');
- toast('Profile saved! ✅');
+async function loadIdeas(){
+ try{
+  let snap=await db.collection('ideas').orderBy('createdAt','desc').limit(50).get();
+  if(snap.empty && ideas.length==0){
+    ideas=[
+     {id:'1',user:'Alex',uid:'',tagline:'Online Earning Session for India (FREE)',title:'Earn Money',desc:'Simple way to earn online for students...',cat:'AI Projects',tags:['AI','EdTech'],up:42,collab:5,joinedUsers:[],banner:'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600',commentsList:[],createdAt:new Date()}
+    ];
+  }else{
+    ideas=snap.docs.map(d=>{let data=d.data();return{id:d.id,...data,createdAt:data.createdAt?.toDate?data.createdAt.toDate():new Date(),joinedUsers:data.joinedUsers||[],commentsList:data.commentsList||[]}});
+  }
+ }catch(e){console.log(e);toast('Firestore rule allow karo')}
+ render();
 }
-function handleAuth(){if(currentUser){if(confirm('Logout?'))auth.signOut()}else{auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast(e.message))}}
-function setF(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');mainF=el.dataset.f;render()}
+
+function saveProfile(){let n=document.getElementById('pName').value.trim();if(!n){toast('Name likho');return}profile={name:n,class:document.getElementById('pClass').value,interest:document.getElementById('pInterest').value};localStorage.setItem('apex_profile_'+currentUser.uid,JSON.stringify(profile));document.getElementById('profileM').classList.remove('open');toast('Profile saved ✅')}
+function handleAuth(){if(currentUser){openProfileView()}else{auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast(e.message))}}
+function setF(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');mainF=el.dataset.f;setActiveNav('home');render()}
+function setActiveNav(n){document.querySelectorAll('.bottom .nav-item').forEach(e=>e.classList.remove('active'));if(n=='home')document.getElementById('navHome').classList.add('active');if(n=='explore')document.getElementById('navExplore').classList.add('active');if(n=='alerts')document.getElementById('navAlerts').classList.add('active');if(n=='profile')document.getElementById('navProfile').classList.add('active');}
+function goHome(){mainF='today';document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));document.querySelector('[data-f=today]').classList.add('active');setActiveNav('home');render();window.scrollTo(0,0)}
+function openExplore(){setActiveNav('explore');renderExplore();document.getElementById('exploreM').classList.add('open')}function closeExplore(){document.getElementById('exploreM').classList.remove('open');setActiveNav('home')}
+function renderExplore(){let q=(document.getElementById('exploreSearch')?.value||'').toLowerCase();let list=ideas.filter(i=>(i.tagline+i.cat).toLowerCase().includes(q));document.getElementById('exploreList').innerHTML=list.map(i=>`<div class=item onclick="closeExplore();openDetail('${i.id}')"><div class=avatar>${i.user[0]}</div><div><b style="font-size:13px">${i.tagline}</b><div style="font-size:11px;color:#6b7280">${i.cat}</div></div></div>`).join('')||'No results'}
+function openAlerts(){setActiveNav('alerts');document.getElementById('alertsList').innerHTML=notifications.length?notifications.map(n=>`<div class=item><div>🔔</div><div><b style="font-size:13px">${n.title}</b><div style="font-size:12px;color:#6b7280">${n.msg}</div></div></div>`).join(''):'<div style="text-align:center;padding:20px;color:#9ca3af">No alerts</div>';document.getElementById('alertsM').classList.add('open')}function closeAlerts(){document.getElementById('alertsM').classList.remove('open');setActiveNav('home')}
+function openProfileView(){if(!currentUser){toast('Login karo');handleAuth();return}setActiveNav('profile');let name=profile?.name||currentUser.displayName||'You';document.getElementById('pvName').innerText=name;document.getElementById('pvAvatar').innerText=name[0];document.getElementById('pvClass').innerText=(profile?.class||'')+' • '+(profile?.interest||'');document.getElementById('pvEditName').value=profile?.name||'';document.getElementById('pvEditClass').value=profile?.class||'';document.getElementById('pvIdeas').innerText=ideas.filter(i=>i.uid===currentUser.uid).length;document.getElementById('pvJoined').innerText=ideas.filter(i=>i.joinedUsers.includes(currentUser.uid)).length;document.getElementById('profileViewM').classList.add('open')}function closeProfileView(){document.getElementById('profileViewM').classList.remove('open');setActiveNav('home')}
+function updateProfile(){profile={...profile,name:document.getElementById('pvEditName').value,class:document.getElementById('pvEditClass').value};localStorage.setItem('apex_profile_'+currentUser.uid,JSON.stringify(profile));toast('Updated ✅');closeProfileView();render()}
+function logout(){if(confirm('Logout?')){auth.signOut();closeProfileView();toast('Logged out')}}
+function previewBanner(e){let f=e.target.files[0];if(!f)return;if(f.size>800*1024){toast('Image 800KB se kam rakho');return}let r=new FileReader();r.onload=function(ev){bannerData=ev.target.result;document.getElementById('bannerPrev').src=bannerData;document.getElementById('bannerPrev').style.display='block'};r.readAsDataURL(f)}
 function render(){
- let list=[...ideas];if(mainF=='trending')list.sort((a,b)=>b.up-a.up);if(mainF=='my'&&currentUser)list=list.filter(i=>i.joinedUsers.includes(currentUser.uid));
- const feed=document.getElementById('feed');feed.innerHTML='';
- list.forEach(idea=>{
-  feed.innerHTML+=`<div class="card" onclick="openDetail('${idea.id}')"><div style="display:flex;justify-content:space-between"><div style="display:flex;gap:8px;align-items:center"><div class="avatar">${idea.user[0]}</div><div><b style="font-size:13px">${idea.user} • ${idea.time}</b> ${idea.verified?'<span class=badge>✓ Verified</span>':''}</div></div></div><h2>${idea.title}</h2><p>${idea.desc.substring(0,90)}...</p><div class="tags">${idea.tags.map(t=>`<span class=tag>#${t}</span>`).join('')}</div><div class="stats"><span>👍 ${idea.up}</span><span>💬 ${idea.commentsList.length}</span><span>👥 ${idea.joinedUsers.length+idea.collab} joined</span></div></div>`;
+ let q=(document.getElementById('searchInput')?.value||'').toLowerCase();
+ let list=[...ideas];
+ if(q)list=list.filter(i=>(i.tagline+i.desc).toLowerCase().includes(q));
+ if(mainF=='trending')list.sort((a,b)=>b.up-a.up);
+ if(mainF=='my'){if(!currentUser){document.getElementById('feed').innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af">Login karo for My Ideas</div>';return}list=list.filter(i=>i.uid===currentUser.uid||i.joinedUsers.includes(currentUser.uid))}
+ const feed=document.getElementById('feed');if(list.length==0){feed.innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af">No ideas yet</div>';return}
+ feed.innerHTML='';list.forEach(idea=>{
+  feed.innerHTML+=`<div class="card" onclick="openDetail('${idea.id}')">${idea.banner?`<img class=banner src="${idea.banner}">`:''}<div class=card-inner><div style="display:flex;gap:8px;align-items:center"><div class=avatar>${idea.user[0]}</div><b style="font-size:12px">${idea.user} • Just now</b></div><div class=tagline>${idea.tagline}</div><div class=desc>${idea.desc.substring(0,90)}...</div><div class=watermark>© ${idea.user} • Protected</div><div class=tags>${(idea.tags||[]).map(t=>`<span class=tag>#${t}</span>`).join('')}</div><div class=stats><span>👍 ${idea.up||0}</span><span>💬 ${(idea.commentsList||[]).length}</span><span>👥 ${(idea.joinedUsers||[]).length+ (idea.collab||0)}</span></div></div></div>`;
  });
 }
-function openDetail(id){detailIdea=ideas.find(x=>x.id===id);document.getElementById('dTitle').innerText=detailIdea.title;document.getElementById('dMainTitle').innerText=detailIdea.title;document.getElementById('dTime').innerText=detailIdea.time;document.getElementById('dDesc').innerText=detailIdea.desc;document.getElementById('dUser').innerText=detailIdea.user;document.getElementById('dAvatar').innerText=detailIdea.user[0];document.getElementById('dFirst').innerText=Math.floor(Math.random()*30+30)+'%';renderDetailComments();updateJoinBtn();document.getElementById('detailM').classList.add('open')}
+function openDetail(id){detailIdea=ideas.find(x=>x.id===id);document.getElementById('dTitle').innerText=detailIdea.tagline;document.getElementById('dMainTitle').innerText=detailIdea.tagline;document.getElementById('dDesc').innerText=detailIdea.desc;document.getElementById('dUser').innerText=detailIdea.user;document.getElementById('dCat').innerText=detailIdea.cat;document.getElementById('dTime').innerText=detailIdea.time||'';let b=document.getElementById('dBanner');if(detailIdea.banner){b.src=detailIdea.banner;b.style.display='block'}else b.style.display='none';document.getElementById('dComments').innerHTML=(detailIdea.commentsList||[]).map(c=>`<div style="padding:6px 0;border-bottom:1px solid #f3f4f6"><b style="font-size:12px">${c.user}</b><div style="font-size:13px">${c.text}</div></div>`).join('')||'No comments';updateJoinBtn();document.getElementById('detailM').classList.add('open')}
 function closeDetail(){document.getElementById('detailM').classList.remove('open')}
-function renderDetailComments(){document.getElementById('dComments').innerHTML=detailIdea.commentsList.map(c=>`<div style="padding:8px 0;border-bottom:1px solid #f3f4f6"><b style="font-size:13px">${c.user}</b><div style="font-size:13px;color:#4b5563">${c.text}</div></div>`).join('')||'<div style="color:#9ca3af;font-size:13px">No comments</div>'}
-function updateJoinBtn(){let btn=document.getElementById('dJoinBtn');if(currentUser&&detailIdea.joinedUsers.includes(currentUser.uid)){btn.innerText='✓ Already Joined';btn.style.background='#e5e7eb';btn.style.color='#6b7280';btn.disabled=true}else{btn.innerText='Attend Online';btn.style.background='#7c5cff';btn.style.color='#fff';btn.disabled=false}}
-function joinFromDetail(){if(!currentUser){toast('Login karo');handleAuth();return}if(detailIdea.joinedUsers.includes(currentUser.uid)){toast('Already Joined');return}detailIdea.joinedUsers.push(currentUser.uid);detailIdea.collab++;render();updateJoinBtn();toast('Joined! 🎉')}
-function postDetailComment(){if(!currentUser){toast('Login karo');handleAuth();return}let txt=document.getElementById('dCommentInput').value.trim();if(!txt)return;detailIdea.commentsList.push({user:profile?.name||currentUser.displayName||'You',text:txt});document.getElementById('dCommentInput').value='';renderDetailComments();render();toast('Comment added')}
-function openCreate(){if(!currentUser){toast('Login karo');handleAuth();return}if(!profile){document.getElementById('profileM').classList.add('open');return}document.getElementById('createM').classList.add('open')}function closeCreate(){document.getElementById('createM').classList.remove('open')}
-function createIdea(){let t=document.getElementById('cTitle').value.trim(),d=document.getElementById('cDesc').value.trim(),cat=document.getElementById('cCat').value,tags=document.getElementById('cTags').value.split(',').map(x=>x.trim()).filter(Boolean);if(!t||!d){toast('Title+Desc likho');return}ideas.unshift({id:Date.now().toString(),user:profile?.name||'You',time:'Just now',verified:true,title:t,desc:d,cat,tags:tags.length?tags:[cat],up:0,comments:0,collab:1,joinedUsers:currentUser?[currentUser.uid]:[],commentsList:[]});closeCreate();render();toast('Posted 🚀');document.getElementById('cTitle').value='';document.getElementById('cDesc').value=''}
-function toast(m){let t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',2500)}
-render();
-</script></body></html>
+function updateJoinBtn(){let btn=document.getElementById('dJoinBtn');let del=document.getElementById('dDelBtn');if(currentUser&&detailIdea.joinedUsers.includes(currentUser.uid)){btn.innerText='✓ Already Joined';btn.disabled=true;btn.style.background='#e5e7eb';btn.style.color='#6b7280'}else{btn.innerText='Attend / Join';btn.disabled=false;btn.style.background='#7c5cff';btn.style.color='#fff'}if(currentUser&&detailIdea.uid===currentUser.uid){del.style.display='block'}else del.style.display='none'}
+async function joinFromDetail(){if(!currentUser){toast('Login karo');handleAuth();return}if(detailIdea.joinedUsers.includes(currentUser.uid)){toast('Already joined');return}try{detailIdea.joinedUsers.push(currentUser.uid);await db.collection('ideas').doc(detailIdea.id).update({joinedUsers:detailIdea.joinedUsers,collab:firebase.firestore.FieldValue.increment(1)});notifications.unshift({title:'Joined',msg:`You joined ${detailIdea.tagline}`});render();updateJoinBtn();toast('Joined & saved to Firestore 🎉')}catch(e){toast('Firestore rules check karo')}} 
+async function postDetailComment(){if(!currentUser){toast('Login');return}let txt=document.getElementById('dCommentInput').value.trim();if(!txt)return;try{let c={user:profile?.name||currentUser.displayName||'You',text:txt};detailIdea.commentsList.push(c);await db.collection('ideas').doc(detailIdea.id).update({commentsList:detailIdea.commentsList});document.getElementById('dCommentInput').value='';document.getElementById('dComments').innerHTML=detailIdea.commentsList.map(x=>`<div style="padding:6px 0;border-bottom:1px solid #f3f4f6"><b style="font-size:12px">${x.user}</b><div style="font-size:13px">${x.text}</div></div>`).join('');render();toast('Comment saved')}catch(e){toast('Error: '+e.message)}}
+function openCreate(){if(!currentUser){toast('Login karo');handleAuth();return}if(!profile){document.getElementById('profileM').classList.add('open');return}document.getElementById('createM').classList.add('open')}function closeCreate(){document.getElementById('createM').classList.remove('open');bannerData='';document.getElementById('bannerPrev').style.display='none'}
+async function createIdea(){let tag=document.getElementById('cTagline').value.trim(),d=document.getElementById('cDesc').value.trim(),cat=document.getElementById('cCat').value,tags=document.getElementById('cTags').value.split(',').map(x=>x.trim()).filter(Boolean);if(!tag||!d){toast('Tagline + 
