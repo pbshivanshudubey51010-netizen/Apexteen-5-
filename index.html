@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen5 - Fixed</title>
+<title>ApexTeen5 Global</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -8,14 +8,20 @@
 .header{position:sticky;top:0;background:#fff;z-index:20;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}
 .btn{padding:10px 14px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:700;cursor:pointer}.btn.p{background:#f65858;color:#fff;border-color:#f65858;width:100%;margin-top:10px;padding:14px}
 .card{background:#fff;margin:12px 16px;border-radius:12px;overflow:hidden;border:1px solid #eee;cursor:pointer}.card img{width:100%;height:180px;object-fit:cover}
-.filters{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff}.chip{padding:8px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer}.chip.a{background:#f65858;color:#fff}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff}.chip{padding:8px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;white-space:nowrap}.chip.a{background:#f65858;color:#fff}
 .bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:10px 0;z-index:30}
 .nav{font-size:11px;text-align:center;color:#999;cursor:pointer;padding:6px 14px;border-radius:12px}.nav.a{color:#f65858;background:#fff1f1}.plus{width:54px;height:54px;background:#f65858;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;justify-content:center;align-items:flex-end}.modal.o{display:flex}.box{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px;max-height:92vh;overflow-y:auto}
 input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0} .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:99;display:none}
 </style></head><body>
 <div class="header"><b style="color:#f65858;font-size:20px">ApexTeen5 🌍</b><button id="lb" class="btn p" style="width:auto;padding:8px 12px" onclick="login()">Login</button></div>
-<div style="padding:12px 16px;background:#fff"><input id="s" placeholder="Search..." oninput="show()"></div>
+<div style="padding:12px 16px;background:#fff">
+<input id="s" placeholder="🔍 Search title..." oninput="show()">
+<div style="display:flex;gap:8px;margin-top:8px">
+<select id="cFilter" onchange="show()"><option value="all">🌍 All Countries</option><option value="India">🇮🇳 India</option><option value="USA">🇺🇸 USA</option><option value="UK">🇬🇧 UK</option><option value="Canada">🇨🇦 Canada</option><option value="Australia">🇦🇺 Australia</option><option value="Germany">🇩🇪 Germany</option></select>
+<select id="aFilter" onchange="show()"><option value="all">📍 All Areas</option><option value="Bela">Bela</option><option value="Delhi">Delhi</option><option value="Mumbai">Mumbai</option><option value="Lucknow">Lucknow</option><option value="Kanpur">Kanpur</option><option value="Prayagraj">Prayagraj</option></select>
+</div>
+</div>
 <div class="filters" id="fb"></div><div id="feed"></div>
 <div class="bottom">
 <div class="nav a" onclick="home()"><div>🏠</div>Home</div>
@@ -24,13 +30,9 @@ input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radiu
 <div class="nav" onclick="openDM()"><div>💬</div>DM</div>
 <div class="nav" onclick="openP()"><div>👤</div>Profile</div>
 </div>
-
-<!-- CREATE -->
 <div id="cM" class="modal" onclick="if(event.target==this)closeC()"><div class="box">
-<h3 id="cT">Post Idea</h3><input id="cTitle" placeholder="Title *"><textarea id="cDesc" placeholder="Describe *"></textarea><select id="cCat"><option>Tech</option><option>AI</option><option>Coding</option><option>Study</option><option>Startup</option></select><input id="cLoc" placeholder="City/Uni"><input type="file" id="cFile" multiple accept="image/*"><div id="cPrev" style="display:flex;gap:6px;overflow-x:auto"></div><button class="btn p" id="cBtn" onclick="save()">Post</button>
+<h3 id="cT">Post Idea</h3><input id="cTitle" placeholder="Title *"><textarea id="cDesc" placeholder="Describe *"></textarea><select id="cCat"><option>Tech</option><option>AI</option><option>Coding</option><option>Study</option><option>Startup</option></select><input id="cLoc" placeholder="City/Uni - ex: Bela, Delhi"><input type="file" id="cFile" multiple accept="image/*"><div id="cPrev" style="display:flex;gap:6px;overflow-x:auto"></div><button class="btn p" id="cBtn" onclick="save()">Post</button>
 </div></div>
-
-<!-- DETAIL -->
 <div id="dM" class="modal" style="align-items:flex-start"><div style="background:#fff;width:100%;max-width:480px;height:100vh;overflow:auto">
 <div style="padding:12px;display:flex;justify-content:space-between;border-bottom:1px solid #eee"><b id="dCat"></b><span onclick="closeD()" style="font-size:22px">✕</span></div>
 <div id="dGal" style="display:flex;gap:6px;padding:10px;overflow:auto"></div><img id="dBan" style="width:100%;height:220px;object-fit:cover;display:none">
@@ -39,39 +41,26 @@ input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radiu
 <div style="display:flex;gap:6px;margin-top:8px"><button class="btn" id="dEdit" style="flex:1;display:none" onclick="doEdit()">Edit</button><button class="btn" id="dDel" style="flex:1;display:none;color:red" onclick="doDel()">Delete</button></div>
 <div style="margin-top:16px"><b>Comments</b><div id="dCom"></div><div style="display:flex;gap:6px;margin-top:8px"><input id="dComI"><button class="btn p" style="width:auto" onclick="doCom()">Send</button></div></div>
 </div></div></div>
-
-<!-- DM LIST -->
 <div id="dmM" class="modal"><div class="box"><div style="display:flex;justify-content:space-between"><h3>DMs</h3><span onclick="closeDM()" style="font-size:22px">✕</span></div><div id="dmList"></div></div></div>
-
-<!-- CHAT -->
 <div id="chM" class="modal" style="align-items:flex-start"><div style="background:#fff;width:100%;max-width:480px;height:100vh;display:flex;flex-direction:column"><div style="padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between"><b id="chWith"></b><span onclick="closeCh()" style="font-size:22px">✕</span></div><div id="chBox" style="flex:1;overflow:auto;padding:12px"></div><div style="padding:12px;display:flex;gap:6px"><input id="chIn"><button class="btn p" style="width:auto" onclick="sendCh()">Send</button></div></div></div>
-
-<!-- REPORT -->
 <div id="rM" class="modal" onclick="if(event.target==this)closeR()"><div class="box"><h3>Report</h3><select id="rRe"><option>Spam</option><option>Abusive</option><option>Fake</option></select><textarea id="rTx"></textarea><button class="btn p" onclick="subR()">Submit</button></div></div>
-
-<!-- PROFILE -->
 <div id="pM" class="modal" onclick="if(event.target==this)closeP()"><div class="box"><h3>Profile</h3><input id="pN" placeholder="Name *"><input id="pU" placeholder="University *"><input id="pC" placeholder="Country *"><input type="file" id="pF" accept="image/*"><img id="pAv" style="width:80px;height:80px;border-radius:50%;display:none"><button class="btn p" onclick="saveP()">Save Profile</button><button class="btn" style="width:100%;margin-top:8px" onclick="pushOn()">🔔 Enable Push</button><button class="btn" style="width:100%;margin-top:8px" onclick="logout()">Logout</button></div></div>
-
 <div id="exM" class="modal" onclick="if(event.target==this)closeEx()"><div class="box"><h3>Explore</h3><div id="exCats" style="display:flex;flex-wrap:wrap;gap:8px"></div></div></div>
 <div id="toast" class="toast"></div>
-
 <script>
 const KEY="b2a23228af0e971d89e2f23ca35b40da";
 const firebaseConfig={apiKey:"AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",authDomain:"apexteen-5.firebaseapp.com",projectId:"apexteen-5",storageBucket:"apexteen-5.firebasestorage.app",messagingSenderId:"428961039333",appId:"1:428961039333:web:5dc05aae6f4fbe6c60250c"};
 firebase.initializeApp(firebaseConfig);const auth=firebase.auth();const db=firebase.firestore();
 let user=null,prof=null,mainF='all',ideas=[],cur=null,bans=[],editId=null,pend=[],chatWith=null,chatId=null;
-
 auth.onAuthStateChanged(u=>{user=u;if(u){let s=localStorage.getItem('apex_'+u.uid);prof=s?JSON.parse(s):{name:u.displayName||'',avatar:u.photoURL||'',uni:'',country:''};document.getElementById('lb').innerText=prof.name.split(' ')[0]||'Student'}else{document.getElementById('lb').innerText='Login'}load();});
-
-function login(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())}
-function logout(){auth.signOut();closeP()}
+function login(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())}function logout(){auth.signOut();closeP()}
 function toast(m){let t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',3000)}
 function init(){let b=document.getElementById('fb');b.innerHTML=['all','Tech','AI','Coding','Study','Startup'].map((c,i)=>`<div class="chip ${i==0?'a':''}" data-f="${c}" onclick="setF(this)">${c}</div>`).join('')+`<div class="chip" data-f="my" onclick="setF(this)">My</div>`;document.getElementById('exCats').innerHTML=['Tech','AI','Coding','Study','Startup'].map(c=>`<div class="chip" onclick="filterC('${c}');closeEx()">${c}</div>`).join('')}init();
 function setF(el){document.querySelectorAll('#fb .chip').forEach(x=>x.classList.remove('a'));el.classList.add('a');mainF=el.dataset.f;show()}
 function filterC(c){setF(document.querySelector(`[data-f="${c}"]`))}function home(){setF(document.querySelector('[data-f="all"]'))}
-async function load(){document.getElementById('feed').innerHTML='Loading...';try{let s=await db.collection('ideas').get();ideas=s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){ideas=[]}if(!ideas.length)ideas=[{id:'demo',tagline:'Test Idea - Click me',desc:'Demo',cat:'Tech',user:'Demo',userCountry:'India',uid:'',joinedUsers:[],banner:'',banners:[],commentsList:[]}];show()}
-function show(){let q=document.getElementById('s').value.toLowerCase();let list=[...ideas];if(q)list=list.filter(i=>(i.tagline+i.desc).toLowerCase().includes(q));if(mainF=='my'){if(!user){document.getElementById('feed').innerHTML='Login for My Ideas';return}list=list.filter(i=>i.uid===user.uid)}else if(mainF!='all')list=list.filter(i=>i.cat===mainF);document.getElementById('feed').innerHTML=list.map(i=>`<div class="card" onclick="openDtl('${i.id}')">${(i.banners?.[0]||i.banner)?`<img src="${i.banners?.[0]||i.banner}">`:''}<div style="padding:12px"><div style="font-size:11px;color:#7c5cff">${i.cat}</div><div style="font-weight:800">${i.tagline}</div><div style="font-size:12px;color:#666">${i.user} • ${i.userCountry||''}</div></div></div>`).join('')||'No ideas'}
-function openDtl(id){cur=ideas.find(x=>x.id==id);document.getElementById('dCat').innerText=cur.cat;document.getElementById('dTT').innerText=cur.tagline;document.getElementById('dDes').innerText=cur.desc;document.getElementById('dOwn').innerText=cur.user+' • '+(cur.userCountry||'');let all=[...(cur.banners||[]),cur.banner].filter(Boolean);document.getElementById('dGal').innerHTML=all.map(u=>`<img src="${u}" style="width:90px;height:70px;object-fit:cover;border-radius:8px" onclick="window.open('${u}')">`).join('');let bn=document.getElementById('dBan');if(all[0]){bn.src=all[0];bn.style.display='block'}else bn.style.display='none';document.getElementById('dCom').innerHTML=(cur.commentsList||[]).map(c=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${c.user}</b><div>${c.text}</div></div>`).join('')||'No comments';document.getElementById('dM').classList.add('o');let mine=user&&cur.uid==user.uid;document.getElementById('dEdit').style.display=mine?'block':'none';document.getElementById('dDel').style.display=mine?'block':'none';document.getElementById('dJoin').innerText=user&&cur.joinedUsers?.includes(user.uid)?'Supported ✓':'Support'}
+async function load(){document.getElementById('feed').innerHTML='Loading...';try{let s=await db.collection('ideas').get();ideas=s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){ideas=[]}if(!ideas.length)ideas=[{id:'demo',tagline:'Test Idea',desc:'Demo',cat:'Tech',user:'Demo',userCountry:'India',location:'Bela',uid:'',joinedUsers:[],banner:'',banners:[],commentsList:[]}];show()}
+function show(){let q=document.getElementById('s').value.toLowerCase();let cf=document.getElementById('cFilter').value;let af=document.getElementById('aFilter').value;let list=[...ideas];if(q)list=list.filter(i=>(i.tagline+i.desc).toLowerCase().includes(q));if(cf!='all')list=list.filter(i=>(i.userCountry||'').toLowerCase().includes(cf.toLowerCase()));if(af!='all')list=list.filter(i=>(i.location||'').toLowerCase().includes(af.toLowerCase()));if(mainF=='my'){if(!user){document.getElementById('feed').innerHTML='Login for My Ideas';return}list=list.filter(i=>i.uid===user.uid)}else if(mainF!='all')list=list.filter(i=>i.cat===mainF);document.getElementById('feed').innerHTML=list.map(i=>`<div class="card" onclick="openDtl('${i.id}')">${(i.banners?.[0]||i.banner)?`<img src="${i.banners?.[0]||i.banner}">`:''}<div style="padding:12px"><div style="font-size:11px;color:#7c5cff">${i.cat} • ${i.location||''}</div><div style="font-weight:800">${i.tagline}</div><div style="font-size:12px;color:#666">${i.user} • ${i.userCountry||''}</div></div></div>`).join('')||'No ideas found for this filter'}
+function openDtl(id){cur=ideas.find(x=>x.id==id);document.getElementById('dCat').innerText=cur.cat+' • '+(cur.location||'');document.getElementById('dTT').innerText=cur.tagline;document.getElementById('dDes').innerText=cur.desc;document.getElementById('dOwn').innerText=cur.user+' • '+(cur.userCountry||'')+' • '+(cur.location||'');let all=[...(cur.banners||[]),cur.banner].filter(Boolean);document.getElementById('dGal').innerHTML=all.map(u=>`<img src="${u}" style="width:90px;height:70px;object-fit:cover;border-radius:8px" onclick="window.open('${u}')">`).join('');let bn=document.getElementById('dBan');if(all[0]){bn.src=all[0];bn.style.display='block'}else bn.style.display='none';document.getElementById('dCom').innerHTML=(cur.commentsList||[]).map(c=>`<div style="padding:6px 0;border-bottom:1px solid #eee"><b>${c.user}</b><div>${c.text}</div></div>`).join('')||'No comments';document.getElementById('dM').classList.add('o');let mine=user&&cur.uid==user.uid;document.getElementById('dEdit').style.display=mine?'block':'none';document.getElementById('dDel').style.display=mine?'block':'none';document.getElementById('dJoin').innerText=user&&cur.joinedUsers?.includes(user.uid)?'Supported ✓':'Support'}
 function closeD(){document.getElementById('dM').classList.remove('o')}
 function openC(){if(!user){login();return}if(!prof?.uni){toast('First complete profile');openP();return}editId=null;pend=[];bans=[];document.getElementById('cT').innerText='Post Idea';document.getElementById('cTitle').value='';document.getElementById('cDesc').value='';document.getElementById('cPrev').innerHTML='';document.getElementById('cM').classList.add('o')}
 function closeC(){document.getElementById('cM').classList.remove('o')}
@@ -95,6 +84,4 @@ function openP(){if(!user){login();return}document.getElementById('pN').value=pr
 function closeP(){document.getElementById('pM').classList.remove('o')}
 document.getElementById('pF').addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;let fd=new FormData();fd.append('image',f);let r=await fetch(`https://api.imgbb.com/1/upload?key=${KEY}`,{method:'POST',body:fd});let d=await r.json();prof.avatar=d.data.url;document.getElementById('pAv').src=prof.avatar;document.getElementById('pAv').style.display='block';toast('Avatar uploaded')});
 function saveP(){let n=document.getElementById('pN').value.trim(),u=document.getElementById('pU').value.trim(),c=document.getElementById('pC').value.trim();if(!n||!u||!c)return toast('All fields required');prof={...prof,name:n,uni:u,country:c};localStorage.setItem('apex_'+user.uid,JSON.stringify(prof));db.collection('users').doc(user.uid).set({name:n,uni:u,country:c,avatar:prof.avatar||'',email:user.email},{merge:true});toast('Saved 🌍');closeP();document.getElementById('lb').innerText=n.split(' ')[0]}
-function openEx(){document.getElementById('exM').classList.add('o')}function closeEx(){document.getElementById('exM').classList.remove('o')}
-function pushOn(){if(!('Notification' in window))return toast('No support');Notification.requestPermission().then(p=>{if(p=='granted'){toast('🔔 Push ON');new Notification('ApexTeen5',{body:'Notifications enabled!'})}})}
-</script></body></html>
+function openEx(){document.getElementB
