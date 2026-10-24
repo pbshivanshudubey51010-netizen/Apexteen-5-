@@ -13,8 +13,6 @@
 </head>
 <body class="bg-[#f7f6ff] pb-[70px]">
 <div class="max-w-[420px] mx-auto bg-white min-h-screen shadow relative">
-
-<!-- HEADER -->
 <div class="sticky top-0 bg-white z-20 p-4 border-b">
 <div class="flex justify-between items-center">
 <h1 class="font-black text-xl tracking-tight">ApexTeen5</h1>
@@ -25,8 +23,6 @@
 <span class="absolute left-4 top-3.5 opacity-50">🔍</span>
 </div>
 </div>
-
-<!-- FILTERS -->
 <div class="px-4 pt-3 flex gap-2 overflow-x-auto no-scrollbar">
 <button onclick="setTimeFilter(this,'all')" class="timeFilter active-pill px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">Trending</button>
 <button onclick="setTimeFilter(this,'today')" class="timeFilter px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">Today</button>
@@ -40,21 +36,15 @@
 <button onclick="setCat(this,'Gaming')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Gaming</button>
 <button onclick="setCat(this,'Social')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Social</button>
 </div>
-
-<!-- MAIN CONTAINER -->
 <div id="homePage">
 <div id="mapCard" class="mx-3 mt-2 rounded-2xl overflow-hidden h-[160px] relative"><div id="map" class="h-full w-full"></div><div class="absolute bottom-2 left-2 bg-white text-[11px] px-3 py-1 rounded-full shadow">📍 Vindhyanagar • <span id="locInfo">Selecting...</span></div></div>
 <div id="ideasList" class="p-3 space-y-4"></div>
 </div>
-
-<!-- EXPLORE PAGE -->
 <div id="explorePage" class="hidden p-4">
 <h2 class="font-bold">Explore Nearby Teens</h2>
 <div id="exploreMap" class="h-[300px] rounded-2xl mt-3"></div>
 <div class="mt-3 text-sm text-gray-600">Country filter: <select id="f_country" onchange="renderIdeas()" class="border rounded p-1"><option value="">All World</option></select></div>
 </div>
-
-<!-- CREATE PAGE -->
 <div id="createPage" class="hidden p-4">
 <h2 class="font-bold text-lg">Create New Idea 💡</h2>
 <div class="mt-3 space-y-2 bg-white border rounded-2xl p-4">
@@ -70,14 +60,8 @@
 <p class="text-[10px] text-gray-400 text-center">⚠️ Bad words auto-blocked | Safe for teens</p>
 </div>
 </div>
-
-<!-- NOTIFICATIONS -->
 <div id="notifPage" class="hidden p-4"><h2 class="font-bold">Notifications</h2><div id="notifList" class="mt-3 space-y-2 text-sm"></div></div>
-
-<!-- PROFILE -->
 <div id="profilePage" class="hidden p-4"><h2 class="font-bold">Profile</h2><div id="profileBox" class="mt-4 bg-violet-50 p-4 rounded-2xl text-center">Login karo profile dekhne ke liye</div></div>
-
-<!-- BOTTOM NAV -->
 <div class="fixed bottom-0 w-full max-w-[420px] bg-white border-t flex justify-around py-2 z-30">
 <button onclick="showPage('home')" class="navBtn flex flex-col items-center text-[#7c5cff]"><span class="text-xl">⌂</span><span class="text-[11px]">Home</span></button>
 <button onclick="showPage('explore')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">◎</span><span class="text-[11px]">Explore</span></button>
@@ -85,17 +69,20 @@
 <button onclick="showPage('notif')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">🔔</span><span class="text-[11px]">Notifications</span></button>
 <button onclick="showPage('profile')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">👤</span><span class="text-[11px]">Profile</span></button>
 </div>
-
 </div>
-
 <script>
-// --- CONFIG - Apna config yahan daalo agar hai toh ---
-const firebaseConfig = { apiKey: "AIzaSyDummy", authDomain: "apexteen-5.firebaseapp.com", projectId: "apexteen-5" };
+// --- CONFIG - FIXED ---
+const firebaseConfig = {
+  apiKey: "AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",
+  authDomain: "apexteen-5.firebaseapp.com",
+  projectId: "apexteen-5",
+  storageBucket: "apexteen-5.firebasestorage.app",
+  messagingSenderId: "428961039333",
+  appId: "1:428961039333:web:5dc05aae6f4fbe6c60250c"
+};
 try{ firebase.initializeApp(firebaseConfig); }catch(e){}
 const auth = firebase.auth ? firebase.auth() : null;
 const db = firebase.firestore ? firebase.firestore() : null;
-
-// --- DATA ---
 let currentUser = null;
 let timeFilter='all', catFilter='All', worldData=[];
 let ideas = JSON.parse(localStorage.getItem('apex_ideas')||'null') || [
@@ -103,10 +90,8 @@ let ideas = JSON.parse(localStorage.getItem('apex_ideas')||'null') || [
  {id:2,title:"Local Study Group Finder",desc:"Connect with teens nearby for in-person study sessions. Join safe group study meetups at libraries, cafes, or parks.",cat:"Social",author:"Maya",time:"5h ago",upvotes:28,comments:[],collab:7,country:"USA",state:"California",city:"Downtown Library",verified:true,dist:"0.8mi away"}
 ];
 let notifs=[];
-
-// --- AUTH ---
 function doLogin(){
- if(!auth){ alert("Firebase config add karo: Firebase > Project Settings > Your Apps se copy karo"); return; }
+ if(!auth){ alert("Firebase config add karo"); return; }
  const p = new firebase.auth.GoogleAuthProvider();
  auth.signInWithPopup(p).then(r=>{
   currentUser=r.user;
@@ -116,25 +101,19 @@ function doLogin(){
  }).catch(e=>alert(e.message+"\n\nFix: Firebase > Authentication > Authorized domains me apna github.io domain add karo"));
 }
 if(auth){ auth.onAuthStateChanged(u=>{ if(u){ currentUser=u; document.getElementById('authBox').innerHTML=`✅ ${u.displayName}`; } }); }
-
-// --- MAP ---
 let map, exploreMap;
 setTimeout(()=>{
  map = L.map('map',{zoomControl:false,attributionControl:false}).setView([24.07,82.64],13);
  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
  L.marker([24.07,82.64]).addTo(map).bindPopup("You are here - Vindhyanagar").openPopup();
 },500);
-
-// --- WORLD DATA ---
 fetch('https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries%2Bstates%2Bcities.json').then(r=>r.json()).then(d=>{
  worldData=d;
- const opts = (id)=>{ let el=document.getElementById(id); el.innerHTML='<option value="">All/Select</option>'; d.forEach(c=>{ el.innerHTML+=`<option value="${c.id}" data-name="${c.name}">${c.name}</option>`; if(id==='f_country'){} }); };
+ const opts = (id)=>{ let el=document.getElementById(id); el.innerHTML='<option value="">All/Select</option>'; d.forEach(c=>{ el.innerHTML+=`<option value="${c.id}" data-name="${c.name}">${c.name}</option>`; }); };
  opts('f_country'); opts('c_country');
  document.getElementById('f_country').innerHTML='<option value="">All World</option>'+d.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
- // default India
  let sel=document.getElementById('c_country'); for(let o of sel.options) if(o.text=='India') sel.value=o.value; loadStates2();
 });
-
 function loadStates2(){ 
  let cid=document.getElementById('c_country').value; let co=worldData.find(c=>c.id==cid);
  let s=document.getElementById('c_state'); s.innerHTML='<option>Select State</option>';
@@ -147,8 +126,6 @@ function loadCities2(){
  let ci=document.getElementById('c_city'); ci.innerHTML='<option>Select District</option>';
  if(st) st.cities.forEach(ct=>ci.innerHTML+=`<option>${ct.name}</option>`);
 }
-
-// --- RENDER ---
 function renderIdeas(){
  let search=document.getElementById('searchBox').value.toLowerCase();
  let fCountry=document.getElementById('f_country')?.value||'';
@@ -159,10 +136,8 @@ function renderIdeas(){
   if(timeFilter=='mine' && currentUser && i.author!=currentUser.displayName) return false;
   return true;
  });
- // sort
  if(timeFilter=='new') list = [...list].reverse();
  if(timeFilter=='trending') list = [...list].sort((a,b)=>b.upvotes-a.upvotes);
-
  document.getElementById('ideasList').innerHTML = list.map(i=>`
  <div class="bg-white rounded-2xl shadow-sm border p-4">
   <div class="flex justify-between">
@@ -184,13 +159,11 @@ function renderIdeas(){
  `).join('') || '<div class="text-center text-sm text-gray-400 py-10">No ideas found</div>';
  localStorage.setItem('apex_ideas', JSON.stringify(ideas));
 }
-
 function upvote(id){ let i=ideas.find(x=>x.id==id); i.upvotes++; addNotif(`You upvoted ${i.title}`); renderIdeas(); }
 function addComment(id){ let txt=prompt("Comment likho:"); if(!txt) return; if(isBad(txt)){ alert("Unsafe word blocked!"); return;} let i=ideas.find(x=>x.id==id); i.comments.push({t:txt}); addNotif(`New comment on ${i.title}`); renderIdeas(); }
 function joinTeam(id){ let i=ideas.find(x=>x.id==id); i.collab++; addNotif(`Joined team: ${i.title}`); renderIdeas(); }
 function report(id){ if(confirm("Report this idea?")){ addNotif("Reported - we will review (Teen Safety)"); } }
 function isBad(t){ let bad=["abuse","sex","drug"]; return bad.some(b=>t.toLowerCase().includes(b)); }
-
 function createIdea(){
  let title=document.getElementById('newTitle').value.trim();
  let desc=document.getElementById('newDesc').value.trim();
@@ -204,18 +177,14 @@ function createIdea(){
  document.getElementById('newTitle').value=''; document.getElementById('newDesc').value='';
  addNotif("Idea posted!"); showPage('home'); renderIdeas();
 }
-
 function setTimeFilter(el,v){ document.querySelectorAll('.timeFilter').forEach(b=>b.classList.remove('active-pill')); el.classList.add('active-pill'); timeFilter=v; renderIdeas(); }
 function setCat(el,v){ document.querySelectorAll('.catFilter').forEach(b=>b.classList.remove('active-pill')); el.classList.add('active-pill'); catFilter=v; renderIdeas(); }
-
 function showPage(p){
  ['home','explore','create','notif','profile'].forEach(x=>document.getElementById(x+'Page').style.display='none');
  document.getElementById(p+'Page').style.display='block';
  if(p=='explore' && !exploreMap){ setTimeout(()=>{ exploreMap=L.map('exploreMap').setView([24.07,82.64],3); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(exploreMap); },200); }
 }
-
 function addNotif(t){ notifs.unshift(t); document.getElementById('notifList').innerHTML=notifs.map(n=>`<div class="bg-white border rounded-xl p-3">${n}</div>`).join(''); }
-
 renderIdeas();
 </script>
 </body>
