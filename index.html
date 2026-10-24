@@ -1,31 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen 5.0 - Final</title>
+<title>ApexTeen 5.0</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-black text-white min-h-screen">
-
-<!-- HEADER -->
-<header class="p-4 flex justify-between items-center border-b border-gray-800 sticky top-0 bg-black z-10">
+<header class="p-4 flex justify-between items-center border-b border-zinc-800 sticky top-0 bg-black">
   <h1 class="font-bold text-xl">ApexTeen 5.0</h1>
-  <div id="authBox"><button id="loginBtn" class="bg-white text-black px-4 py-2 rounded-full font-bold">Login with Google</button></div>
+  <div id="authBox"><button id="loginBtn" class="bg-white text-black px-5 py-2 rounded-full font-bold text-sm">Login with Google</button></div>
 </header>
 
-<!-- CREATE POST -->
-<div id="createBox" class="hidden max-w-xl mx-auto p-4 border-b border-gray-800">
-  <textarea id="postText" placeholder="What's your idea?" class="w-full bg-gray-900 rounded-xl p-3 outline-none"></textarea>
+<div id="createBox" class="hidden max-w-[600px] mx-auto p-4 border-b border-zinc-800">
+  <textarea id="postText" placeholder="What's your idea?" class="w-full bg-zinc-900 rounded-2xl p-4 outline-none min-h-[90px]"></textarea>
   <input type="file" id="postImage" accept="image/*" class="mt-2 text-sm">
-  <button id="postBtn" class="mt-3 w-full bg-white text-black py-2 rounded-full font-bold">Post Idea</button>
+  <button id="postBtn" class="mt-3 bg-white text-black px-6 py-2 rounded-full font-bold">Post Idea</button>
+  <p id="postStatus" class="text-xs text-zinc-500 mt-2"></p>
 </div>
 
-<!-- FEED -->
-<main id="feed" class="max-w-xl mx-auto p-4 space-y-4"></main>
-
-<!-- PROFILE BOX -->
-<div id="profileBox" class="max-w-xl mx-auto p-4 text-center text-gray-400">Login karo profile dekhne ke liye</div>
+<main id="feed" class="max-w-[600px] mx-auto p-4 space-y-4"></main>
+<div id="profileBox" class="max-w-[600px] mx-auto p-4 text-center text-zinc-500 text-sm">Login karo profile dekhne ke liye</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -33,14 +28,14 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChang
 import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-// 👇 TUMHARA CONFIG YAHI RAHEGA - CHANGE MAT KARNA
+// YAHAN APNA PURANA CONFIG PASTE KARO
 const firebaseConfig = {
-  apiKey: "AIzaSy... (tumhara wala hi rahega)",
+  apiKey: "TUMHARA_API_KEY",
   authDomain: "apexteen-5.firebaseapp.com",
   projectId: "apexteen-5",
   storageBucket: "apexteen-5.appspot.com",
-  messagingSenderId: "...",
-  appId: "..."
+  messagingSenderId: "ID",
+  appId: "APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -48,54 +43,50 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
-
 let currentUser = null;
 
-const authBox = document.getElementById('authBox');
-const createBox = document.getElementById('createBox');
-const profileBox = document.getElementById('profileBox');
-const feed = document.getElementById('feed');
-
-document.getElementById('loginBtn')?.addEventListener('click', () => signInWithPopup(auth, provider));
+function attachLogin(){
+  document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
+}
+attachLogin();
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if(user){
-    authBox.innerHTML = `<span class="text-sm">✅ ${user.displayName}</span> <button id="logoutBtn" class="ml-2 bg-gray-800 px-3 py-1 rounded-full text-sm">Logout</button>`;
+    document.getElementById('authBox').innerHTML = `<span>✅ ${user.displayName}</span> <button id="logoutBtn" class="ml-2 bg-zinc-800 px-3 py-1 rounded-full">Logout</button>`;
     document.getElementById('logoutBtn').onclick = () => signOut(auth);
-    createBox.classList.remove('hidden');
-    profileBox.innerHTML = `<div class="bg-gray-900 p-4 rounded-xl"><p class="font-bold">${user.displayName}</p><p class="text-sm">${user.email}</p></div>`;
+    document.getElementById('createBox').classList.remove('hidden');
+    document.getElementById('profileBox').innerHTML = `<div class="bg-zinc-900 p-4 rounded-xl"><p class="font-bold">${user.displayName}</p><p>${user.email}</p></div>`;
   } else {
-    authBox.innerHTML = `<button id="loginBtn" class="bg-white text-black px-4 py-2 rounded-full font-bold">Login with Google</button>`;
-    document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
-    createBox.classList.add('hidden');
-    profileBox.innerHTML = `Login karo profile dekhne ke liye`;
+    document.getElementById('authBox').innerHTML = `<button id="loginBtn" class="bg-white text-black px-4 py-2 rounded-full">Login with Google</button>`;
+    attachLogin();
+    document.getElementById('createBox').classList.add('hidden');
   }
 });
 
 document.getElementById('postBtn').onclick = async () => {
-  const text = document.getElementById('postText').value.trim();
+  const text = document.getElementById('postText').value;
   const file = document.getElementById('postImage').files[0];
-  if(!text && !file) return alert('Kuch likho ya photo lagao!');
+  if(!text && !file) return alert('Kuch likho');
   document.getElementById('postBtn').innerText = 'Posting...';
   let imageUrl = "";
   if(file){
-    const storageRef = ref(storage, `posts/${Date.now()}_${file.name}`);
-    await uploadBytes(storageRef, file);
-    imageUrl = await getDownloadURL(storageRef);
+    const r = ref(storage, `posts/${Date.now()}_${file.name}`);
+    await uploadBytes(r, file);
+    imageUrl = await getDownloadURL(r);
   }
-  await addDoc(collection(db, "posts"), { text, imageUrl, uid: currentUser.uid, name: currentUser.displayName, email: currentUser.email, createdAt: serverTimestamp() });
+  await addDoc(collection(db, "posts"), { text, imageUrl, uid: currentUser.uid, name: currentUser.displayName, createdAt: serverTimestamp() });
   document.getElementById('postText').value = "";
-  document.getElementById('postImage').value = "";
   document.getElementById('postBtn').innerText = 'Post Idea';
 };
 
 const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 onSnapshot(q, (snap) => {
+  const feed = document.getElementById('feed');
   feed.innerHTML = "";
-  snap.forEach(doc => {
-    const p = doc.data();
-    feed.innerHTML += `<div class="bg-gray-900 rounded-xl p-4"><p class="font-bold text-sm mb-1">${p.name}</p><p class="mb-2">${p.text || ''}</p>${p.imageUrl ? `<img src="${p.imageUrl}" class="rounded-xl w-full">` : ''}</div>`;
+  snap.forEach(d => {
+    const p = d.data();
+    feed.innerHTML += `<div class="bg-zinc-900 rounded-xl p-4"><p class="font-bold text-sm">${p.name}</p><p>${p.text||''}</p>${p.imageUrl?`<img src="${p.imageUrl}" class="rounded-xl mt-2 w-full">`:''}</div>`;
   });
 });
 </script>
