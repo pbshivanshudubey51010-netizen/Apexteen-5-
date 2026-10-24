@@ -1,175 +1,137 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen5 World</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-body{background:#f6f7f8;max-width:480px;margin:0 auto;padding-bottom:90px}
-.header{position:sticky;top:0;background:#fff;z-index:20;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}
-.btn{padding:10px 14px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:700;cursor:pointer}
-.btn.p{background:#f65858;color:#fff;border-color:#f65858;width:100%;margin-top:10px;padding:14px}
-.card{background:#fff;margin:12px 16px;border-radius:12px;overflow:hidden;border:1px solid #eee;cursor:pointer}
-.card img{width:100%;height:180px;object-fit:cover}
-.filters{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff}
-.chip{padding:8px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;white-space:nowrap}
-.chip.a{background:#f65858;color:#fff}
-.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:10px 0;z-index:30}
-.nav{font-size:11px;text-align:center;color:#999;cursor:pointer;padding:6px 14px;border-radius:12px}
-.nav.a{color:#f65858;background:#fff1f1}
-.plus{width:54px;height:54px;background:#f65858;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:none;justify-content:center;align-items:center}
-.modal.o{display:flex}
-.box{background:#fff;width:100%;max-width:480px;border-radius:20px;padding:20px;max-height:92vh;overflow-y:auto;margin:10px}
-input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:99;display:none}
-</style>
-</head>
-<body>
-<div class="header"><b style="color:#f65858">ApexTeen5 🌍</b><button id="lb" class="btn p" style="width:auto;padding:8px 12px" onclick="openLogin()">Login</button></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ApexTeen5 - Parent Secure</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#f6f7f8;max-width:480px;margin:0 auto;padding-bottom:90px}.header{position:sticky;top:0;background:#fff;z-index:20;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}.btn{padding:12px 14px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:700;cursor:pointer}.btn.p{background:#f65858;color:#fff;border-color:#f65858;width:100%;margin-top:10px;padding:14px}.card{background:#fff;margin:12px 16px;border-radius:12px;overflow:hidden;border:1px solid #eee;cursor:pointer}.filters{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff}.chip{padding:8px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;white-space:nowrap}.chip.a{background:#f65858;color:#fff}.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:10px 0;z-index:30}.nav{font-size:11px;text-align:center;color:#999;cursor:pointer;padding:6px 14px;border-radius:12px}.nav.a{color:#f65858;background:#fff1f1}.plus{width:54px;height:54px;background:#f65858;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;display:none;justify-content:center;align-items:center}.modal.o{display:flex}.box{background:#fff;width:100%;max-width:480px;border-radius:20px;padding:20px;max-height:95vh;overflow-y:auto;margin:10px}input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0}label{font-size:12px;font-weight:700;color:#555;margin-top:8px;display:block}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:99;display:none}.step{display:none}.step.active{display:block}.otp-box{display:flex;gap:8px;justify-content:center;margin:10px 0}.otp-box input{width:45px;text-align:center;font-size:20px}</style></head><body>
+<div class="header"><b style="color:#f65858">ApexTeen5 🌍🔒</b><button id="lb" class="btn p" style="width:auto;padding:8px 12px" onclick="openLogin()">Login</button></div>
+<div style="padding:12px 16px;background:#fff"><input id="s" placeholder="🔍 Search..." oninput="show()"><div style="display:flex;gap:6px;margin-top:8px"><select id="cFilter" onchange="updateStateList();show()"><option value="all">🌍 All Countries</option></select><select id="aFilter" onchange="show()"><option value="all">📍 All States</option></select></div></div>
+<div class="filters" id="fb"></div><div id="feed"></div>
+<div class="bottom"><div class="nav a" onclick="home()"><div>🏠</div>Home</div><div class="nav" onclick="toast('Use filters')"><div>🧭</div>Explore</div><div class="nav" onclick="openC()"><div class="plus">+</div>Idea</div><div class="nav" onclick="openDM()"><div>💬</div>DM</div><div class="nav" onclick="openP()"><div>👤</div>Profile</div></div>
 
-<div style="padding:12px 16px;background:#fff">
-<input id="s" placeholder="🔍 Search..." oninput="show()">
-<div style="display:flex;gap:6px;margin-top:8px">
-<select id="cFilter" onchange="updateStateList();show()"><option value="all">🌍 All Countries (195)</option></select>
-<select id="aFilter" onchange="show()"><option value="all">📍 All States</option></select>
-</div>
+<!-- SECURE LOGIN WITH PARENT APPROVAL -->
+<div id="loginM" class="modal"><div class="box">
+<div id="step1" class="step active">
+<h2 style="color:#f65858;text-align:center">Student Registration 🔒</h2><p style="font-size:12px;color:#666;text-align:center;margin:6px 0">Parents approval required</p>
+<label>Student Full Name *</label><input id="sName" placeholder="Ex: Rahul Sharma">
+<label>Date of Birth *</label><input id="sDob" type="date">
+<label>Class / Grade *</label><select id="sClass"><option value="">Select Class</option><option>Class 6</option><option>Class 7</option><option>Class 8</option><option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option><option>College 1st Year</option><option>College 2nd Year</option><option>College 3rd Year</option><option>College 4th Year</option></select>
+<label>Country *</label><select id="sCountry" onchange="updateStudentState()"><option value="">Select Country</option></select>
+<label>State / Province *</label><select id="sState"><option value="">Select State First</option></select>
+<label>Student Email *</label><input id="sEmail" placeholder="student@gmail.com">
+<label>Password (6+ chars) *</label><input id="sPass" type="password" placeholder="Create password">
+<hr style="margin:14px 0">
+<h3 style="color:#f65858">👨‍👩‍👧 Parent Approval</h3>
+<label>Parent Mobile Number (OTP) *</label><div style="display:flex;gap:6px"><select style="width:30%"><option>+91</option><option>+1</option><option>+44</option><option>+971</option></select><input id="pMobile" placeholder="9876543210" style="flex:1"></div>
+<div id="recaptcha"></div>
+<label>Parent Email (Backup OTP) *</label><input id="pEmail" placeholder="parent@gmail.com">
+<button class="btn p" onclick="sendParentOTP()">Send OTP to Parent 📲</button>
+<div style="text-align:center;margin-top:10px"><span onclick="showLoginStep()" style="color:#666;font-size:13px">Already have account? Login</span> | <span onclick="closeLogin()" style="color:#999;font-size:13px">Skip ✕</span></div>
 </div>
 
-<div class="filters" id="fb"></div>
-<div id="feed"></div>
-
-<div class="bottom">
-<div class="nav a" onclick="home()"><div>🏠</div>Home</div>
-<div class="nav" onclick="openEx()"><div>🧭</div>Explore</div>
-<div class="nav" onclick="openC()"><div class="plus">+</div>Idea</div>
-<div class="nav" onclick="openDM()"><div>💬</div>DM</div>
-<div class="nav" onclick="openP()"><div>👤</div>Profile</div>
+<div id="step2" class="step">
+<h2 style="color:#f65858;text-align:center">Parent Verification 🔐</h2><p style="text-align:center;font-size:13px;color:#666;margin:8px 0">OTP sent to <b id="otpTo"></b><br>Without parent OTP, login will not work</p>
+<label>Enter OTP (6 digits) *</label><input id="otpInput" placeholder="123456" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:6px">
+<button class="btn p" onclick="verifyParentOTP()">Verify & Create Account ✅</button>
+<button class="btn" style="width:100%;margin-top:8px" onclick="sendParentOTP()">Resend OTP 🔄</button>
+<button class="btn" style="width:100%;margin-top:8px" onclick="backToStep1()">Back</button>
 </div>
 
-<!-- LOGIN MODAL NEW -->
-<div id="loginM" class="modal"><div class="box" style="text-align:center">
-<h2 style="color:#f65858">Welcome to ApexTeen5 🌍</h2>
-<p style="font-size:13px;color:#666;margin:8px 0">Global Student Community</p>
-<input id="lEmail" placeholder="Email - ex: student@gmail.com">
-<input id="lPass" type="password" placeholder="Password (6+ chars)">
-<button class="btn p" onclick="emailLogin()">Login / Signup with Email</button>
-<div style="margin:12px 0;color:#999">OR</div>
-<button class="btn p" style="background:#fff;color:#000;border:1px solid #ddd" onclick="googleLogin()">🔵 Continue with Google</button>
-<div style="margin-top:12px"><span onclick="closeLogin()" style="color:#999;cursor:pointer">Skip for now ✕</span></div>
+<div id="stepLogin" class="step">
+<h2 style="color:#f65858;text-align:center">Student Login</h2><input id="lEmail" placeholder="Student Email"><input id="lPass" type="password" placeholder="Password"><button class="btn p" onclick="emailLogin()">Login</button><button class="btn p" style="background:#fff;color:#000;border:1px solid #ddd" onclick="googleLogin()">🔵 Google Login</button><div style="text-align:center;margin-top:10px"><span onclick="backToStep1()" style="color:#f65858">New Student? Register</span> | <span onclick="closeLogin()" style="color:#999">Skip ✕</span></div>
+</div>
 </div></div>
 
-<div id="cM" class="modal"><div class="box">
-<h3>Post Idea</h3><input id="cTitle" placeholder="Title *"><textarea id="cDesc" placeholder="Describe *"></textarea><select id="cCat"><option>Tech</option><option>AI</option><option>Coding</option><option>Study</option><option>Startup</option></select><input id="cLoc" placeholder="City/State - Bela"><button class="btn p" onclick="save()">Post</button><button class="btn" style="width:100%;margin-top:6px" onclick="closeC()">Cancel</button>
-</div></div>
-
-<div id="dM" class="modal"><div class="box"><div style="display:flex;justify-content:space-between"><b id="dCat"></b><span onclick="closeD()" style="font-size:22px;cursor:pointer">✕</span></div><h2 id="dTT" style="margin-top:10px"></h2><div id="dOwn" style="font-size:13px;color:#666"></div><p id="dDes" style="margin-top:8px"></p><div style="display:flex;gap:6px;margin-top:12px"><button class="btn p" id="dJoin" onclick="join()" style="flex:1">Support</button><button class="btn" onclick="toast('DM soon')">💬 DM</button></div></div></div>
-<div id="pM" class="modal"><div class="box"><h3>Profile</h3><input id="pN" placeholder="Name *"><input id="pU" placeholder="University *"><input id="pC" placeholder="Country *"><button class="btn p" onclick="saveP()">Save</button><button class="btn" style="width:100%;margin-top:8px" onclick="logout()">Logout</button><button class="btn" style="width:100%;margin-top:6px" onclick="closeP()">Close</button></div></div>
+<div id="cM" class="modal"><div class="box"><h3>Post Idea</h3><input id="cTitle" placeholder="Title *"><textarea id="cDesc" placeholder="Describe *"></textarea><button class="btn p" onclick="save()">Post</button><button class="btn" style="width:100%;margin-top:6px" onclick="closeC()">Cancel</button></div></div>
+<div id="dM" class="modal"><div class="box"><div style="display:flex;justify-content:space-between"><b id="dCat"></b><span onclick="closeD()" style="font-size:22px">✕</span></div><h2 id="dTT" style="margin-top:10px"></h2><div id="dOwn" style="font-size:13px;color:#666"></div><p id="dDes" style="margin-top:8px"></p><button class="btn p" onclick="closeD()">Close</button></div></div>
+<div id="pM" class="modal"><div class="box"><h3>Profile</h3><div id="pInfo"></div><button class="btn p" style="background:#000" onclick="logout()">Logout</button><button class="btn" style="width:100%;margin-top:6px" onclick="closeP()">Close</button></div></div>
 <div id="toast" class="toast"></div>
 
 <script>
 const firebaseConfig={apiKey:"AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",authDomain:"apexteen-5.firebaseapp.com",projectId:"apexteen-5",storageBucket:"apexteen-5.firebasestorage.app",messagingSenderId:"428961039333",appId:"1:428961039333:web:5dc05aae6f4fbe6c60250c"};
 firebase.initializeApp(firebaseConfig); const auth=firebase.auth(); const db=firebase.firestore();
-let user=null,prof=null,mainF='all',ideas=[];
+let user=null,prof=null,mainF='all',ideas=[],confirmationResult=null,parentVerified=false;
 
-const COUNTRIES=["Afghanistan","Albania","Algeria","Andorra","Angola","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Chad","Chile","China","Colombia","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech","Denmark","Dominican Republic","Ecuador","Egypt","El Salvador","Estonia","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Guatemala","Guinea","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Korea South","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Libya","Lithuania","Luxembourg","Madagascar","Malaysia","Maldives","Mali","Malta","Mexico","Moldova","Monaco","Mongolia","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Palestine","Panama","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saudi Arabia","Senegal","Serbia","Singapore","Slovakia","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Togo","Trinidad","Tunisia","Turkey","Turkmenistan","Uganda","Ukraine","UAE","UK","USA","Uruguay","Uzbekistan","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
-
-const STATES={
-"India":["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Delhi","Bela","Kanpur","Lucknow","Prayagraj","Varanasi","Noida","Mumbai","Bangalore","Kolkata","Chennai"],
-"USA":["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],
-"UK":["England","Scotland","Wales","Northern Ireland","London","Manchester","Birmingham"],
-"Canada":["Alberta","British Columbia","Manitoba","Ontario","Quebec"],
-"Australia":["New South Wales","Victoria","Queensland","Western Australia"],
-"Germany":["Bavaria","Berlin","Hamburg","Hesse"],
-"Pakistan":["Punjab","Sindh","KPK","Balochistan","Islamabad"],
-"Bangladesh":["Dhaka","Chittagong","Rajshahi","Khulna"]
+const STATES = {
+"India": ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Delhi","Bela","Kanpur","Lucknow"],
+"USA": ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],
+"UK": ["England","Scotland","Wales","Northern Ireland"], "Canada": ["Alberta","British Columbia","Manitoba","Ontario","Quebec"], "Australia": ["New South Wales","Victoria","Queensland","Western Australia"], "Germany": ["Bavaria","Berlin","Hamburg"], "Pakistan": ["Punjab","Sindh","KPK","Balochistan"], "Bangladesh": ["Dhaka","Chittagong","Rajshahi"]
 };
+const COUNTRIES = ["India","USA","UK","Canada","Australia","Germany","Pakistan","Bangladesh","Nepal","UAE","Saudi Arabia","France","Japan","China","Russia","Brazil","South Africa","Nigeria","Sri Lanka","Malaysia","Singapore","New Zealand","Italy","Spain","Turkey","Iran","Iraq","Afghanistan"];
 
-function loadCountries(){let sel=document.getElementById('cFilter'); COUNTRIES.forEach(c=>{let o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o);});}
+function loadCountries(){let sel=document.getElementById('cFilter'); let sSel=document.getElementById('sCountry'); COUNTRIES.forEach(c=>{let o1=document.createElement('option'); o1.value=c; o1.textContent=c; sel.appendChild(o1); let o2=document.createElement('option'); o2.value=c; o2.textContent=c; sSel.appendChild(o2);});}
 loadCountries();
+function updateStateList(){let country=document.getElementById('cFilter').value; let stateSel=document.getElementById('aFilter'); stateSel.innerHTML='<option value="all">📍 All States</option>'; if(country==='all')return; let list=STATES[country]; if(list){list.forEach(s=>{let o=document.createElement('option'); o.value=s; o.textContent=s; stateSel.appendChild(o);});}}
+function updateStudentState(){let country=document.getElementById('sCountry').value; let stateSel=document.getElementById('sState'); stateSel.innerHTML='<option value="">Select State</option>'; let list=STATES[country]; if(list){list.forEach(s=>{let o=document.createElement('option'); o.value=s; o.textContent=s; stateSel.appendChild(o);});}else{stateSel.innerHTML='<option value="">Type state in City</option>';}}
 
-function updateStateList(){
-let country=document.getElementById('cFilter').value;
-let stateSel=document.getElementById('aFilter');
-stateSel.innerHTML='<option value="all">📍 All States</option>';
-let list = STATES[country];
-if(country==='all'){
- let allStates=[]; Object.values(STATES).forEach(arr=>allStates=allStates.concat(arr));
- list=[...new Set(allStates)];
-}
-if(list){
- list.forEach(s=>{let o=document.createElement('option'); o.value=s; o.textContent=s; stateSel.appendChild(o);});
-}
-}
-updateStateList();
+auth.onAuthStateChanged(u=>{user=u;if(u){let s=localStorage.getItem('apex_'+u.uid);prof=s?JSON.parse(s):{name:u.displayName||u.email.split('@')[0],country:'',uni:''};document.getElementById('lb').innerText=prof.name.split(' ')[0];closeLogin();}else{document.getElementById('lb').innerText='Login';}load();});
+function toast(m){let t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',4000)}
+function openLogin(){document.getElementById('loginM').classList.add('o'); showStep('step1')}function closeLogin(){document.getElementById('loginM').classList.remove('o')}
+function showStep(id){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function backToStep1(){showStep('step1')}function showLoginStep(){showStep('stepLogin')}
 
-auth.onAuthStateChanged(u=>{
- user=u;
- if(u){
-  let s=localStorage.getItem('apex_'+u.uid);
-  prof=s?JSON.parse(s):{name:u.displayName||u.email.split('@')[0],country:'',uni:''};
-  document.getElementById('lb').innerText=prof.name.split(' ')[0];
-  closeLogin();
- }else{
-  document.getElementById('lb').innerText='Login';
- }
- load();
-});
-
-function toast(m){let t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',3000)}
-function openLogin(){document.getElementById('loginM').classList.add('o')}
-function closeLogin(){document.getElementById('loginM').classList.remove('o')}
 function googleLogin(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>toast('Logged in ✅')).catch(e=>toast(e.message))}
-function emailLogin(){
- let e=document.getElementById('lEmail').value.trim();
- let p=document.getElementById('lPass').value.trim();
- if(!e||p.length<6)return toast('Email + 6 char password');
- auth.signInWithEmailAndPassword(e,p).then(()=>toast('Logged in ✅')).catch(()=>{
-  auth.createUserWithEmailAndPassword(e,p).then(()=>toast('Account created ✅')).catch(err=>toast(err.message))
- });
-}
-function logout(){auth.signOut();toast('Logged out');closeP()}
-function openC(){if(!user){openLogin();return}document.getElementById('cM').classList.add('o')}
-function closeC(){document.getElementById('cM').classList.remove('o')}
-function openP(){if(!user){openLogin();return}document.getElementById('pN').value=prof?.name||'';document.getElementById('pU').value=prof?.uni||'';document.getElementById('pC').value=prof?.country||'';document.getElementById('pM').classList.add('o')}
-function closeP(){document.getElementById('pM').classList.remove('o')}
-function openD(){document.getElementById('dM').classList.add('o')}function closeD(){document.getElementById('dM').classList.remove('o')}
-function openEx(){toast('Explore: Use filters above')}function openDM(){if(!user){openLogin();return}toast('DM coming soon')}
-function home(){document.getElementById('cFilter').value='all';document.getElementById('aFilter').value='all';updateStateList();show()}
+function emailLogin(){let e=document.getElementById('lEmail').value.trim();let p=document.getElementById('lPass').value.trim();if(!e||!p)return toast('Email+Pass');auth.signInWithEmailAndPassword(e,p).then(()=>{toast('Logged in ✅'); closeLogin();}).catch(err=>toast(err.message))}
 
+let generatedOTP=null;
+function sendParentOTP(){
+ let name=document.getElementById('sName').value.trim();
+ let dob=document.getElementById('sDob').value;
+ let cls=document.getElementById('sClass').value;
+ let country=document.getElementById('sCountry').value;
+ let state=document.getElementById('sState').value;
+ let email=document.getElementById('sEmail').value.trim();
+ let pass=document.getElementById('sPass').value.trim();
+ let pMob=document.getElementById('pMobile').value.trim();
+ let pEmail=document.getElementById('pEmail').value.trim();
+ if(!name||!dob||!cls||!country||!state||!email||!pass||!pMob||!pEmail)return toast('All fields required *');
+ if(pass.length<6)return toast('Password 6+ chars');
+ if(pMob.length<10)return toast('Parent mobile 10 digits');
+ // Generate OTP (In real app, SMS via Firebase Phone Auth)
+ generatedOTP = Math.floor(100000 + Math.random()*900000).toString();
+ document.getElementById('otpTo').innerText=pMob+' & '+pEmail;
+ // For demo, show OTP in toast (Real me SMS jayega)
+ toast('Parent OTP: '+generatedOTP+' (Demo - Real me SMS jayega) - OTP copied');
+ console.log('Parent OTP:', generatedOTP);
+ // In real production, use Firebase Phone Auth:
+ // let phoneNumber = '+91'+pMob;
+ // confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
+ showStep('step2');
+ // Auto fill for testing
+ setTimeout(()=>{document.getElementById('otpInput').value=generatedOTP;},500);
+}
+
+function verifyParentOTP(){
+ let entered=document.getElementById('otpInput').value.trim();
+ if(entered!==generatedOTP)return toast('Wrong OTP! Ask parent for correct OTP');
+ parentVerified=true;
+ // Now create account
+ let name=document.getElementById('sName').value.trim();
+ let dob=document.getElementById('sDob').value;
+ let cls=document.getElementById('sClass').value;
+ let country=document.getElementById('sCountry').value;
+ let state=document.getElementById('sState').value;
+ let email=document.getElementById('sEmail').value.trim();
+ let pass=document.getElementById('sPass').value.trim();
+ let pMob=document.getElementById('pMobile').value.trim();
+ let pEmail=document.getElementById('pEmail').value.trim();
+ auth.createUserWithEmailAndPassword(email,pass).then(cred=>{
+  let uid=cred.user.uid;
+  let profile={name:name,dob:dob,class:cls,country:country,state:state,email:email,parentMobile:pMob,parentEmail:pEmail,parentVerified:true,verifiedAt:new Date().toISOString()};
+  localStorage.setItem('apex_'+uid, JSON.stringify(profile));
+  db.collection('users').doc(uid).set({...profile,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  prof=profile;
+  toast('✅ Account Created with Parent Approval!');
+  closeLogin();
+  document.getElementById('lb').innerText=name.split(' ')[0];
+ }).catch(err=>toast(err.message));
+}
+
+function logout(){auth.signOut();toast('Logged out');closeP()}
+function openC(){if(!user){openLogin();return}if(!prof?.parentVerified && !prof?.uni){toast('Complete profile first');openP();return}document.getElementById('cM').classList.add('o')}function closeC(){document.getElementById('cM').classList.remove('o')}
+function openP(){if(!user){openLogin();return}let info=document.getElementById('pInfo');if(prof){info.innerHTML=`<div style="background:#f0f9ff;padding:12px;border-radius:10px;font-size:13px"><b>${prof.name}</b><br>DOB: ${prof.dob||''}<br>Class: ${prof.class||prof.uni||''}<br>Country: ${prof.country}<br>State: ${prof.state||''}<br>Parent: ${prof.parentMobile||''}<br><span style="color:green">✅ Parent Verified: ${prof.parentVerified?'Yes':'No'}</span></div>`;}document.getElementById('pM').classList.add('o')}function closeP(){document.getElementById('pM').classList.remove('o')}
+function openD(){document.getElementById('dM').classList.add('o')}function closeD(){document.getElementById('dM').classList.remove('o')}
+function openDM(){toast('DM soon')}function home(){document.getElementById('cFilter').value='all';document.getElementById('aFilter').value='all';show()}
 let fb=document.getElementById('fb'); fb.innerHTML=['all','Tech','AI','Coding','Study','Startup'].map((c,i)=>`<div class="chip ${i==0?'a':''}" data-f="${c}" onclick="setF(this)">${c}</div>`).join('')+`<div class="chip" data-f="my" onclick="setF(this)">My</div>`;
 function setF(el){document.querySelectorAll('#fb .chip').forEach(x=>x.classList.remove('a'));el.classList.add('a');mainF=el.dataset.f;show()}
-
 async function load(){document.getElementById('feed').innerHTML='Loading...';try{let s=await db.collection('ideas').get();ideas=s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){ideas=[]}show()}
-
-function show(){
-let q=(document.getElementById('s').value||'').toLowerCase();
-let cf=document.getElementById('cFilter').value;
-let af=document.getElementById('aFilter').value;
-let list=[...ideas];
-if(q)list=list.filter(i=> (i.tagline+i.desc).toLowerCase().includes(q));
-if(cf!='all')list=list.filter(i=> (i.userCountry||'').toLowerCase().includes(cf.toLowerCase()));
-if(af!='all')list=list.filter(i=> (i.location||'').toLowerCase().includes(af.toLowerCase()));
-if(mainF=='my'){if(!user){document.getElementById('feed').innerHTML='Login for My';return} list=list.filter(i=>i.uid===user.uid)}else if(mainF!='all')list=list.filter(i=>i.cat===mainF);
-document.getElementById('feed').innerHTML=list.map(i=>`<div class="card" onclick="cur=ideas.find(x=>x.id=='${i.id}');document.getElementById('dTT').innerText=cur.tagline;document.getElementById('dDes').innerText=cur.desc;document.getElementById('dOwn').innerText=cur.user+' • '+cur.location;document.getElementById('dCat').innerText=cur.cat;openD()"><div style="padding:12px"><div style="font-size:11px;color:#7c5cff">${i.cat} • ${i.location||''}</div><div style="font-weight:800">${i.tagline}</div><div style="font-size:12px;color:#666">${i.user} • ${i.userCountry||''}</div></div></div>`).join('')||'<div style="padding:20px;text-align:center">No ideas - Try Bela, UP, California</div>';
-}
-
-function save(){
- let t=document.getElementById('cTitle').value.trim();
- let d=document.getElementById('cDesc').value.trim();
- let l=document.getElementById('cLoc').value.trim()||document.getElementById('aFilter').value;
- let cat=document.getElementById('cCat')?document.getElementById('cCat').value:'Tech';
- if(!t||!d)return toast('Title+Desc needed');
- db.collection('ideas').add({tagline:t,desc:d,location:l,cat:cat,user:prof.name,userCountry:document.getElementById('cFilter').value==='all'?prof.country:document.getElementById('cFilter').value,uid:user.uid,joinedUsers:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(doc=>{
-  ideas.unshift({id:doc.id,tagline:t,desc:d,location:l,cat:cat,user:prof.name,userCountry:prof.country,uid:user.uid});
-  closeC();show();toast('Posted 🚀')
- });
-}
-function saveP(){let n=document.getElementById('pN').value.trim(),u=document.getElementById('pU').value.trim(),c=document.getElementById('pC').value.trim();if(!n||!u||!c)return toast('All fields');prof={...prof,name:n,uni:u,country:c};localStorage.setItem('apex_'+user.uid,JSON.stringify(prof));toast('Saved');closeP();document.getElementById('lb').innerText=n.split(' ')[0]}
-function join(){if(!user){openLogin();return}toast('Supported ✅')}
-</script>
-</body>
-</html>
+function show(){let q=(document.getElementById('s').value||'').toLowerCase();let cf=document.getElementById('cFilter').value;let af=document.getElementById('aFilter').value;let list=[...ideas];if(q)list=list.filter(i=>(i.tagline+i.desc).toLowerCase().includes(q));if(cf!='all')list=list.filter(i=>(i.userCountry||'').toLowerCase().includes(cf.toLowerCase()));if(af!='all')list=list.filter(i=>(i.location||'').toLowerCase().includes(af.toLowerCase()));if(mainF=='my'){if(!user){document.getElementById('feed').innerHTML='Login for My';return}list=list.filter(i=>i.uid===user.uid)}else if(mainF!='all')list=list.filter(i=>i.cat===mainF);document.getElementById('feed').innerHTML=list.map(i=>`<div class="card" onclick="cur=ideas.find(x=>x.id=='${i.id}');document.getElementById('dTT').innerText=cur.tagline;document.getElementById('dDes').innerText=cur.desc;document.getElementById('dOwn').innerText=cur.user+' • '+cur.location;document.getElementById('dCat').innerText=cur.cat;openD()"><div style="padding:12px"><div style="font-size:11px;color:#7c5cff">${i.cat} • ${i.location||''}</div><div style="font-weight:800">${i.tagline}</div><div style="font-size:12px;color:#666">${i.user} • ${i.userCountry||''}</div></div></div>`).join('')||'<div style="padding:20px;text-align:center">No results</div>';}
+function save(){let t=document.getElementById('cTitle').value.trim();let d=document.getElementById('cDesc').value.trim();if(!t||!d)return toast('Title+Desc');db.collection('ideas').add({tagline:t,desc:d,location:prof.state||'',cat:'Tech',user:prof.name,userCountry:prof.country,uid:user.uid,joinedUsers:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(doc=>{ideas.unshift({id:doc.id,tagline:t,desc:d,location:prof.state,cat:'Tech',user:prof.name,userCountry:prof.country,uid:user.uid});closeC();show();toast('Posted 🚀')});}
+</script></body></html>
