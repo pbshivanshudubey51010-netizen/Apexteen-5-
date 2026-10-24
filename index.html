@@ -1,51 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>ApexTeen5</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body{font-family:sans-serif;text-align:center;padding:20px;background:#f5f5f5}
-h1{color:#111}
-input{padding:12px;width:85%;border:1px solid #ccc;border-radius:8px}
-button{padding:12px 25px;background:black;color:white;border:none;border-radius:8px;margin:10px;font-weight:bold}
-.card{background:white;padding:10px;margin:10px;border-radius:8px}
-</style>
+<link rel="manifest" href="manifest.json">
+<title>ApexTeen5</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Inter',sans-serif;background:#f8f7ff}</style>
 </head>
-<body>
-<h1>ApexTeen5 🚀</h1>
-<p>Apna Idea Share Karo</p>
-<input id="ideaInput" placeholder="Yaha Idea likho...">
-<br>
-<button onclick="saveIdea()">Post Idea</button>
-<div id="ideasList"></div>
+<body class="pb-20">
+<!-- HEADER -->
+<div class="sticky top-0 bg-white z-10 p-4">
+<h1 class="text-center font-bold text-xl">ApexTeen5</h1>
+<div class="mt-3 flex items-center bg-white border rounded-full px-4 py-2.5 shadow-sm">
+<span>🔍</span><input id="searchInput" onkeyup="filterIdeas()" placeholder="Search ideas, projects..." class="ml-2 w-full outline-none text-sm">
+</div>
+</div>
+
+<!-- FILTERS -->
+<div class="px-4 mt-3 flex gap-2 overflow-x-auto">
+<button onclick="setFilter(this,'all')" class="filter-btn bg-gray-200 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">Trending</button>
+<button onclick="setFilter(this,'today')" class="filter-btn bg-[#7c5cff] text-white px-5 py-2 rounded-full text-sm font-semibold">Today</button>
+<button onclick="setFilter(this,'new')" class="filter-btn bg-gray-200 px-4 py-2 rounded-full text-sm font-semibold">New</button>
+<button onclick="setFilter(this,'my')" class="filter-btn bg-gray-200 px-4 py-2 rounded-full text-sm font-semibold">My Ideas</button>
+</div>
+<div class="px-4 mt-2 flex gap-2 overflow-x-auto">
+<span class="bg-[#7c5cff] text-white px-4 py-1.5 rounded-full text-sm">All Ideas</span>
+<span class="bg-gray-200 px-4 py-1.5 rounded-full text-sm">AI Projects</span>
+<span class="bg-gray-200 px-4 py-1.5 rounded-full text-sm">Tech</span>
+<span class="bg-gray-200 px-4 py-1.5 rounded-full text-sm">Gaming</span>
+<span class="bg-gray-200 px-4 py-1.5 rounded-full text-sm">Social</span>
+</div>
+
+<!-- IDEAS FEED -->
+<div id="ideasList" class="p-4 space-y-4"></div>
+
+<!-- CREATE MODAL -->
+<div id="createBox" class="fixed bottom-20 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border hidden">
+<input id="ideaTitle" placeholder="Idea Title (e.g. AI Study Buddy)" class="w-full border p-3 rounded-xl mb-2">
+<textarea id="ideaInput" placeholder="Describe your idea..." class="w-full border p-3 rounded-xl"></textarea>
+<button onclick="saveIdea()" class="mt-2 w-full bg-[#7c5cff] text-white py-3 rounded-xl font-bold">Post Idea 🚀</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3">
+<button class="text-[#7c5cff] flex flex-col items-center text-xs font-bold"><span class="text-xl">🏠</span>Home</button>
+<button class="flex flex-col items-center text-xs"><span class="text-xl">🏠</span>Explore</button>
+<button onclick="document.getElementById('createBox').classList.toggle('hidden')" class="flex flex-col items-center text-xs"><span class="bg-[#7c5cff] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg">+</span>Create</button>
+<button class="flex flex-col items-center text-xs"><span class="text-xl">🔔</span>Notifications</button>
+<button class="flex flex-col items-center text-xs"><span class="text-xl">💬</span>Profile</button>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, Timestamp, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",
-  authDomain: "apexteen-5.firebaseapp.com",
-  projectId: "apexteen-5",
-  storageBucket: "apexteen-5.firebasestorage.app",
-  messagingSenderId: "428961039333",
-  appId: "1:428961039333:web:5dc05aae6f4fbe6c60250c"
-};
+const firebaseConfig = { apiKey: "AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc", authDomain: "apexteen-5.firebaseapp.com", projectId: "apexteen-5", storageBucket: "apexteen-5.firebasestorage.app", messagingSenderId: "428961039333", appId: "1:428961039333:web:5dc05aae6f4fbe6c60250c" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+let allIdeas = [];
+
 window.saveIdea = async () => {
-  const text = document.getElementById("ideaInput").value;
-  if(!text) return alert("Pehle idea likho!");
-  await addDoc(collection(db, "ideas_vault"), { idea: text, timestamp: Timestamp.now() });
-  alert("Saved!");
-  document.getElementById("ideaInput").value="";
-  loadIdeas();
+ const title = document.getElementById("ideaTitle").value || "My Idea";
+ const desc = document.getElementById("ideaInput").value;
+ if(!desc) return alert("Idea likho!");
+ await addDoc(collection(db, "ideas_vault"), { title: title, idea: desc, timestamp: Timestamp.now(), upvotes: Math.floor(Math.random()*50), comments: 0, user: "You" });
+ document.getElementById("ideaInput").value=""; document.getElementById("ideaTitle").value=""; document.getElementById('createBox').classList.add('hidden'); loadIdeas();
 }
-async function loadIdeas(){
-  const q = query(collection(db, "ideas_vault"), orderBy("timestamp","desc"));
-  const snap = await getDocs(q);
-  let html = "";
-  snap.forEach(doc => { html += `<div class=card>💡 ${doc.data().idea}</div>`; });
-  document.getElementById("ideasList").innerHTML = html;
+
+window.loadIdeas = async () => {
+ const q = query(collection(db, "ideas_vault"), orderBy("timestamp","desc"));
+ const snap = await getDocs(q);
+ allIdeas = [];
+ snap.forEach(d => allIdeas.push(d.data()));
+ render(allIdeas);
+}
+
+window.render = (list) => {
+ const box = document.getElementById("ideasList");
+ if(list.length==0){ box.innerHTML="<p class='text-center text-gray-400 mt-10'>No ideas yet. Be first! 🚀</p>"; return; }
+ box.innerHTML = list.map((item,i) => `
+ <div class="bg-white rounded-2xl p-4 shadow-sm border">
+   <div class="flex items-center gap-2">
+     <img src="https://i.pravatar.cc/100?img=${i+5}" class="w-8 h-8 rounded-full">
+     <span class="text-sm font-semibold">${item.user || 'Alex'} • ${i==0?'2h':'5h'} ago •</span>
+     <span class="bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full font-bold">✓ Parent Verified</span>
+   </div>
+   <h2 class="font-bold text-[16px] mt-2">${item.title || 'AI Study Buddy for Teens'}</h2>
+   <p class="text-sm text-gray-600 mt-1 leading-snug">${item.idea}</p>
+   <div class="flex gap-2 mt-3">
+     <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">#AI</span>
+     <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">#EdTech</span>
+   </div>
+   <div class="flex gap-4 mt-3 text-xs text-gray-500">
+     <span>👍 ${item.upvotes || 42} upvotes</span><span>💬 ${item.comments || 12} comments</span><span>👥 5 collaborators</span>
+   </div>
+   <div class="flex gap-2 mt-3">
+     <button class="flex-1 border border-purple-300 rounded-full py-2 text-sm">↑ Upvote</button>
+     <button class="flex-1 bg-gray-100 rounded-full py-2 text-sm">Comment</button>
+     <button class="flex-1 bg-[#7c5cff] text-white rounded-full py-2 text-sm">Join Team</button>
+   </div>
+ </div>
+ `).join('');
+}
+window.filterIdeas = () => {
+ const s = document.getElementById("searchInput").value.toLowerCase();
+ render(allIdeas.filter(x => x.idea.toLowerCase().includes(s) || (x.title||'').toLowerCase().includes(s)));
+}
+window.setFilter = (el,type) => {
+ document.querySelectorAll('.filter-btn').forEach(b=>{b.className='filter-btn bg-gray-200 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap'});
+ el.className='filter-btn bg-[#7c5cff] text-white px-5 py-2 rounded-full text-sm font-semibold';
 }
 loadIdeas();
 </script>
