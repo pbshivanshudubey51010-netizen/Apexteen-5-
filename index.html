@@ -1,152 +1,222 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen5</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApexTeen5 - Final Pro</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-<style>
-.pill-active{background:#7c5cff;color:white}
-.scroll-hide::-webkit-scrollbar{display:none}
-</style>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<style>.active-pill{background:#7c5cff!important;color:white!important;border-color:#7c5cff!important} .no-scrollbar::-webkit-scrollbar{display:none}</style>
 </head>
-<body class="bg-gray-50 pb-20">
-<div class="max-w-md mx-auto bg-white min-h-screen">
+<body class="bg-[#f7f6ff] pb-[70px]">
+<div class="max-w-[420px] mx-auto bg-white min-h-screen shadow relative">
 
 <!-- HEADER -->
-<div class="p-4 text-center">
-<h1 class="text-xl font-bold">ApexTeen5</h1>
-<div id="loginArea" class="mt-2"><button onclick="login()" class="bg-[#7c5cff] text-white px-4 py-1 rounded-full text-sm">Login with Google</button></div>
+<div class="sticky top-0 bg-white z-20 p-4 border-b">
+<div class="flex justify-between items-center">
+<h1 class="font-black text-xl tracking-tight">ApexTeen5</h1>
+<div id="authBox"><button onclick="doLogin()" class="bg-[#7c5cff] text-white text-xs px-4 py-1.5 rounded-full font-bold">Login with Google</button></div>
+</div>
 <div class="mt-3 relative">
-<input placeholder="Search ideas, projects..." class="w-full border rounded-full py-3 px-12 bg-gray-50">
-<span class="absolute left-4 top-3.5">🔍</span>
+<input id="searchBox" oninput="renderIdeas()" placeholder="Search ideas, projects..." class="w-full bg-gray-50 border rounded-full py-3 pl-12 pr-4 text-sm outline-none focus:border-violet-400">
+<span class="absolute left-4 top-3.5 opacity-50">🔍</span>
 </div>
 </div>
 
 <!-- FILTERS -->
-<div class="flex gap-2 px-4 overflow-x-auto scroll-hide pb-2">
-<button class="px-5 py-2 rounded-full border bg-gray-100 whitespace-nowrap">Trending</button>
-<button class="px-6 py-2 rounded-full pill-active whitespace-nowrap">Today</button>
-<button class="px-5 py-2 rounded-full border bg-gray-100 whitespace-nowrap">New</button>
-<button class="px-5 py-2 rounded-full border bg-gray-100 whitespace-nowrap">My Ideas</button>
+<div class="px-4 pt-3 flex gap-2 overflow-x-auto no-scrollbar">
+<button onclick="setTimeFilter(this,'all')" class="timeFilter active-pill px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">Trending</button>
+<button onclick="setTimeFilter(this,'today')" class="timeFilter px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">Today</button>
+<button onclick="setTimeFilter(this,'new')" class="timeFilter px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">New</button>
+<button onclick="setTimeFilter(this,'mine')" class="timeFilter px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">My Ideas</button>
 </div>
-<div class="flex gap-2 px-4 overflow-x-auto scroll-hide pb-3">
-<button class="px-4 py-2 rounded-full pill-active text-sm">All Ideas</button>
-<button class="px-4 py-2 rounded-full bg-gray-100 text-sm whitespace-nowrap">AI Projects</button>
-<button class="px-4 py-2 rounded-full bg-gray-100 text-sm">Tech</button>
-<button class="px-4 py-2 rounded-full bg-gray-100 text-sm">Gaming</button>
-<button class="px-4 py-2 rounded-full bg-gray-100 text-sm">Social</button>
-</div>
-
-<!-- CARD 1 - Alex -->
-<div class="mx-3 bg-white rounded-2xl shadow p-4 border">
-<div class="flex justify-between">
-<div class="flex gap-2">
-<img src="https://i.pravatar.cc/40?img=3" class="w-10 h-10 rounded-full">
-<div>
-<div class="text-sm flex items-center gap-1">Alex • 2h ago • <span class="bg-violet-100 text-violet-700 text-[10px] px-2 py-0.5 rounded-full">✓ Parent Verified</span></div>
-<div class="font-bold">AI Study Buddy for Teens</div>
-</div>
-</div>
-<img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" class="w-16 h-16">
-</div>
-<p class="text-[13px] mt-2 text-gray-600">An AI tutor that helps teens study smarter with quiz mode, flashcards, and 24/7 homework help. Designed for highschoolers to stay focused and learn faster.</p>
-<div class="flex gap-2 mt-2"><span class="bg-violet-50 text-violet-600 text-xs px-2 py-1 rounded">#AI</span><span class="bg-violet-50 text-violet-600 text-xs px-2 py-1 rounded">#EdTech</span></div>
-<div class="flex justify-between text-sm mt-3"><span>👍 42 upvotes</span><span>💬 12 comments</span><span>👥 5 collaborators</span></div>
-<div class="flex gap-2 mt-3">
-<button class="flex-1 border-violet-300 rounded-full py-2 text-sm">↑ Upvote</button>
-<button class="flex-1 bg-gray-100 rounded-full py-2 text-sm">Comment</button>
-<button class="flex-1 bg-[#7c5cff] text-white rounded-full py-2 text-sm">Join Team</button>
-</div>
+<div class="px-4 pt-2 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
+<button onclick="setCat(this,'All')" class="catFilter active-pill px-4 py-2 rounded-full border text-xs font-medium">All Ideas</button>
+<button onclick="setCat(this,'AI')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">AI Projects</button>
+<button onclick="setCat(this,'Tech')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Tech</button>
+<button onclick="setCat(this,'Gaming')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Gaming</button>
+<button onclick="setCat(this,'Social')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Social</button>
 </div>
 
-<!-- MAP CARD - REAL MAP -->
-<div class="mx-3 mt-4 rounded-2xl overflow-hidden h-36 relative bg-[#8b7cff]">
-<div id="map" class="h-full w-full"></div>
+<!-- MAIN CONTAINER -->
+<div id="homePage">
+<div id="mapCard" class="mx-3 mt-2 rounded-2xl overflow-hidden h-[160px] relative"><div id="map" class="h-full w-full"></div><div class="absolute bottom-2 left-2 bg-white text-[11px] px-3 py-1 rounded-full shadow">📍 Vindhyanagar • <span id="locInfo">Selecting...</span></div></div>
+<div id="ideasList" class="p-3 space-y-4"></div>
 </div>
 
-<!-- CREATE LOCATION -->
-<div class="mx-3 mt-4 bg-white rounded-2xl shadow p-3 border">
-<h3 class="font-bold text-sm mb-2">🌍 Select Location (World Wide)</h3>
-<select id="country" onchange="loadStates()" class="w-full border rounded-lg p-2 mb-2 text-sm"><option>Loading Countries...</option></select>
-<select id="state" onchange="loadCities()" class="w-full border rounded-lg p-2 mb-2 text-sm"><option>Select State</option></select>
-<select id="city" class="w-full border rounded-lg p-2 text-sm"><option>Select District</option></select>
+<!-- EXPLORE PAGE -->
+<div id="explorePage" class="hidden p-4">
+<h2 class="font-bold">Explore Nearby Teens</h2>
+<div id="exploreMap" class="h-[300px] rounded-2xl mt-3"></div>
+<div class="mt-3 text-sm text-gray-600">Country filter: <select id="f_country" onchange="renderIdeas()" class="border rounded p-1"><option value="">All World</option></select></div>
 </div>
 
-<!-- CARD 2 - Maya -->
-<div class="mx-3 mt-4 bg-white rounded-2xl shadow p-4 border">
-<div class="flex gap-2">
-<img src="https://i.pravatar.cc/40?img=5" class="w-10 h-10 rounded-full">
-<div>
-<div class="text-sm flex items-center gap-1">Maya • 5h ago • <span class="bg-violet-100 text-violet-700 text-[10px] px-2 py-0.5 rounded-full">✓ Parent Verified</span></div>
-<div class="font-bold">Local Study Group Finder</div>
+<!-- CREATE PAGE -->
+<div id="createPage" class="hidden p-4">
+<h2 class="font-bold text-lg">Create New Idea 💡</h2>
+<div class="mt-3 space-y-2 bg-white border rounded-2xl p-4">
+<input id="newTitle" placeholder="Idea Title (ex: AI Study Buddy)" class="w-full border rounded-lg p-2.5 text-sm">
+<select id="newCat" class="w-full border rounded-lg p-2.5 text-sm"><option>AI</option><option>Tech</option><option>Gaming</option><option>Social</option></select>
+<textarea id="newDesc" placeholder="Describe your idea..." class="w-full border rounded-lg p-2.5 text-sm h-24"></textarea>
+<div class="grid grid-cols-1 gap-2">
+<select id="c_country" onchange="loadStates2()" class="border rounded-lg p-2 text-sm"><option>Select Country</option></select>
+<select id="c_state" onchange="loadCities2()" class="border rounded-lg p-2 text-sm"><option>Select State</option></select>
+<select id="c_city" class="border rounded-lg p-2 text-sm"><option>Select District/City</option></select>
+</div>
+<button onclick="createIdea()" class="w-full bg-[#7c5cff] text-white py-3 rounded-full font-bold mt-2">Post Idea</button>
+<p class="text-[10px] text-gray-400 text-center">⚠️ Bad words auto-blocked | Safe for teens</p>
 </div>
 </div>
-<p class="text-[13px] mt-2 text-gray-600">Connect with teens nearby for in-person study sessions. Join safe group study meetups at libraries, cafes, or parks.</p>
-<div class="flex gap-2 mt-2"><span class="bg-gray-100 text-xs px-2 py-1 rounded">#Social</span><span class="bg-gray-100 text-xs px-2 py-1 rounded">#Community</span></div>
-<div class="text-center text-sm mt-3 font-medium">28 upvotes • 9 comments • 7 collaborators</div>
-<div class="flex gap-2 mt-3">
-<button class="flex-1 border border-violet-300 rounded-full py-2 text-sm">Upvote</button>
-<button class="flex-1 bg-gray-100 rounded-full py-2 text-sm">Comment</button>
-<button class="flex-1 border border-violet-300 text-violet-600 rounded-full py-2 text-sm">Join Team</button>
-</div>
-</div>
+
+<!-- NOTIFICATIONS -->
+<div id="notifPage" class="hidden p-4"><h2 class="font-bold">Notifications</h2><div id="notifList" class="mt-3 space-y-2 text-sm"></div></div>
+
+<!-- PROFILE -->
+<div id="profilePage" class="hidden p-4"><h2 class="font-bold">Profile</h2><div id="profileBox" class="mt-4 bg-violet-50 p-4 rounded-2xl text-center">Login karo profile dekhne ke liye</div></div>
 
 <!-- BOTTOM NAV -->
-<div class="fixed bottom-0 w-full max-w-md bg-white border-t flex justify-around py-2">
-<div class="text-center text-violet-600"><div>🏠</div><div class="text-[11px]">Home</div></div>
-<div class="text-center"><div>⌂</div><div class="text-[11px]">Explore</div></div>
-<div class="text-center"><div class="bg-violet-600 text-white w-8 h-8 rounded-full flex items-center justify-center mx-auto">+</div><div class="text-[11px]">Create</div></div>
-<div class="text-center"><div>🔔</div><div class="text-[11px]">Notifications</div></div>
-<div class="text-center"><div>💬</div><div class="text-[11px]">Profile</div></div>
+<div class="fixed bottom-0 w-full max-w-[420px] bg-white border-t flex justify-around py-2 z-30">
+<button onclick="showPage('home')" class="navBtn flex flex-col items-center text-[#7c5cff]"><span class="text-xl">⌂</span><span class="text-[11px]">Home</span></button>
+<button onclick="showPage('explore')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">◎</span><span class="text-[11px]">Explore</span></button>
+<button onclick="showPage('create')" class="navBtn flex flex-col items-center"><span class="bg-[#7c5cff] text-white w-9 h-9 rounded-full flex items-center justify-center text-xl">+</span><span class="text-[11px] mt-1">Create</span></button>
+<button onclick="showPage('notif')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">🔔</span><span class="text-[11px]">Notifications</span></button>
+<button onclick="showPage('profile')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">👤</span><span class="text-[11px]">Profile</span></button>
 </div>
 
 </div>
 
 <script>
-// Firebase
+// --- CONFIG - Apna config yahan daalo agar hai toh ---
 const firebaseConfig = { apiKey: "AIzaSyDummy", authDomain: "apexteen-5.firebaseapp.com", projectId: "apexteen-5" };
-firebase.initializeApp(firebaseConfig);
-function login(){
-  const p = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(p).then(r=>{
-    document.getElementById('loginArea').innerHTML = `✅ ${r.user.displayName}`;
-  }).catch(e=>alert("Enable Google Login in Firebase + Add your domain"));
-}
-// Real Map - Vindhyanagar
-const map = L.map('map',{zoomControl:false}).setView([24.07,82.64],12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.marker([24.07,82.64]).addTo(map).bindPopup("Vindhyanagar").openPopup();
+try{ firebase.initializeApp(firebaseConfig); }catch(e){}
+const auth = firebase.auth ? firebase.auth() : null;
+const db = firebase.firestore ? firebase.firestore() : null;
 
-// World Countries
-let all=[];
+// --- DATA ---
+let currentUser = null;
+let timeFilter='all', catFilter='All', worldData=[];
+let ideas = JSON.parse(localStorage.getItem('apex_ideas')||'null') || [
+ {id:1,title:"AI Study Buddy for Teens",desc:"An AI tutor that helps teens study smarter with quiz mode, flashcards, and 24/7 homework help.",cat:"AI",author:"Alex",time:"2h ago",upvotes:42,comments:[{t:"Great idea!"}],collab:5,country:"India",state:"Madhya Pradesh",city:"Singrauli",verified:true},
+ {id:2,title:"Local Study Group Finder",desc:"Connect with teens nearby for in-person study sessions. Join safe group study meetups at libraries, cafes, or parks.",cat:"Social",author:"Maya",time:"5h ago",upvotes:28,comments:[],collab:7,country:"USA",state:"California",city:"Downtown Library",verified:true,dist:"0.8mi away"}
+];
+let notifs=[];
+
+// --- AUTH ---
+function doLogin(){
+ if(!auth){ alert("Firebase config add karo: Firebase > Project Settings > Your Apps se copy karo"); return; }
+ const p = new firebase.auth.GoogleAuthProvider();
+ auth.signInWithPopup(p).then(r=>{
+  currentUser=r.user;
+  document.getElementById('authBox').innerHTML=`<span class="text-xs">✅ ${r.user.displayName}</span>`;
+  document.getElementById('profileBox').innerHTML=`<img src="${r.user.photoURL}" class="w-16 h-16 rounded-full mx-auto"><div class="font-bold mt-2">${r.user.displayName}</div><div class="text-xs">${r.user.email}</div><div class="mt-2 text-xs bg-violet-600 text-white px-3 py-1 rounded-full inline-block">✓ Parent Verified</div>`;
+  addNotif("Logged in successfully!");
+ }).catch(e=>alert(e.message+"\n\nFix: Firebase > Authentication > Authorized domains me apna github.io domain add karo"));
+}
+if(auth){ auth.onAuthStateChanged(u=>{ if(u){ currentUser=u; document.getElementById('authBox').innerHTML=`✅ ${u.displayName}`; } }); }
+
+// --- MAP ---
+let map, exploreMap;
+setTimeout(()=>{
+ map = L.map('map',{zoomControl:false,attributionControl:false}).setView([24.07,82.64],13);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+ L.marker([24.07,82.64]).addTo(map).bindPopup("You are here - Vindhyanagar").openPopup();
+},500);
+
+// --- WORLD DATA ---
 fetch('https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries%2Bstates%2Bcities.json').then(r=>r.json()).then(d=>{
-  all=d;
-  let c=document.getElementById('country');
-  c.innerHTML='<option>Select Country</option>';
-  d.forEach(x=>c.innerHTML+=`<option value="${x.id}">${x.name}</option>`);
-  c.value=101; loadStates();
+ worldData=d;
+ const opts = (id)=>{ let el=document.getElementById(id); el.innerHTML='<option value="">All/Select</option>'; d.forEach(c=>{ el.innerHTML+=`<option value="${c.id}" data-name="${c.name}">${c.name}</option>`; if(id==='f_country'){} }); };
+ opts('f_country'); opts('c_country');
+ document.getElementById('f_country').innerHTML='<option value="">All World</option>'+d.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+ // default India
+ let sel=document.getElementById('c_country'); for(let o of sel.options) if(o.text=='India') sel.value=o.value; loadStates2();
 });
-function loadStates(){
-  let cid=document.getElementById('country').value;
-  let co=all.find(c=>c.id==cid);
-  let s=document.getElementById('state');
-  s.innerHTML='<option>Select State</option>';
-  if(co) co.states.forEach(st=>s.innerHTML+=`<option value="${st.id}">${st.name}</option>`);
+
+function loadStates2(){ 
+ let cid=document.getElementById('c_country').value; let co=worldData.find(c=>c.id==cid);
+ let s=document.getElementById('c_state'); s.innerHTML='<option>Select State</option>';
+ if(co) co.states.forEach(st=>s.innerHTML+=`<option value="${st.id}" data-name="${st.name}">${st.name}</option>`);
+ document.getElementById('locInfo').innerText = co?co.name:'';
 }
-function loadCities(){
-  let cid=document.getElementById('country').value;
-  let sid=document.getElementById('state').value;
-  let co=all.find(c=>c.id==cid);
-  let st=co?.states.find(s=>s.id==sid);
-  let ci=document.getElementById('city');
-  ci.innerHTML='<option>Select District</option>';
-  if(st) st.cities.forEach(ct=>ci.innerHTML+=`<option>${ct.name}</option>`);
+function loadCities2(){
+ let cid=document.getElementById('c_country').value; let sid=document.getElementById('c_state').value;
+ let co=worldData.find(c=>c.id==cid); let st=co?.states.find(s=>s.id==sid);
+ let ci=document.getElementById('c_city'); ci.innerHTML='<option>Select District</option>';
+ if(st) st.cities.forEach(ct=>ci.innerHTML+=`<option>${ct.name}</option>`);
 }
+
+// --- RENDER ---
+function renderIdeas(){
+ let search=document.getElementById('searchBox').value.toLowerCase();
+ let fCountry=document.getElementById('f_country')?.value||'';
+ let list = ideas.filter(i=>{
+  if(catFilter!='All' && i.cat!=catFilter) return false;
+  if(search && ! (i.title.toLowerCase().includes(search) || i.desc.toLowerCase().includes(search))) return false;
+  if(fCountry && i.country!=fCountry) return false;
+  if(timeFilter=='mine' && currentUser && i.author!=currentUser.displayName) return false;
+  return true;
+ });
+ // sort
+ if(timeFilter=='new') list = [...list].reverse();
+ if(timeFilter=='trending') list = [...list].sort((a,b)=>b.upvotes-a.upvotes);
+
+ document.getElementById('ideasList').innerHTML = list.map(i=>`
+ <div class="bg-white rounded-2xl shadow-sm border p-4">
+  <div class="flex justify-between">
+   <div class="flex gap-2">
+    <div class="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center font-bold text-violet-600">${i.author[0]}</div>
+    <div><div class="text-[13px]">${i.author} • ${i.time} • ${i.verified?'<span class="bg-violet-100 text-violet-700 text-[10px] px-2 py-0.5 rounded-full">✓ Parent Verified</span>':''}</div><div class="font-bold text-[15px]">${i.title}</div></div>
+   </div>
+   <button onclick="report(${i.id})" class="text-[10px] text-gray-400">Report</button>
+  </div>
+  <p class="text-[13px] text-gray-600 mt-2">${i.desc}</p>
+  <div class="flex gap-2 mt-2"><span class="bg-violet-50 text-violet-600 text-[11px] px-2 py-1 rounded">#${i.cat}</span><span class="bg-gray-50 text-[11px] px-2 py-1 rounded">${i.city||''} ${i.dist||''}</span></div>
+  <div class="flex justify-between text-[12px] mt-3 text-gray-700"><span>👍 ${i.upvotes} upvotes</span><span>💬 ${i.comments.length} comments</span><span>👥 ${i.collab} collaborators</span></div>
+  <div class="flex gap-2 mt-3">
+   <button onclick="upvote(${i.id})" class="flex-1 border border-violet-200 rounded-full py-2 text-xs font-medium">↑ Upvote</button>
+   <button onclick="addComment(${i.id})" class="flex-1 bg-gray-100 rounded-full py-2 text-xs font-medium">Comment</button>
+   <button onclick="joinTeam(${i.id})" class="flex-1 bg-[#7c5cff] text-white rounded-full py-2 text-xs font-medium">Join Team</button>
+  </div>
+ </div>
+ `).join('') || '<div class="text-center text-sm text-gray-400 py-10">No ideas found</div>';
+ localStorage.setItem('apex_ideas', JSON.stringify(ideas));
+}
+
+function upvote(id){ let i=ideas.find(x=>x.id==id); i.upvotes++; addNotif(`You upvoted ${i.title}`); renderIdeas(); }
+function addComment(id){ let txt=prompt("Comment likho:"); if(!txt) return; if(isBad(txt)){ alert("Unsafe word blocked!"); return;} let i=ideas.find(x=>x.id==id); i.comments.push({t:txt}); addNotif(`New comment on ${i.title}`); renderIdeas(); }
+function joinTeam(id){ let i=ideas.find(x=>x.id==id); i.collab++; addNotif(`Joined team: ${i.title}`); renderIdeas(); }
+function report(id){ if(confirm("Report this idea?")){ addNotif("Reported - we will review (Teen Safety)"); } }
+function isBad(t){ let bad=["abuse","sex","drug"]; return bad.some(b=>t.toLowerCase().includes(b)); }
+
+function createIdea(){
+ let title=document.getElementById('newTitle').value.trim();
+ let desc=document.getElementById('newDesc').value.trim();
+ let cat=document.getElementById('newCat').value;
+ let cSel=document.getElementById('c_country'); let cName=cSel.options[cSel.selectedIndex]?.dataset?.name||'';
+ let sSel=document.getElementById('c_state'); let sName=sSel.options[sSel.selectedIndex]?.dataset?.name||'';
+ let city=document.getElementById('c_city').value;
+ if(!title || !desc) return alert("Title + Description likho");
+ if(isBad(title+desc)) return alert("Unsafe content blocked!");
+ ideas.unshift({id:Date.now(),title,desc,cat,author:currentUser?.displayName||'You',time:"now",upvotes:0,comments:[],collab:1,country:cName,state:sName,city,verified:!!currentUser});
+ document.getElementById('newTitle').value=''; document.getElementById('newDesc').value='';
+ addNotif("Idea posted!"); showPage('home'); renderIdeas();
+}
+
+function setTimeFilter(el,v){ document.querySelectorAll('.timeFilter').forEach(b=>b.classList.remove('active-pill')); el.classList.add('active-pill'); timeFilter=v; renderIdeas(); }
+function setCat(el,v){ document.querySelectorAll('.catFilter').forEach(b=>b.classList.remove('active-pill')); el.classList.add('active-pill'); catFilter=v; renderIdeas(); }
+
+function showPage(p){
+ ['home','explore','create','notif','profile'].forEach(x=>document.getElementById(x+'Page').style.display='none');
+ document.getElementById(p+'Page').style.display='block';
+ if(p=='explore' && !exploreMap){ setTimeout(()=>{ exploreMap=L.map('exploreMap').setView([24.07,82.64],3); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(exploreMap); },200); }
+}
+
+function addNotif(t){ notifs.unshift(t); document.getElementById('notifList').innerHTML=notifs.map(n=>`<div class="bg-white border rounded-xl p-3">${n}</div>`).join(''); }
+
+renderIdeas();
 </script>
 </body>
 </html>
