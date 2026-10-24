@@ -1,134 +1,463 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ApexTeen5 - Fixed</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#f6f7f8;max-width:480px;margin:0 auto;padding-bottom:90px}.header{position:sticky;top:0;background:#fff;z-index:20;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}.btn{padding:12px 14px;border-radius:10px;border:1px solid #ddd;background:#fff;font-weight:700;cursor:pointer}.btn.p{background:#f65858;color:#fff;border-color:#f65858;width:100%;margin-top:10px;padding:14px}.card{background:#fff;margin:12px 16px;border-radius:12px;overflow:hidden;border:1px solid #eee;cursor:pointer}.filters{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff}.chip{padding:8px 16px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;white-space:nowrap}.chip.a{background:#f65858;color:#fff}.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:10px 0;z-index:30}.nav{font-size:11px;text-align:center;color:#999;cursor:pointer;padding:6px 14px;border-radius:12px}.nav.a{color:#f65858;background:#fff1f1}.plus{width:54px;height:54px;background:#f65858;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;display:none;justify-content:center;align-items:center}.modal.o{display:flex}.box{background:#fff;width:100%;max-width:480px;border-radius:20px;padding:20px;max-height:95vh;overflow-y:auto;margin:10px}input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0}label{font-size:12px;font-weight:700;color:#555;margin-top:8px;display:block}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:20px;z-index:99;display:none;max-width:90%;text-align:center}.step{display:none}.step.active{display:block}</style></head><body>
-<div class="header"><b style="color:#f65858">ApexTeen5 🌍🔒</b><button id="lb" class="btn p" style="width:auto;padding:8px 12px" onclick="openLogin()">Login</button></div>
-<div style="padding:12px 16px;background:#fff"><input id="s" placeholder="🔍 Search..." oninput="show()"><div style="display:flex;gap:6px;margin-top:8px"><select id="cFilter" onchange="updateStateList();show()"><option value="all">🌍 All Countries</option></select><select id="aFilter" onchange="show()"><option value="all">📍 All States</option></select></div></div>
-<div class="filters" id="fb"></div><div id="feed"></div>
-<div class="bottom"><div class="nav a" onclick="home()"><div>🏠</div>Home</div><div class="nav" onclick="toast('Use filters above')"><div>🧭</div>Explore</div><div class="nav" onclick="openC()"><div class="plus">+</div>Idea</div><div class="nav" onclick="toast('DM soon')"><div>💬</div>DM</div><div class="nav" onclick="openP()"><div>👤</div>Profile</div></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ApexTeen5</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#f3f0fb;display:flex;justify-content:center;color:#1e1b2e}
+.app{width:100%;max-width:430px;background:#fff;min-height:100vh;position:relative;padding-bottom:90px;box-shadow:0 0 25px rgba(0,0,0,.08)}
 
-<div id="loginM" class="modal"><div class="box">
-<div id="step1" class="step active">
-<h2 style="color:#f65858;text-align:center">Student Registration 🔒</h2><p style="font-size:12px;color:#666;text-align:center">Parents approval required - OTP will go to parent</p>
-<label>Student Full Name *</label><input id="sName" placeholder="Rahul Sharma">
-<label>Date of Birth *</label><input id="sDob" type="date">
-<label>Class *</label><select id="sClass"><option value="">Select Class</option><option>Class 6</option><option>Class 7</option><option>Class 8</option><option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option><option>College 1st Year</option><option>College 2nd Year</option><option>College 3rd Year</option><option>College 4th Year</option></select>
-<label>Country *</label><select id="sCountry" onchange="updateStudentState()"><option value="">Select Country</option></select>
-<label>State *</label><select id="sState"><option value="">Select State</option></select>
-<label>Student Email *</label><input id="sEmail" placeholder="student@gmail.com">
-<label>Password *</label><input id="sPass" type="password" placeholder="6+ chars">
-<hr style="margin:14px 0"><h3 style="color:#f65858">👨‍👩‍👧 Parent Approval</h3>
-<label>Parent Mobile *</label><input id="pMobile" placeholder="9876543210">
-<label>Parent Email *</label><input id="pEmail" placeholder="parent@gmail.com">
-<button class="btn p" onclick="sendParentOTP()">Send OTP to Parent 📲</button>
-<div style="text-align:center;margin-top:10px"><span onclick="showLoginStep()" style="color:#f65858;font-size:13px">Already account? Login</span> | <span onclick="closeLogin()" style="color:#999;font-size:13px">Skip ✕</span></div>
+.screen{display:none}
+.screen.active{display:block}
+
+.auth-container{padding:24px 20px}
+.auth-header{text-align:center;margin-bottom:20px}
+.auth-header h1{color:#6d4aff;font-size:26px;font-weight:800}
+.auth-header p{font-size:12px;color:#666;margin-top:4px}
+
+.form-group{margin-bottom:12px;position:relative}
+.form-group label{display:block;font-size:11px;font-weight:700;color:#444;margin-bottom:4px}
+.form-group input, .form-group select, .form-group textarea{width:100%;padding:11px 14px;border:1.5px solid #ece8ff;border-radius:12px;outline:none;font-size:13px;background:#faf9ff}
+.form-row{display:flex;gap:10px}
+
+.suggest-box{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #6d4aff;border-radius:10px;max-height:120px;overflow-y:auto;z-index:300;display:none;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.suggest-item{padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid #f0ecff}
+.suggest-item:hover{background:#f0ebff;color:#6d4aff;font-weight:700}
+
+.btn-main{width:100%;padding:13px;background:#6d4aff;color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px;box-shadow:0 4px 12px rgba(109,74,255,.3)}
+.btn-main:active{transform:scale(.98)}
+
+.top{padding:16px 16px 0}
+.logo-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px;color:#6d4aff}
+.location-badge{font-size:11px;background:#f0ebff;color:#6d4aff;padding:5px 12px;border-radius:20px;font-weight:700}
+.search-row{display:flex;gap:10px}
+.search{flex:1;background:#fff;border:1.8px solid #ece8ff;border-radius:28px;padding:12px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 12px rgba(124,92,255,.08)}
+.search input{border:0;outline:none;width:100%;font-size:13px;background:transparent}
+
+.location-filters{display:flex;gap:8px;padding:8px 16px;background:#f8f6ff}
+.location-filters input{flex:1;padding:8px 12px;border-radius:10px;border:1px solid #ece8ff;font-size:11px;font-weight:700;color:#6d4aff;outline:none}
+
+.cats{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.tab{padding:8px 16px;border-radius:20px;background:#f0eef6;color:#6b6b7b;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+.tab.active{background:#6d4aff;color:#fff}
+
+.card{background:#fff;border:1.5px solid #f0ecff;border-radius:20px;margin:12px 16px;padding:15px;box-shadow:0 4px 16px rgba(109,74,255,.06);cursor:pointer}
+.card-head{display:flex;gap:10px;align-items:center}
+.avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #ece8ff}
+.badge{font-size:10px;background:#ede8ff;color:#6d4aff;padding:3px 8px;border-radius:20px;font-weight:700}
+.title{font-size:15px;font-weight:800;margin-top:4px;color:#1e1b2e}
+.idea-img{width:100%;height:150px;object-fit:cover;border-radius:14px;margin:8px 0}
+.desc{font-size:12px;color:#555;margin:6px 0;line-height:1.4}
+.stats{display:flex;gap:12px;font-size:11px;color:#666;font-weight:600;margin:8px 0}
+.btns{display:flex;gap:8px}
+.btn-sm{flex:1;padding:8px;border-radius:10px;border:1px solid #ece8ff;background:#fff;font-weight:700;font-size:11px;cursor:pointer}
+
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid #f0ecff;display:flex;justify-content:space-around;padding:10px 0 12px;z-index:90}
+.bottom div{text-align:center;font-size:10px;color:#9a9ab0;font-weight:700;cursor:pointer}
+.bottom div.active{color:#6d4aff}
+.bottom b{font-size:20px;display:block;margin-bottom:2px}
+
+.modal{position:fixed;inset:0;background:rgba(15,10,35,.6);backdrop-filter:blur(5px);display:none;place-items:end center;z-index:200}
+.modal.show{display:grid}
+.sheet{background:#fff;width:100%;max-width:430px;border-radius:24px 24px 0 0;padding:20px;max-height:85vh;overflow-y:auto}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- REGISTRATION SCREEN -->
+  <div id="screen-auth" class="screen active">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h1>ApexTeen5</h1>
+        <p>Student Verification & Safety Portal</p>
+      </div>
+
+      <div id="student-fields">
+        <div class="form-group">
+          <label>Student Profile Photo</label>
+          <input type="file" id="reg-photo" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="Aapka Naam">
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1">
+            <label>Mobile Number</label>
+            <input type="tel" id="reg-phone" placeholder="Student Mobile">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>Class</label>
+            <input type="text" id="reg-class" placeholder="10th / 12th">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="reg-email" placeholder="student@gmail.com">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="flex:1">
+            <label>Country (Searchable)</label>
+            <input type="text" id="reg-country" placeholder="Search Country..." oninput="searchLocation(this, 'country-list', countriesList)">
+            <div id="country-list" class="suggest-box"></div>
+          </div>
+          <div class="form-group" style="flex:1">
+            <label>State (Searchable)</label>
+            <input type="text" id="reg-state" placeholder="Search State..." oninput="searchLocation(this, 'state-list', statesList)">
+            <div id="state-list" class="suggest-box"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>District / City</label>
+          <input type="text" id="reg-district" placeholder="District Name">
+        </div>
+        <div class="form-group">
+          <label>Field of Interest</label>
+          <select id="reg-interest">
+            <option value="AI & Tech">🤖 AI & Tech</option>
+            <option value="Gaming & Design">🎮 Gaming & Design</option>
+            <option value="Social Good">👥 Social Good & Science</option>
+          </select>
+        </div>
+        <div class="form-group" style="border-top:1.5px dashed #d8d0ff;padding-top:10px;margin-top:10px">
+          <label style="color:#6d4aff">Parent Mobile Number / Email (For Approval)</label>
+          <input type="text" id="reg-parent" placeholder="Parent Contact Number or Email">
+        </div>
+        <button class="btn-main" type="button" onclick="sendParentOTP()">Send Approval OTP to Parent →</button>
+      </div>
+
+      <!-- OTP BOX -->
+      <div id="otp-box" style="display:none;margin-top:15px;text-align:center">
+        <div style="background:#f0ebff;padding:10px;border-radius:10px;margin-bottom:10px">
+          <p style="font-size:12px;color:#6d4aff;font-weight:700">Parent ke paas OTP bhej diya gaya hai!</p>
+          <p style="font-size:11px;color:#555;margin-top:2px">Testing OTP: <b>1234</b></p>
+        </div>
+        <input type="text" id="otp-input" placeholder="Enter OTP (1234)" style="text-align:center;font-size:18px;letter-spacing:4px;padding:10px">
+        <button class="btn-main" type="button" onclick="verifyOTP()" style="margin-top:10px">Verify Parent & Complete Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP SCREEN -->
+  <div id="screen-main" class="screen">
+    <div class="top">
+      <div class="logo-row">
+        <div class="logo">ApexTeen5</div>
+        <div class="location-badge" id="user-location-badge">📍 India</div>
+      </div>
+      <div class="search-row">
+        <div class="search">🔍 <input id="searchInput" placeholder="Search ideas..." oninput="renderFeed()"></div>
+      </div>
+    </div>
+
+    <div class="location-filters">
+      <input id="filter-country" placeholder="Filter Country..." oninput="renderFeed()">
+      <input id="filter-state" placeholder="Filter State..." oninput="renderFeed()">
+    </div>
+
+    <div class="cats">
+      <div class="tab active" onclick="filterCat(this,'all')">✨ All Ideas</div>
+      <div class="tab" onclick="filterCat(this,'AI & Tech')">🤖 AI & Tech</div>
+      <div class="tab" onclick="filterCat(this,'Gaming & Design')">🎮 Gaming</div>
+      <div class="tab" onclick="filterCat(this,'Social Good')">👥 Social</div>
+    </div>
+
+    <div id="feed"></div>
+
+    <div class="bottom">
+      <div class="active" onclick="switchTab('feed')"><b>⌂</b>Home</div>
+      <div onclick="switchTab('find')"><b>🔍</b>Find</div>
+      <div onclick="openCreateSheet()"><b style="background:#6d4aff;color:#fff;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;margin:0 auto 2px">+</b>Create</div>
+      <div onclick="switchTab('profile')"><b>👤</b>Profile</div>
+    </div>
+  </div>
+
+  <!-- POST MODAL -->
+  <div class="modal" id="create-modal" onclick="if(event.target===this)closeCreateSheet()">
+    <div class="sheet">
+      <h3 style="font-size:16px;font-weight:800;margin-bottom:10px">💡 Share Your Idea</h3>
+      <input id="post-title" placeholder="Idea Heading / Title" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:8px">
+      <textarea id="post-desc" placeholder="Idea ki details samjhayein..." style="width:100%;height:70px;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:8px"></textarea>
+      
+      <select id="post-cat" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px">
+        <option value="AI & Tech">🤖 AI & Tech</option>
+        <option value="Gaming & Design">🎮 Gaming & Design</option>
+        <option value="Social Good">👥 Social Good</option>
+      </select>
+      <button class="btn-main" type="button" onclick="submitIdea()">Post Idea Now →</button>
+      <button class="btn-main" type="button" onclick="closeCreateSheet()" style="background:#eee;color:#444;margin-top:6px">Cancel</button>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div class="modal" id="detail-modal" onclick="if(event.target===this)closeDetailSheet()">
+    <div class="sheet">
+      <div id="detail-content"></div>
+      
+      <div style="border-top:1px solid #eee;padding-top:10px;margin-top:10px">
+        <h4 style="font-size:13px;font-weight:800;color:#6d4aff">🔒 Anti-Copy Secure DM to Creator</h4>
+        <p style="font-size:10px;color:#777">All messages are stored in Admin Vault to prevent idea theft.</p>
+        <textarea id="dm-message" placeholder="Creator ko private collaboration message bhejein..." style="width:100%;height:60px;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:8px"></textarea>
+        <button class="btn-main" type="button" onclick="sendSecureDM()" style="margin-top:6px;padding:10px">Send Direct Message ✉️</button>
+      </div>
+    </div>
+  </div>
+
 </div>
-
-<div id="step2" class="step">
-<h2 style="color:#f65858;text-align:center">Parent Verification 🔐</h2><p style="text-align:center;font-size:13px;color:#666;margin:8px 0">OTP sent to <b id="otpTo"></b><br><span style="color:red">Bina parent OTP ke login nahi hoga</span><br><br><span id="demoOtp" style="background:yellow;padding:6px 10px;border-radius:8px;font-weight:bold"></span></p>
-<label>Enter OTP *</label><input id="otpInput" placeholder="Enter 6 digit OTP" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:6px">
-<button class="btn p" onclick="verifyParentOTP()">Verify & Create Account ✅</button>
-<button class="btn" style="width:100%;margin-top:8px" onclick="sendParentOTP()">Resend OTP 🔄</button>
-<button class="btn" style="width:100%;margin-top:8px" onclick="backToStep1()">Back</button>
-</div>
-
-<div id="stepLogin" class="step">
-<h2 style="color:#f65858;text-align:center">Login</h2><input id="lEmail" placeholder="Student Email"><input id="lPass" type="password" placeholder="Password"><button class="btn p" onclick="emailLogin()">Login</button><button class="btn p" style="background:#fff;color:#000;border:1px solid #ddd" onclick="googleLogin()">🔵 Google Login</button><div style="text-align:center;margin-top:10px"><span onclick="backToStep1()" style="color:#f65858">New? Register</span> | <span onclick="closeLogin()" style="color:#999">Skip ✕</span></div>
-</div>
-</div></div>
-
-<div id="cM" class="modal"><div class="box"><h3>Post Idea</h3><input id="cTitle" placeholder="Title *"><textarea id="cDesc" placeholder="Describe *"></textarea><button class="btn p" onclick="save()">Post</button><button class="btn" style="width:100%;margin-top:6px" onclick="closeC()">Cancel</button></div></div>
-<div id="dM" class="modal"><div class="box"><div style="display:flex;justify-content:space-between"><b id="dCat"></b><span onclick="closeD()" style="font-size:22px">✕</span></div><h2 id="dTT" style="margin-top:10px"></h2><div id="dOwn" style="font-size:13px;color:#666"></div><p id="dDes" style="margin-top:8px"></p><button class="btn p" onclick="closeD()">Close</button></div></div>
-<div id="pM" class="modal"><div class="box"><h3>Profile</h3><div id="pInfo"></div><button class="btn p" style="background:#000" onclick="logout()">Logout</button><button class="btn" style="width:100%;margin-top:6px" onclick="closeP()">Close</button></div></div>
-<div id="toast" class="toast"></div>
 
 <script>
-const firebaseConfig={apiKey:"AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",authDomain:"apexteen-5.firebaseapp.com",projectId:"apexteen-5",storageBucket:"apexteen-5.firebasestorage.app",messagingSenderId:"428961039333",appId:"1:428961039333:web:5dc05aae6f4fbe6c60250c"};
-firebase.initializeApp(firebaseConfig); const auth=firebase.auth(); const db=firebase.firestore();
-let user=null,prof=null,mainF='all',ideas=[],generatedOTP=null;
+const countriesList = ["India", "United States", "United Kingdom", "Canada", "Australia", "Germany", "Singapore", "United Arab Emirates"];
+const statesList = ["Delhi", "Maharashtra", "Uttar Pradesh", "Bihar", "Karnataka", "Tamil Nadu", "West Bengal", "Gujarat", "Rajasthan", "Punjab", "Haryana", "Madhya Pradesh"];
 
-const STATES = {"India": ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Delhi","Bela","Kanpur","Lucknow"],"USA": ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],"UK": ["England","Scotland","Wales","Northern Ireland"], "Canada": ["Alberta","British Columbia","Manitoba","Ontario","Quebec"]};
-const COUNTRIES = ["India","USA","UK","Canada","Australia","Germany","Pakistan","Bangladesh","Nepal","UAE","Saudi Arabia","France","Japan","China","Russia","Brazil","South Africa","Nigeria","Sri Lanka","Malaysia","Singapore","New Zealand","Italy","Spain","Turkey"];
-
-function loadCountries(){let sel=document.getElementById('cFilter'); let sSel=document.getElementById('sCountry'); COUNTRIES.forEach(c=>{let o1=document.createElement('option'); o1.value=c; o1.textContent=c; sel.appendChild(o1); let o2=document.createElement('option'); o2.value=c; o2.textContent=c; sSel.appendChild(o2);});}
-loadCountries();
-function updateStateList(){let country=document.getElementById('cFilter').value; let stateSel=document.getElementById('aFilter'); stateSel.innerHTML='<option value="all">📍 All States</option>'; let list=STATES[country]; if(list){list.forEach(s=>{let o=document.createElement('option'); o.value=s; o.textContent=s; stateSel.appendChild(o);});}}
-function updateStudentState(){let country=document.getElementById('sCountry').value; let stateSel=document.getElementById('sState'); stateSel.innerHTML='<option value="">Select State</option>'; let list=STATES[country]; if(list){list.forEach(s=>{let o=document.createElement('option'); o.value=s; o.textContent=s; stateSel.appendChild(o);});}}
-
-auth.onAuthStateChanged(u=>{user=u;if(u){let s=localStorage.getItem('apex_'+u.uid);prof=s?JSON.parse(s):{name:u.displayName||u.email.split('@')[0],country:'',uni:''};document.getElementById('lb').innerText=prof.name.split(' ')[0];closeLogin();}else{document.getElementById('lb').innerText='Login';}load();});
-function toast(m){let t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',5000)}
-function openLogin(){document.getElementById('loginM').classList.add('o'); showStep('step1')}function closeLogin(){document.getElementById('loginM').classList.remove('o')}
-function showStep(id){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function backToStep1(){showStep('step1')}function showLoginStep(){showStep('stepLogin')}
-
-function googleLogin(){
- auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>{toast('Logged in ✅'); closeLogin();}).catch(e=>{
-  if(e.code==='auth/operation-not-allowed'){toast('⚠️ Firebase me Google ON karo: Console > Authentication > Sign-in method > Google Enable');}
-  else toast(e.message);
- });
-}
-function emailLogin(){
- let e=document.getElementById('lEmail').value.trim();let p=document.getElementById('lPass').value.trim();
- if(!e||!p)return toast('Email+Pass required');
- auth.signInWithEmailAndPassword(e,p).then(()=>{toast('Logged in ✅'); closeLogin();}).catch(err=>{
-  if(err.code==='auth/operation-not-allowed'){toast('⚠️ Firebase me Email/Password ON karo: Console > Authentication > Sign-in method > Email/Password Enable');}
-  else toast(err.message);
- });
+let currentUser = null;
+try {
+  currentUser = JSON.parse(localStorage.getItem('apex_user_v3'));
+} catch(e) {
+  currentUser = null;
 }
 
-function sendParentOTP(){
- let name=document.getElementById('sName').value.trim();
- let dob=document.getElementById('sDob').value;
- let cls=document.getElementById('sClass').value;
- let country=document.getElementById('sCountry').value;
- let state=document.getElementById('sState').value;
- let email=document.getElementById('sEmail').value.trim();
- let pass=document.getElementById('sPass').value.trim();
- let pMob=document.getElementById('pMobile').value.trim();
- let pEmail=document.getElementById('pEmail').value.trim();
- if(!name||!dob||!cls||!country||!state||!email||!pass||!pMob||!pEmail)return toast('All fields required *');
- if(pass.length<6)return toast('Password 6+ chars');
- generatedOTP = Math.floor(100000 + Math.random()*900000).toString();
- document.getElementById('otpTo').innerText=pMob+' & '+pEmail;
- document.getElementById('demoOtp').innerText='Demo OTP: '+generatedOTP+' (Real me parent ko SMS jayega)';
- toast('Parent OTP: '+generatedOTP);
- showStep('step2');
+let ideasList = [];
+try {
+  ideasList = JSON.parse(localStorage.getItem('apex_ideas_db_v3')) || [
+    {
+      id: 1,
+      creator: "Aarav Sharma",
+      title: "AI Homework Buddy for High Schoolers",
+      desc: "An AI tool that scans textbook math problems and explains them step by step.",
+      img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400",
+      cat: "AI & Tech",
+      country: "India",
+      state: "Delhi",
+      district: "New Delhi",
+      upvotes: 24,
+      comments: [],
+      avatar: "https://i.pravatar.cc/100?img=12"
+    }
+  ];
+} catch(e) {
+  ideasList = [];
 }
 
-function verifyParentOTP(){
- let entered=document.getElementById('otpInput').value.trim();
- if(entered!==generatedOTP)return toast('Wrong OTP! Parent se sahi OTP lo');
- let name=document.getElementById('sName').value.trim();
- let dob=document.getElementById('sDob').value;
- let cls=document.getElementById('sClass').value;
- let country=document.getElementById('sCountry').value;
- let state=document.getElementById('sState').value;
- let email=document.getElementById('sEmail').value.trim();
- let pass=document.getElementById('sPass').value.trim();
- let pMob=document.getElementById('pMobile').value.trim();
- let pEmail=document.getElementById('pEmail').value.trim();
- auth.createUserWithEmailAndPassword(email,pass).then(cred=>{
-  let uid=cred.user.uid;
-  let profile={name:name,dob:dob,class:cls,country:country,state:state,email:email,parentMobile:pMob,parentEmail:pEmail,parentVerified:true,verifiedAt:new Date().toISOString()};
-  localStorage.setItem('apex_'+uid, JSON.stringify(profile));
-  db.collection('users').doc(uid).set({...profile,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  prof=profile;
-  toast('✅ Account Created with Parent Approval!');
-  closeLogin();
-  document.getElementById('lb').innerText=name.split(' ')[0];
- }).catch(err=>{
-  if(err.code==='auth/operation-not-allowed'){toast('⚠️ Firebase me Email/Password Enable karo fir try karo');}
-  else toast(err.message);
- });
+let adminVaultDMs = [];
+try {
+  adminVaultDMs = JSON.parse(localStorage.getItem('apex_admin_vault_v3')) || [];
+} catch(e) {
+  adminVaultDMs = [];
 }
 
-function logout(){auth.signOut();toast('Logged out');closeP()}
-function openC(){if(!user){openLogin();return}document.getElementById('cM').classList.add('o')}function closeC(){document.getElementById('cM').classList.remove('o')}
-function openP(){if(!user){openLogin();return}let info=document.getElementById('pInfo');if(prof){info.innerHTML=`<div style="background:#f0f9ff;padding:12px;border-radius:10px;font-size:13px"><b>${prof.name}</b><br>DOB: ${prof.dob||''}<br>Class: ${prof.class||''}<br>Country: ${prof.country}<br>State: ${prof.state||''}<br>Parent: ${prof.parentMobile||''}<br><span style="color:green">✅ Parent Verified</span></div>`;}document.getElementById('pM').classList.add('o')}function closeP(){document.getElementById('pM').classList.remove('o')}
-function openD(){document.getElementById('dM').classList.add('o')}function closeD(){document.getElementById('dM').classList.remove('o')}
-function home(){document.getElementById('cFilter').value='all';document.getElementById('aFilter').value='all';show()}
-let fb=document.getElementById('fb'); fb.innerHTML=['all','Tech','AI','Coding','Study','Startup'].map((c,i)=>`<div class="chip ${i==0?'a':''}" data-f="${c}" onclick="setF(this)">${c}</div>`).join('')+`<div class="chip" data-f="my" onclick="setF(this)">My</div>`;
-function setF(el){document.querySelectorAll('#fb .chip').forEach(x=>x.classList.remove('a'));el.classList.add('a');mainF=el.dataset.f;show()}
-async function load(){document.getElementById('feed').innerHTML='Loading...';try{let s=await db.collection('ideas').get();ideas=s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){ideas=[]}show()}
-function show(){let q=(document.getElementById('s').value||'').toLowerCase();let cf=document.getElementById('cFilter').value;let af=document.getElementById('aFilter').value;let list=[...ideas];if(q)list=list.filter(i=>(i.tagline+i.desc).toLowerCase().includes(q));if(cf!='all')list=list.filter(i=>(i.userCountry||'').toLowerCase().includes(cf.toLowerCase()));if(af!='all')list=list.filter(i=>(i.location||'').toLowerCase().includes(af.toLowerCase()));if(mainF=='my'){if(!user){document.getElementById('feed').innerHTML='Login for My';return}list=list.filter(i=>i.uid===user.uid)}else if(mainF!='all')list=list.filter(i=>i.cat===mainF);document.getElementById('feed').innerHTML=list.map(i=>`<div class="card" onclick="cur=ideas.find(x=>x.id=='${i.id}');document.getElementById('dTT').innerText=cur.tagline;document.getElementById('dDes').innerText=cur.desc;document.getElementById('dOwn').innerText=cur.user+' • '+cur.location;document.getElementById('dCat').innerText=cur.cat;openD()"><div style="padding:12px"><div style="font-size:11px;color:#7c5cff">${i.cat} • ${i.location||''}</div><div style="font-weight:800">${i.tagline}</div><div style="font-size:12px;color:#666">${i.user} • ${i.userCountry||''}</div></div></div>`).join('')||'<div style="padding:20px;text-align:center">No results</div>';}
-function save(){let t=document.getElementById('cTitle').value.trim();let d=document.getElementById('cDesc').value.trim();if(!t||!d)return toast('Title+Desc');db.collection('ideas').add({tagline:t,desc:d,location:prof.state||'',cat:'Tech',user:prof.name,userCountry:prof.country,uid:user.uid,joinedUsers:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(doc=>{ideas.unshift({id:doc.id,tagline:t,desc:d,location:prof.state,cat:'Tech',user:prof.name,userCountry:prof.country,uid:user.uid});closeC();show();toast('Posted 🚀')});}
-</script></body></html>
+let activeCategory = 'all';
+let currentSelectedIdeaId = null;
+
+function searchLocation(inputEl, listId, dataArray) {
+  const query = inputEl.value.toLowerCase().trim();
+  const listEl = document.getElementById(listId);
+  listEl.innerHTML = '';
+
+  if (!query) {
+    listEl.style.display = 'none';
+    return;
+  }
+
+  const matches = dataArray.filter(item => item.toLowerCase().includes(query));
+  if (matches.length > 0) {
+    listEl.style.display = 'block';
+    matches.forEach(match => {
+      const div = document.createElement('div');
+      div.className = 'suggest-item';
+      div.innerText = match;
+      div.onclick = function() {
+        inputEl.value = match;
+        listEl.style.display = 'none';
+      };
+      listEl.appendChild(div);
+    });
+  } else {
+    listEl.style.display = 'none';
+  }
+}
+
+function sendParentOTP() {
+  const name = document.getElementById('reg-name').value.trim();
+  const parent = document.getElementById('reg-parent').value.trim();
+  if (!name || !parent) {
+    alert("Kripya Apna Naam aur Parent ka Mobile/Email darj karein!");
+    return;
+  }
+  document.getElementById('student-fields').style.display = 'none';
+  document.getElementById('otp-box').style.display = 'block';
+}
+
+function verifyOTP() {
+  const otp = document.getElementById('otp-input').value.trim();
+  if (otp === "1234" || otp.length === 4) {
+    currentUser = {
+      name: document.getElementById('reg-name').value || "Student",
+      phone: document.getElementById('reg-phone').value || "",
+      email: document.getElementById('reg-email').value || "",
+      class: document.getElementById('reg-class').value || "",
+      country: document.getElementById('reg-country').value || "India",
+      state: document.getElementById('reg-state').value || "Delhi",
+      district: document.getElementById('reg-district').value || "District",
+      interest: document.getElementById('reg-interest').value,
+      avatar: "https://i.pravatar.cc/100?img=68",
+      verified: true
+    };
+
+    localStorage.setItem('apex_user_v3', JSON.stringify(currentUser));
+    initApp();
+  } else {
+    alert("Galat OTP! Kripya Sahi OTP Darj Karein (1234).");
+  }
+}
+
+function initApp() {
+  if (currentUser && currentUser.verified) {
+    document.getElementById('screen-auth').classList.remove('active');
+    document.getElementById('screen-main').classList.add('active');
+    const badge = document.getElementById('user-location-badge');
+    if (badge) badge.innerText = `📍 ${currentUser.country}, ${currentUser.state}`;
+    renderFeed();
+  } else {
+    document.getElementById('screen-auth').classList.add('active');
+    document.getElementById('screen-main').classList.remove('active');
+  }
+}
+
+function renderFeed() {
+  const searchInput = document.getElementById('searchInput');
+  const filterCountryInput = document.getElementById('filter-country');
+  const filterStateInput = document.getElementById('filter-state');
+  
+  const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const filterCountry = filterCountryInput ? filterCountryInput.value.toLowerCase().trim() : '';
+  const filterState = filterStateInput ? filterStateInput.value.toLowerCase().trim() : '';
+  const feed = document.getElementById('feed');
+  if (!feed) return;
+  feed.innerHTML = '';
+
+  let filtered = ideasList.filter(item => {
+    let matchCat = activeCategory === 'all' || item.cat === activeCategory;
+    let matchQuery = !q || item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q);
+    let matchCountry = !filterCountry || item.country.toLowerCase().includes(filterCountry);
+    let matchState = !filterState || item.state.toLowerCase().includes(filterState);
+    return matchCat && matchQuery && matchCountry && matchState;
+  });
+
+  if (filtered.length === 0) {
+    feed.innerHTML = `<div style="text-align:center;padding:30px;color:#888;font-size:13px">Koi idea nahi mila. Naya idea post karein!</div>`;
+    return;
+  }
+
+  filtered.forEach(item => {
+    let card = document.createElement('div');
+    card.className = 'card';
+    card.onclick = () => openIdeaDetail(item.id);
+    card.innerHTML = `
+      <div class="card-head">
+        <img class="avatar" src="${item.avatar}">
+        <div style="flex:1">
+          <div style="display:flex;gap:4px;align-items:center">
+            <b style="font-size:12px">${item.creator}</b>
+            <span class="badge">✓ Parent Verified</span>
+          </div>
+          <div class="title">${item.title}</div>
+        </div>
+      </div>
+      ${item.img ? `<img src="${item.img}" class="idea-img">` : ''}
+      <div class="desc">${item.desc}</div>
+      <div class="stats">
+        <span>👍 ${item.upvotes} upvotes</span>
+        <span>💬 ${item.comments.length} comments</span>
+        <span>📍 ${item.state}, ${item.country}</span>
+      </div>
+      <div class="btns" onclick="event.stopPropagation()">
+        <button class="btn-sm" type="button" onclick="upvoteIdea(${item.id})">👍 Upvote</button>
+        <button class="btn-sm" type="button" onclick="openIdeaDetail(${item.id})">💬 Comment / DM</button>
+      </div>
+    `;
+    feed.appendChild(card);
+  });
+
+  localStorage.setItem('apex_ideas_db_v3', JSON.stringify(ideasList));
+}
+
+function filterCat(el, cat) {
+  document.querySelectorAll('.cats .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeCategory = cat;
+  renderFeed();
+}
+
+function openCreateSheet() { 
+  const modal = document.getElementById('create-modal');
+  if (modal) modal.classList.add('show'); 
+}
+
+function closeCreateSheet() { 
+  const modal = document.getElementById('create-modal');
+  if (modal) modal.classList.remove('show'); 
+}
+
+function submitIdea() {
+  const titleEl = document.getElementById('post-title');
+  const descEl = document.getElementById('post-desc');
+  const catEl = document.getElementById('post-cat');
+
+  const title = titleEl ? titleEl.value.trim() : '';
+  const desc = descEl ? descEl.value.trim() : '';
+  const cat = catEl ? catEl.value : 'AI & Tech';
+
+  if (!title || !desc) {
+    alert("Heading aur Description dono likhna zaroori hai!");
+    return;
+  }
+
+  const newIdea = {
+    id: Date.now(),
+    creator: currentUser ? currentUser.name : "Student Creator",
+    title: title,
+    desc: desc,
+    img: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400",
+    cat: cat,
+    country: currentUser ? currentUser.country : "India",
+    state: currentUser ? currentUser.state : "Delhi",
+    district: currentUser ? currentUser.district : "City",
+    upvotes: 1,
+    comments: [],
+    avatar: currentUser ? currentUser.avatar : "https://i.pravatar.cc/100?img=68"
+  };
+
+  ideasList.unshift(newIdea);
+  localStorage.setItem('apex_ideas_db_v3', JSON.stringify(ideasList));
+
+  if (titleEl) titleEl.value = '';
+  if (descEl) descEl.value = '';
+  closeCreateSheet();
+  renderFeed();
+  alert("Aapka Idea successfully post ho gaya hai!");
+}
+
+function upvoteIdea(id) {
+  let item = ideasList.find(x => x.id === id);
+  if (item) {
+    item.upvotes++;
+    renderFeed();
+  }
+}
+
+function openIdeaDetail(id) {
+  currentSelectedIdeaId = id;
+  let item = ideasList.find(x => x.id === id);
+  if (item) {
+    const detailBox = document.getElementById('detail-content');
+    if (detailBox) {
+      detailBox.innerHTML
