@@ -1,131 +1,176 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen5 - Final</title>
+<title>ApexTeen5 - Ultimate Meetup</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}body{background:#f8f7ff;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:90px}
-.header{position:sticky;top:0;background:#fff;z-index:20;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}
-.header h1{font-size:22px;font-weight:800}.login{font-size:13px;background:#7c5cff;color:#fff;padding:8px 14px;border-radius:20px;border:none;font-weight:600;cursor:pointer}
-.search-wrap{padding:10px 16px;position:sticky;top:56px;background:#f8f7ff;z-index:10}.search{width:100%;background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:12px 16px;display:flex;gap:8px}
-.search input{border:none;outline:none;width:100%;font-size:14px}
-.filters{display:flex;gap:8px;overflow-x:auto;padding:6px 16px}.chip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid #e5e7eb;background:#fff;font-size:13px;font-weight:600;cursor:pointer}.chip.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
-.card{background:#fff;margin:12px 16px;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06);cursor:pointer}
-.card img.banner{width:100%;height:160px;object-fit:cover}.card-inner{padding:14px}
-.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#a78bfa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
-.tagline{font-size:17px;font-weight:800;margin:8px 0 4px}.desc{font-size:13px;color:#4b5563}.watermark{font-size:10px;color:#9ca3af;margin-top:6px;font-weight:600}
-.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tag{font-size:11px;background:#f3f0ff;color:#6d5acd;padding:4px 8px;border-radius:8px}
-.stats{display:flex;gap:14px;margin-top:10px;font-size:12px;color:#6b7280;font-weight:600}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}body{background:#f6f7f8;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:90px}
+.header{position:sticky;top:0;background:#fff;z-index:20;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb}
+.header b{font-size:22px;color:#f65858}.login{font-size:13px;background:#f65858;color:#fff;padding:8px 14px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.search-wrap{padding:12px 16px;background:#fff;border-bottom:1px solid #e5e7eb}.search{width:100%;background:#f6f7f8;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;display:flex;gap:8px} .search input{border:none;outline:none;width:100%;background:transparent;font-size:14px}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff}.chip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid #e5e7eb;background:#fff;font-size:13px;font-weight:600;cursor:pointer}.chip.active{background:#f65858;color:#fff;border-color:#f65858}
+.card{background:#fff;margin:12px 16px;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);cursor:pointer;border:1px solid #eee}
+.card img.banner{width:100%;height:180px;object-fit:cover}.card-inner{padding:14px}
+.date{font-size:11px;font-weight:700;color:#7c5cff;text-transform:uppercase}.tagline{font-size:18px;font-weight:800;margin:4px 0;line-height:1.3}.meta{font-size:13px;color:#6b7280}
 .bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:8px 0 14px;z-index:30}
-.nav-item{text-align:center;font-size:11px;color:#9ca3af;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 14px;border-radius:12px;cursor:pointer}.nav-item.active{color:#7c5cff;background:#f3f0ff}.plus{width:54px;height:54px;background:#5b21b6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}
+.nav-item{text-align:center;font-size:11px;color:#9ca3af;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 14px;border-radius:12px;cursor:pointer;position:relative}.nav-item.active{color:#f65858;background:#fff1f1}.plus{width:54px;height:54px;background:#f65858;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px}
+.badge{position:absolute;top:2px;right:6px;background:#f65858;color:#fff;font-size:9px;padding:2px 5px;border-radius:10px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-end;justify-content:center}.modal.open{display:flex}
-.modal-box{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px 16px 30px;max-height:92vh;overflow-y:auto}
-.detail-box{background:#fff;width:100%;max-width:480px;height:100vh;overflow-y:auto}
-.btn{padding:10px 14px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-size:13px;cursor:pointer}.btn.primary{background:#7c5cff;color:#fff;border-color:#7c5cff;width:100%;margin-top:10px;padding:14px}
+.modal-box{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 16px 30px;max-height:92vh;overflow-y:auto}
+.btn{padding:10px 14px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-size:13px;cursor:pointer}.btn.primary{background:#f65858;color:#fff;border-color:#f65858;width:100%;margin-top:10px;padding:14px}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;font-size:13px;z-index:100;display:none}
-input,textarea,select{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;margin:8px 0;font-size:14px;outline:none}
-.item{padding:12px;border:1px solid #eee;border-radius:12px;margin:8px 0;display:flex;gap:10px;align-items:center;background:#fff;cursor:pointer}
-.loading{text-align:center;padding:40px;color:#9ca3af}
+input,textarea,select{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:10px;margin:8px 0;font-size:14px;outline:none}
+.gallery{display:flex;gap:6px;overflow-x:auto;margin-top:8px}.gallery img{width:100px;height:80px;object-fit:cover;border-radius:8px}
 </style></head><body>
-<div class="header"><h1>ApexTeen5</h1><button id="loginBtn" class="login" onclick="handleAuth()">Login</button></div>
-<div class="search-wrap"><div class="search">🔍<input id="searchInput" placeholder="Search tagline, ideas..." oninput="render()"></div></div>
-<div class="filters"><button class="chip active" data-f="today" onclick="setF(this)">Today</button><button class="chip" data-f="trending" onclick="setF(this)">Trending</button><button class="chip" data-f="my" onclick="setF(this)">My Ideas</button></div>
-<div id="feed"><div class="loading">Loading ideas from Firestore...</div></div>
+<div class="header"><b>ApexTeen5</b><button id="loginBtn" class="login" onclick="handleAuth()">Login</button></div>
+<div class="search-wrap"><div class="search">🔍<input id="searchInput" placeholder="Search..." oninput="render()"></div></div>
+<div class="filters" id="filterBar"></div>
+<div id="feed"></div>
 <div class="bottom">
-<div class="nav-item active" id="navHome" onclick="goHome()">🏠<span>Home</span></div>
-<div class="nav-item" id="navExplore" onclick="openExplore()">🧭<span>Explore</span></div>
+<div class="nav-item active" onclick="goHome()">🏠<span>Home</span></div>
+<div class="nav-item" onclick="openExplore()">🧭<span>Explore</span></div>
 <div class="nav-item" onclick="openCreate()"><div class="plus">+</div><span>Create</span></div>
-<div class="nav-item" id="navAlerts" onclick="openAlerts()">🔔<span>Alerts</span></div>
-<div class="nav-item" id="navProfile" onclick="openProfileView()">👤<span>Profile</span></div>
+<div class="nav-item" onclick="openNotifs()">🔔<span>Bell</span><div id="notifBadge" class="badge" style="display:none">0</div></div>
+<div class="nav-item" onclick="openProfile()">👤<span>Profile</span></div>
 </div>
 
-<!-- CREATE -->
 <div id="createM" class="modal" onclick="if(event.target==this)closeCreate()"><div class="modal-box">
-<h3>Create Idea with Poster 🚀</h3>
-<input id="cTagline" placeholder="Main Tagline (Bada dikhega) *">
-<textarea id="cDesc" placeholder="Full Description *"></textarea>
-<select id="cCat"><option>AI Projects</option><option>Tech</option><option>Gaming</option><option>Social</option></select>
-<input id="cTags" placeholder="Tags - AI, Study">
-<label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Upload Banner</label>
-<input type="file" id="cBanner" accept="image/*" onchange="previewBanner(event)">
-<img id="bannerPrev" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-top:8px;display:none">
-<button class="btn primary" id="postBtn" onclick="createIdea()">Post to Firestore</button>
+<h3 id="createTitle">Create Meetup 📅</h3>
+<input id="cTagline" placeholder="Event Title *">
+<textarea id="cDesc" placeholder="What will we do? *"></textarea>
+<select id="cCat"><option value="Tech">💻 Tech</option><option value="AI">🤖 AI</option><option value="Coding">👨‍💻 Coding</option><option value="Music">🎵 Music</option><option value="Sports">⚽ Sports</option><option value="Study">📚 Study</option></select>
+<input id="cLocation" placeholder="Location - e.g. Lucknow">
+<input type="datetime-local" id="cDate">
+<label style="font-size:12px;font-weight:700;margin-top:8px;display:block">Posters (3 tak)</label>
+<input type="file" id="cBanner" accept="image/*" multiple onchange="previewBanner(event)">
+<div id="bannerPrev" class="gallery"></div>
+<button class="btn primary" id="postBtn" onclick="saveEvent()">Create Event</button>
 </div></div>
 
-<!-- PROFILE -->
-<div id="profileM" class="modal"><div class="modal-box"><h3>Setup Profile</h3><input id="pName" placeholder="Full Name"><input id="pClass" placeholder="Class"><input id="pInterest" placeholder="Interest"><button class="btn primary" onclick="saveProfile()">Save</button></div></div>
-<div id="profileViewM" class="modal" onclick="if(event.target==this)closeProfileView()"><div class="modal-box">
-<div style="text-align:center"><div class="avatar" style="width:70px;height:70px;font-size:24px;margin:0 auto" id="pvAvatar">S</div><h3 id="pvName" style="margin-top:10px">Guest</h3><div id="pvClass" style="font-size:13px;color:#6b7280"></div></div>
-<div style="margin-top:16px;background:#f9fafb;padding:12px;border-radius:12px;display:flex;gap:16px"><div><b id="pvIdeas">0</b><div style="font-size:11px">Ideas</div></div><div><b id="pvJoined">0</b><div style="font-size:11px">Joined</div></div></div>
-<input id="pvEditName" placeholder="Edit Name" style="margin-top:12px"><input id="pvEditClass" placeholder="Edit Class"><button class="btn primary" onclick="updateProfile()">Update</button><button class="btn" style="width:100%;margin-top:8px" onclick="logout()">Logout</button>
-</div></div>
-
-<!-- EXPLORE / ALERTS -->
-<div id="exploreM" class="modal" onclick="if(event.target==this)closeExplore()"><div class="modal-box"><h3>Explore 🧭</h3><input id="exploreSearch" placeholder="Search..." oninput="renderExplore()"><div id="exploreList" style="margin-top:12px"></div></div></div>
-<div id="alertsM" class="modal" onclick="if(event.target==this)closeAlerts()"><div class="modal-box"><h3>Notifications 🔔</h3><div id="alertsList" style="margin-top:12px"></div></div></div>
-
-<!-- DETAIL -->
-<div id="detailM" class="modal" style="align-items:flex-start"><div class="detail-box">
-<div style="position:sticky;top:0;background:#fff;padding:12px 16px;display:flex;justify-content:space-between;border-bottom:1px solid #eee;z-index:2"><b id="dTitle" style="font-size:14px"></b><span onclick="closeDetail()" style="font-size:22px;cursor:pointer">✕</span></div>
-<img id="dBanner" style="width:100%;height:200px;object-fit:cover;display:none"><div style="padding:16px"><div id="dCat" style="background:#fff3cd;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700"></div><h2 id="dMainTitle" style="margin:12px 0;font-size:22px;font-weight:800"></h2><div style="font-size:12px;color:#6b7280">By <b id="dUser"></b> • <span id="dTime"></span> • <span style="color:#7c5cff">Protected</span></div><p id="dDesc" style="font-size:14px;color:#374151;margin-top:14px;line-height:1.6"></p>
-<div style="display:flex;gap:8px;margin-top:12px"><button class="btn primary" id="dJoinBtn" onclick="joinFromDetail()" style="flex:1">Join</button><button class="btn" id="dDelBtn" onclick="deleteIdea()" style="display:none;color:#ef4444;border-color:#fecaca">Delete</button></div>
-<div style="margin-top:16px"><b>Comments</b><div id="dComments" style="margin-top:8px"></div><div style="display:flex;gap:8px;margin-top:10px"><input id="dCommentInput" placeholder="Write comment..."><button class="btn primary" style="width:auto" onclick="postDetailComment()">Send</button></div></div>
+<div id="detailM" class="modal" style="align-items:flex-start"><div style="background:#fff;width:100%;max-width:480px;height:100vh;overflow-y:auto">
+<div style="padding:12px 16px;display:flex;justify-content:space-between;border-bottom:1px solid #eee"><b id="dTitle"></b><span onclick="closeDetail()" style="font-size:22px;cursor:pointer">✕</span></div>
+<div id="dGallery" class="gallery" style="padding:10px 16px"></div>
+<img id="dBanner" style="width:100%;height:220px;object-fit:cover;display:none"><div style="padding:16px">
+<div id="dDate" style="color:#7c5cff;font-weight:700;font-size:12px"></div>
+<h2 id="dMainTitle" style="font-size:24px;font-weight:800;margin:6px 0"></h2>
+<div style="display:flex;gap:6px;margin:6px 0"><span id="dCat" style="background:#f3f4f6;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700"></span><span id="dLoc" style="color:#f65858;font-size:13px;cursor:pointer;text-decoration:underline" onclick="openMap()"></span></div>
+<p id="dDesc" style="font-size:14px;line-height:1.6;color:#374151"></p>
+<div style="display:flex;gap:8px;margin-top:12px"><button class="btn primary" id="dJoinBtn" onclick="joinFromDetail()" style="flex:1">Attend</button><button class="btn" onclick="shareEvent()">Share</button></div>
+<div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="dEditBtn" onclick="editEvent()" style="flex:1;display:none">Edit</button><button class="btn" id="dDelBtn" onclick="deleteIdea()" style="flex:1;color:#ef4444;display:none">Delete</button></div>
+<div style="margin-top:18px"><b>Discussion</b><div id="dComments" style="margin-top:8px"></div><div style="display:flex;gap:8px;margin-top:10px"><input id="dCommentInput" placeholder="Ask something..."><button class="btn primary" style="width:auto" onclick="postComment()">Send</button></div></div>
 </div></div></div>
+
+<div id="profileM" class="modal" onclick="if(event.target==this)closeProfile()"><div class="modal-box">
+<h3>My Profile 👤</h3><input id="pName" placeholder="Your Name"><button class="btn primary" onclick="saveProfile()">Save Name</button>
+<div style="margin-top:16px;font-size:13px;color:#6b7280">Events Created: <b id="pCreated">0</b> • Joined: <b id="pJoined">0</b></div>
+<button class="btn" style="width:100%;margin-top:12px" onclick="auth.signOut();closeProfile();toast('Logged out')">Logout</button>
+</div></div>
+
+<div id="exploreM" class="modal" onclick="if(event.target==this)closeExplore()"><div class="modal-box">
+<h3>Explore Categories 🧭</h3><div id="exploreCats" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"></div>
+</div></div>
+
+<div id="notifM" class="modal" onclick="if(event.target==this)closeNotifs()"><div class="modal-box">
+<h3>Notifications 🔔</h3><div id="notifList" style="margin-top:12px"></div>
+</div></div>
 
 <div id="toast" class="toast"></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",authDomain:"apexteen-5.firebaseapp.com",projectId:"apexteen-5",storageBucket:"apexteen-5.firebasestorage.app",messagingSenderId:"428961039333",appId:"1:428961039333:web:5dc05aae6f4fbe6c60250c"};
 firebase.initializeApp(firebaseConfig);const auth=firebase.auth();const db=firebase.firestore();
-let currentUser=null,profile=null,mainF='today',detailIdea=null,bannerData='',notifications=[],ideas=[];
+let currentUser=null,profile=null,mainF='all',detailIdea=null,banners=[],editId=null,ideas=[],notifs=[];
+const CATS=['all','Tech','AI','Coding','Music','Sports','Study'];
 
-auth.onAuthStateChanged(u=>{
- currentUser=u;document.getElementById('loginBtn').innerText=u?(u.displayName?.split(' ')[0]||'Profile'):'Login';
- if(u){let s=localStorage.getItem('apex_profile_'+u.uid);if(s){profile=JSON.parse(s)}else{document.getElementById('pName').value=u.displayName||'';document.getElementById('profileM').classList.add('open')}}
- loadIdeas();
-});
+auth.onAuthStateChanged(u=>{currentUser=u;document.getElementById('loginBtn').innerText=u?(u.displayName?.split(' ')[0]||'Profile'):'Login';if(u){let s=localStorage.getItem('apex_profile_'+u.uid);profile=s?JSON.parse(s):{name:u.displayName||'You'};loadIdeas();loadNotifs();}else loadIdeas();});
+
+function initFilters(){
+ let bar=document.getElementById('filterBar');
+ bar.innerHTML=CATS.map((c,i)=>`<button class="chip ${i==0?'active':''}" data-f="${c}" onclick="setF(this)">${c=='all'?'All':c}</button>`).join('')+'<button class="chip" data-f="my" onclick="setF(this)">My Events</button>';
+ let exp=document.getElementById('exploreCats');
+ exp.innerHTML=CATS.filter(c=>c!='all').map(c=>`<button class="chip" onclick="filterBy('${c}');closeExplore()">${c}</button>`).join('');
+} initFilters();
 
 async function loadIdeas(){
- try{
-  let snap=await db.collection('ideas').orderBy('createdAt','desc').limit(50).get();
-  if(snap.empty && ideas.length==0){
-    ideas=[
-     {id:'1',user:'Alex',uid:'',tagline:'Online Earning Session for India (FREE)',title:'Earn Money',desc:'Simple way to earn online for students...',cat:'AI Projects',tags:['AI','EdTech'],up:42,collab:5,joinedUsers:[],banner:'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600',commentsList:[],createdAt:new Date()}
-    ];
-  }else{
-    ideas=snap.docs.map(d=>{let data=d.data();return{id:d.id,...data,createdAt:data.createdAt?.toDate?data.createdAt.toDate():new Date(),joinedUsers:data.joinedUsers||[],commentsList:data.commentsList||[]}});
-  }
- }catch(e){console.log(e);toast('Firestore rule allow karo')}
- render();
+ document.getElementById('feed').innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af">Loading...</div>';
+ try{let snap=await db.collection('ideas').orderBy('createdAt','desc').get();ideas=snap.docs.map(d=>({id:d.id,...d.data()})); if(ideas.length==0) throw 'empty';}
+ catch(e){
+  try{let snap=await db.collection('ideas').get();ideas=snap.docs.map(d=>({id:d.id,...d.data()}));}
+  catch{ideas=[
+   {id:'demo1',tagline:'Coding & Coffee in Lucknow',desc:'Lets code together.',cat:'Tech',location:'Hazratganj',dateStr:'SAT, OCT 26 • 5:00 PM',user:'Apex Host',uid:'',joinedUsers:[1,2],banner:'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600',banners:[],commentsList:[]},
+   {id:'demo2',tagline:'AI Builders Meetup - Bela',desc:'AI projects for students.',cat:'AI',location:'Bela, UP',dateStr:'SUN, OCT 27 • 10:00 AM',user:'Shivanshu',uid:'',joinedUsers:[1],banner:'',banners:[],commentsList:[]}
+  ];}
+ } render();
 }
+async function loadNotifs(){if(!currentUser)return;try{let snap=await db.collection('notifs').where('toUid','==',currentUser.uid).orderBy('createdAt','desc').limit(20).get();notifs=snap.docs.map(d=>d.data());}catch{let snap=await db.collection('notifs').where('toUid','==',currentUser.uid).get();notifs=snap.docs.map(d=>d.data());}updateBadge()}
+function updateBadge(){let b=document.getElementById('notifBadge');if(notifs.length>0){b.style.display='block';b.innerText=notifs.length}else b.style.display='none';}
 
-function saveProfile(){let n=document.getElementById('pName').value.trim();if(!n){toast('Name likho');return}profile={name:n,class:document.getElementById('pClass').value,interest:document.getElementById('pInterest').value};localStorage.setItem('apex_profile_'+currentUser.uid,JSON.stringify(profile));document.getElementById('profileM').classList.remove('open');toast('Profile saved ✅')}
-function handleAuth(){if(currentUser){openProfileView()}else{auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast(e.message))}}
-function setF(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');mainF=el.dataset.f;setActiveNav('home');render()}
-function setActiveNav(n){document.querySelectorAll('.bottom .nav-item').forEach(e=>e.classList.remove('active'));if(n=='home')document.getElementById('navHome').classList.add('active');if(n=='explore')document.getElementById('navExplore').classList.add('active');if(n=='alerts')document.getElementById('navAlerts').classList.add('active');if(n=='profile')document.getElementById('navProfile').classList.add('active');}
-function goHome(){mainF='today';document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));document.querySelector('[data-f=today]').classList.add('active');setActiveNav('home');render();window.scrollTo(0,0)}
-function openExplore(){setActiveNav('explore');renderExplore();document.getElementById('exploreM').classList.add('open')}function closeExplore(){document.getElementById('exploreM').classList.remove('open');setActiveNav('home')}
-function renderExplore(){let q=(document.getElementById('exploreSearch')?.value||'').toLowerCase();let list=ideas.filter(i=>(i.tagline+i.cat).toLowerCase().includes(q));document.getElementById('exploreList').innerHTML=list.map(i=>`<div class=item onclick="closeExplore();openDetail('${i.id}')"><div class=avatar>${i.user[0]}</div><div><b style="font-size:13px">${i.tagline}</b><div style="font-size:11px;color:#6b7280">${i.cat}</div></div></div>`).join('')||'No results'}
-function openAlerts(){setActiveNav('alerts');document.getElementById('alertsList').innerHTML=notifications.length?notifications.map(n=>`<div class=item><div>🔔</div><div><b style="font-size:13px">${n.title}</b><div style="font-size:12px;color:#6b7280">${n.msg}</div></div></div>`).join(''):'<div style="text-align:center;padding:20px;color:#9ca3af">No alerts</div>';document.getElementById('alertsM').classList.add('open')}function closeAlerts(){document.getElementById('alertsM').classList.remove('open');setActiveNav('home')}
-function openProfileView(){if(!currentUser){toast('Login karo');handleAuth();return}setActiveNav('profile');let name=profile?.name||currentUser.displayName||'You';document.getElementById('pvName').innerText=name;document.getElementById('pvAvatar').innerText=name[0];document.getElementById('pvClass').innerText=(profile?.class||'')+' • '+(profile?.interest||'');document.getElementById('pvEditName').value=profile?.name||'';document.getElementById('pvEditClass').value=profile?.class||'';document.getElementById('pvIdeas').innerText=ideas.filter(i=>i.uid===currentUser.uid).length;document.getElementById('pvJoined').innerText=ideas.filter(i=>i.joinedUsers.includes(currentUser.uid)).length;document.getElementById('profileViewM').classList.add('open')}function closeProfileView(){document.getElementById('profileViewM').classList.remove('open');setActiveNav('home')}
-function updateProfile(){profile={...profile,name:document.getElementById('pvEditName').value,class:document.getElementById('pvEditClass').value};localStorage.setItem('apex_profile_'+currentUser.uid,JSON.stringify(profile));toast('Updated ✅');closeProfileView();render()}
-function logout(){if(confirm('Logout?')){auth.signOut();closeProfileView();toast('Logged out')}}
-function previewBanner(e){let f=e.target.files[0];if(!f)return;if(f.size>800*1024){toast('Image 800KB se kam rakho');return}let r=new FileReader();r.onload=function(ev){bannerData=ev.target.result;document.getElementById('bannerPrev').src=bannerData;document.getElementById('bannerPrev').style.display='block'};r.readAsDataURL(f)}
+function handleAuth(){if(currentUser)return;auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast(e.message))}
+function setF(el){document.querySelectorAll('#filterBar .chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');mainF=el.dataset.f;render()}
+function filterBy(cat){let el=document.querySelector(`#filterBar [data-f="${cat}"]`);if(el)setF(el);}
+function goHome(){setF(document.querySelector('#filterBar [data-f="all"]'));window.scrollTo(0,0)}
+function openMy(){setF(document.querySelector('#filterBar [data-f="my"]'))}
+
+async function previewBanner(e){
+ banners=[];document.getElementById('bannerPrev').innerHTML='';
+ let files=Array.from(e.target.files).slice(0,3);
+ for(let file of files){
+  let data=await compress(file);
+  banners.push(data);
+  document.getElementById('bannerPrev').innerHTML+=`<img src="${data}">`;
+ }
+}
+function compress(file){return new Promise(res=>{
+ let r=new FileReader();r.onload=ev=>{
+  let img=new Image();img.onload=()=>{
+   let c=document.createElement('canvas');let MAX=600,w=img.width,h=img.height;
+   if(w>h){if(w>MAX){h*=MAX/w;w=MAX}}else{if(h>MAX){w*=MAX/h;h=MAX}}
+   c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+   res(c.toDataURL('image/jpeg',0.6));
+  };img.src=ev.target.result;
+ };r.readAsDataURL(file);
+});}
+
 function render(){
  let q=(document.getElementById('searchInput')?.value||'').toLowerCase();
  let list=[...ideas];
- if(q)list=list.filter(i=>(i.tagline+i.desc).toLowerCase().includes(q));
- if(mainF=='trending')list.sort((a,b)=>b.up-a.up);
- if(mainF=='my'){if(!currentUser){document.getElementById('feed').innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af">Login karo for My Ideas</div>';return}list=list.filter(i=>i.uid===currentUser.uid||i.joinedUsers.includes(currentUser.uid))}
- const feed=document.getElementById('feed');if(list.length==0){feed.innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af">No ideas yet</div>';return}
+ if(q)list=list.filter(i=>(i.tagline+i.desc+(i.location||'')+i.cat).toLowerCase().includes(q));
+ if(mainF=='my'){if(!currentUser){document.getElementById('feed').innerHTML='<div style="text-align:center;padding:40px">Login for My Events</div>';return}list=list.filter(i=>i.uid===currentUser.uid||i.joinedUsers?.includes(currentUser.uid))}
+ else if(mainF!='all') list=list.filter(i=>i.cat===mainF);
+ let feed=document.getElementById('feed');if(list.length==0){feed.innerHTML='<div style="text-align:center;padding:40px;color:#9ca3af">No events</div>';return}
  feed.innerHTML='';list.forEach(idea=>{
-  feed.innerHTML+=`<div class="card" onclick="openDetail('${idea.id}')">${idea.banner?`<img class=banner src="${idea.banner}">`:''}<div class=card-inner><div style="display:flex;gap:8px;align-items:center"><div class=avatar>${idea.user[0]}</div><b style="font-size:12px">${idea.user} • Just now</b></div><div class=tagline>${idea.tagline}</div><div class=desc>${idea.desc.substring(0,90)}...</div><div class=watermark>© ${idea.user} • Protected</div><div class=tags>${(idea.tags||[]).map(t=>`<span class=tag>#${t}</span>`).join('')}</div><div class=stats><span>👍 ${idea.up||0}</span><span>💬 ${(idea.commentsList||[]).length}</span><span>👥 ${(idea.joinedUsers||[]).length+ (idea.collab||0)}</span></div></div></div>`;
+  let firstBanner=idea.banners?.[0]||idea.banner||'';
+  feed.innerHTML+=`<div class="card" onclick="openDetail('${idea.id}')">${firstBanner?`<img class=banner src="${firstBanner}">`:''}<div class=card-inner><div class=date>${idea.dateStr||'THIS WEEK'} • ${idea.cat||''}</div><div class=tagline>${idea.tagline}</div><div class=meta>📍 ${idea.location||'Online'} • ${idea.user} • ${idea.joinedUsers?.length||0} going</div></div></div>`;
  });
 }
-function openDetail(id){detailIdea=ideas.find(x=>x.id===id);document.getElementById('dTitle').innerText=detailIdea.tagline;document.getElementById('dMainTitle').innerText=detailIdea.tagline;document.getElementById('dDesc').innerText=detailIdea.desc;document.getElementById('dUser').innerText=detailIdea.user;document.getElementById('dCat').innerText=detailIdea.cat;document.getElementById('dTime').innerText=detailIdea.time||'';let b=document.getElementById('dBanner');if(detailIdea.banner){b.src=detailIdea.banner;b.style.display='block'}else b.style.display='none';document.getElementById('dComments').innerHTML=(detailIdea.commentsList||[]).map(c=>`<div style="padding:6px 0;border-bottom:1px solid #f3f4f6"><b style="font-size:12px">${c.user}</b><div style="font-size:13px">${c.text}</div></div>`).join('')||'No comments';updateJoinBtn();document.getElementById('detailM').classList.add('open')}
+function openDetail(id){detailIdea=ideas.find(x=>x.id===id);document.getElementById('dTitle').innerText=detailIdea.cat||'Event';document.getElementById('dMainTitle').innerText=detailIdea.tagline;document.getElementById('dDesc').innerText=detailIdea.desc;document.getElementById('dDate').innerText=detailIdea.dateStr||'';document.getElementById('dCat').innerText=detailIdea.cat||'';document.getElementById('dLoc').innerText='📍 '+(detailIdea.location||'Online')+' (Map)';let gal=document.getElementById('dGallery');let all=[...(detailIdea.banners||[]),detailIdea.banner].filter(Boolean);gal.innerHTML=all.map(u=>`<img src="${u}" onclick="window.open('${u}','_blank')" style="width:90px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer">`).join('');let b=document.getElementById('dBanner');if(all.length>0){b.src=all[0];b.style.display='block'}else b.style.display='none';document.getElementById('dComments').innerHTML=(detailIdea.commentsList||[]).map(c=>`<div style="padding:6px 0;border-bottom:1px solid #f3f4f6"><b style="font-size:12px">${c.user}</b><div style="font-size:13px">${c.text}</div></div>`).join('')||'No comments';document.getElementById('detailM').classList.add('open');updateBtn()}
 function closeDetail(){document.getElementById('detailM').classList.remove('open')}
-function updateJoinBtn(){let btn=document.getElementById('dJoinBtn');let del=document.getElementById('dDelBtn');if(currentUser&&detailIdea.joinedUsers.includes(currentUser.uid)){btn.innerText='✓ Already Joined';btn.disabled=true;btn.style.background='#e5e7eb';btn.style.color='#6b7280'}else{btn.innerText='Attend / Join';btn.disabled=false;btn.style.background='#7c5cff';btn.style.color='#fff'}if(currentUser&&detailIdea.uid===currentUser.uid){del.style.display='block'}else del.style.display='none'}
-async function joinFromDetail(){if(!currentUser){toast('Login karo');handleAuth();return}if(detailIdea.joinedUsers.includes(currentUser.uid)){toast('Already joined');return}try{detailIdea.joinedUsers.push(currentUser.uid);await db.collection('ideas').doc(detailIdea.id).update({joinedUsers:detailIdea.joinedUsers,collab:firebase.firestore.FieldValue.increment(1)});notifications.unshift({title:'Joined',msg:`You joined ${detailIdea.tagline}`});render();updateJoinBtn();toast('Joined & saved to Firestore 🎉')}catch(e){toast('Firestore rules check karo')}} 
-async function postDetailComment(){if(!currentUser){toast('Login');return}let txt=document.getElementById('dCommentInput').value.trim();if(!txt)return;try{let c={user:profile?.name||currentUser.displayName||'You',text:txt};detailIdea.commentsList.push(c);await db.collection('ideas').doc(detailIdea.id).update({commentsList:detailIdea.commentsList});document.getElementById('dCommentInput').value='';document.getElementById('dComments').innerHTML=detailIdea.commentsList.map(x=>`<div style="padding:6px 0;border-bottom:1px solid #f3f4f6"><b style="font-size:12px">${x.user}</b><div style="font-size:13px">${x.text}</div></div>`).join('');render();toast('Comment saved')}catch(e){toast('Error: '+e.message)}}
-function openCreate(){if(!currentUser){toast('Login karo');handleAuth();return}if(!profile){document.getElementById('profileM').classList.add('open');return}document.getElementById('createM').classList.add('open')}function closeCreate(){document.getElementById('createM').classList.remove('open');bannerData='';document.getElementById('bannerPrev').style.display='none'}
-async function createIdea(){let tag=document.getElementById('cTagline').value.trim(),d=document.getElementById('cDesc').value.trim(),cat=document.getElementById('cCat').value,tags=document.getElementById('cTags').value.split(',').map(x=>x.trim()).filter(Boolean);if(!tag||!d){toast('Tagline + 
+function updateBtn(){let isMine=currentUser&&detailIdea.uid===currentUser.uid;document.getElementById('dEditBtn').style.display=isMine?'block':'none';document.getElementById('dDelBtn').style.display=isMine?'block':'none';let btn=document.getElementById('dJoinBtn');if(currentUser&&detailIdea.joinedUsers?.includes(currentUser.uid)){btn.innerText='✓ You are going';btn.disabled=true}else{btn.innerText='Attend this Event';btn.disabled=false}}
+function openMap(){if(!detailIdea.location){toast('No location');return}window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(detailIdea.location),'_blank')}
+function shareEvent(){let text=`Join ${detailIdea.tagline} at ${detailIdea.location} - ${window.location.href}`;if(navigator.share){navigator.share({title:detailIdea.tagline,text})}else{window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}}
+async function joinFromDetail(){if(!currentUser){toast('Login karo');handleAuth();return}detailIdea.joinedUsers=detailIdea.joinedUsers||[];if(detailIdea.joinedUsers.includes(currentUser.uid)){toast('Already');return}detailIdea.joinedUsers.push(currentUser.uid);if(detailIdea.id.startsWith('demo')){toast('Joined Demo ✅');updateBtn();render();return}try{await db.collection('ideas').doc(detailIdea.id).update({joinedUsers:detailIdea.joinedUsers}); if(detailIdea.uid!==currentUser.uid) await db.collection('notifs').add({toUid:detailIdea.uid,msg:`${profile?.name||'Someone'} joined your event: ${detailIdea.tagline}`,createdAt:firebase.firestore.FieldValue.serverTimestamp()});toast('You are going! ✅');updateBtn();render();}catch(e){toast(e.message)}}
+function openCreate(){if(!currentUser){toast('Login');handleAuth();return}editId=null;banners=[];document.getElementById('createTitle').innerText='Create Meetup 📅';document.getElementById('cTagline').value='';document.getElementById('cDesc').value='';document.getElementById('cLocation').value='';document.getElementById('cDate').value='';document.getElementById('bannerPrev').innerHTML='';document.getElementById('postBtn').innerText='Create Event';document.getElementById('createM').classList.add('open')}
+function closeCreate(){document.getElementById('createM').classList.remove('open')}
+function editEvent(){closeDetail();editId=detailIdea.id;banners=detailIdea.banners||[];if(detailIdea.banner&&!banners.includes(detailIdea.banner))banners.unshift(detailIdea.banner);document.getElementById('createTitle').innerText='Edit Event ✏️';document.getElementById('cTagline').value=detailIdea.tagline;document.getElementById('cDesc').value=detailIdea.desc;document.getElementById('cLocation').value=detailIdea.location||'';document.getElementById('cCat').value=detailIdea.cat||'Tech';document.getElementById('bannerPrev').innerHTML=banners.map(u=>`<img src="${u}">`).join('');document.getElementById('postBtn').innerText='Update Event';document.getElementById('createM').classList.add('open')}
+async function saveEvent(){
+ let tag=document.getElementById('cTagline').value.trim(),d=document.getElementById('cDesc').value.trim(),loc=document.getElementById('cLocation').value,cat=document.getElementById('cCat').value,dt=document.getElementById('cDate').value;
+ if(!tag||!d){toast('Title+Desc');return}
+ document.getElementById('postBtn').innerText='Creating...';document.getElementById('postBtn').disabled=true;
+ try{
+  let dateStr=dt?new Date(dt).toLocaleString('en-IN',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).toUpperCase(): (editId?detailIdea?.dateStr:'THIS WEEK');
+  let bannerFirst=banners[0]||'';
+  if(editId){
+   await db.collection('ideas').doc(editId).update({tagline:tag,desc:d,location:loc,cat,dateStr,banner:bannerFirst,banners});
+   let idx=ideas.findIndex(i=>i.id===editId);ideas[idx]={...ideas[idx],tagline:tag,desc:d,location:loc,cat,dateStr,banner:bannerFirst,banners};
+   toast('Updated ✅');
+  }else{
+   let doc=await db.collection('ideas').add({tagline:tag,desc:d,location:loc,cat,dateStr,user:profile?.name||currentUser.displayName||'You',uid:currentUser.uid,joinedUsers:[currentUser.uid],banner:bannerFirst,banners,commentsList:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+   ideas.unshift({id:doc.id,tagline:tag,desc:d,location:loc,cat,dateStr,user:profile?.name||'You',uid:currentUser.uid,joinedUsers:[currentUser.uid],banner:bannerFirst,banners,commentsList:[]});
+   toast('Meetup Created 🚀');
+  }
+  closeCreate();render();
+ }catch(e){toast('Error: '+e.message)}
+ document.getElementById('postBtn').innerText='Create Event';document.getElementById('postBtn').disabled=false;
+}
+async function deleteIdea(){if(!confirm('Delete?'))return;try{await db.collection('ideas').doc(detailIdea.id).delete();ideas=ideas.filter(i=>i.id!==detailIdea.id);closeDetail();render();toast('Deleted')}catch(e){toast(e.message)}}
+async function postComment(){if(!currentUser){toast('Login');return}let txt=document.getElementById('dCommentInput').value.trim();if(!txt)return;let c={user:profile?.name||currentUser.dis
