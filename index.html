@@ -1,191 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen5 - Final Pro</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApexTeen 5.0 - Final</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
-<style>.active-pill{background:#7c5cff!important;color:white!important;border-color:#7c5cff!important} .no-scrollbar::-webkit-scrollbar{display:none}</style>
 </head>
-<body class="bg-[#f7f6ff] pb-[70px]">
-<div class="max-w-[420px] mx-auto bg-white min-h-screen shadow relative">
-<div class="sticky top-0 bg-white z-20 p-4 border-b">
-<div class="flex justify-between items-center">
-<h1 class="font-black text-xl tracking-tight">ApexTeen5</h1>
-<div id="authBox"><button onclick="doLogin()" class="bg-[#7c5cff] text-white text-xs px-4 py-1.5 rounded-full font-bold">Login with Google</button></div>
+<body class="bg-black text-white min-h-screen">
+
+<!-- HEADER -->
+<header class="p-4 flex justify-between items-center border-b border-gray-800 sticky top-0 bg-black z-10">
+  <h1 class="font-bold text-xl">ApexTeen 5.0</h1>
+  <div id="authBox"><button id="loginBtn" class="bg-white text-black px-4 py-2 rounded-full font-bold">Login with Google</button></div>
+</header>
+
+<!-- CREATE POST -->
+<div id="createBox" class="hidden max-w-xl mx-auto p-4 border-b border-gray-800">
+  <textarea id="postText" placeholder="What's your idea?" class="w-full bg-gray-900 rounded-xl p-3 outline-none"></textarea>
+  <input type="file" id="postImage" accept="image/*" class="mt-2 text-sm">
+  <button id="postBtn" class="mt-3 w-full bg-white text-black py-2 rounded-full font-bold">Post Idea</button>
 </div>
-<div class="mt-3 relative">
-<input id="searchBox" oninput="renderIdeas()" placeholder="Search ideas, projects..." class="w-full bg-gray-50 border rounded-full py-3 pl-12 pr-4 text-sm outline-none focus:border-violet-400">
-<span class="absolute left-4 top-3.5 opacity-50">🔍</span>
-</div>
-</div>
-<div class="px-4 pt-3 flex gap-2 overflow-x-auto no-scrollbar">
-<button onclick="setTimeFilter(this,'all')" class="timeFilter active-pill px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">Trending</button>
-<button onclick="setTimeFilter(this,'today')" class="timeFilter px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">Today</button>
-<button onclick="setTimeFilter(this,'new')" class="timeFilter px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">New</button>
-<button onclick="setTimeFilter(this,'mine')" class="timeFilter px-5 py-2 rounded-full border bg-gray-100 text-sm font-medium whitespace-nowrap">My Ideas</button>
-</div>
-<div class="px-4 pt-2 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
-<button onclick="setCat(this,'All')" class="catFilter active-pill px-4 py-2 rounded-full border text-xs font-medium">All Ideas</button>
-<button onclick="setCat(this,'AI')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">AI Projects</button>
-<button onclick="setCat(this,'Tech')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Tech</button>
-<button onclick="setCat(this,'Gaming')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Gaming</button>
-<button onclick="setCat(this,'Social')" class="catFilter px-4 py-2 rounded-full bg-gray-100 text-xs">Social</button>
-</div>
-<div id="homePage">
-<div id="mapCard" class="mx-3 mt-2 rounded-2xl overflow-hidden h-[160px] relative"><div id="map" class="h-full w-full"></div><div class="absolute bottom-2 left-2 bg-white text-[11px] px-3 py-1 rounded-full shadow">📍 Vindhyanagar • <span id="locInfo">Selecting...</span></div></div>
-<div id="ideasList" class="p-3 space-y-4"></div>
-</div>
-<div id="explorePage" class="hidden p-4">
-<h2 class="font-bold">Explore Nearby Teens</h2>
-<div id="exploreMap" class="h-[300px] rounded-2xl mt-3"></div>
-<div class="mt-3 text-sm text-gray-600">Country filter: <select id="f_country" onchange="renderIdeas()" class="border rounded p-1"><option value="">All World</option></select></div>
-</div>
-<div id="createPage" class="hidden p-4">
-<h2 class="font-bold text-lg">Create New Idea 💡</h2>
-<div class="mt-3 space-y-2 bg-white border rounded-2xl p-4">
-<input id="newTitle" placeholder="Idea Title (ex: AI Study Buddy)" class="w-full border rounded-lg p-2.5 text-sm">
-<select id="newCat" class="w-full border rounded-lg p-2.5 text-sm"><option>AI</option><option>Tech</option><option>Gaming</option><option>Social</option></select>
-<textarea id="newDesc" placeholder="Describe your idea..." class="w-full border rounded-lg p-2.5 text-sm h-24"></textarea>
-<div class="grid grid-cols-1 gap-2">
-<select id="c_country" onchange="loadStates2()" class="border rounded-lg p-2 text-sm"><option>Select Country</option></select>
-<select id="c_state" onchange="loadCities2()" class="border rounded-lg p-2 text-sm"><option>Select State</option></select>
-<select id="c_city" class="border rounded-lg p-2 text-sm"><option>Select District/City</option></select>
-</div>
-<button onclick="createIdea()" class="w-full bg-[#7c5cff] text-white py-3 rounded-full font-bold mt-2">Post Idea</button>
-<p class="text-[10px] text-gray-400 text-center">⚠️ Bad words auto-blocked | Safe for teens</p>
-</div>
-</div>
-<div id="notifPage" class="hidden p-4"><h2 class="font-bold">Notifications</h2><div id="notifList" class="mt-3 space-y-2 text-sm"></div></div>
-<div id="profilePage" class="hidden p-4"><h2 class="font-bold">Profile</h2><div id="profileBox" class="mt-4 bg-violet-50 p-4 rounded-2xl text-center">Login karo profile dekhne ke liye</div></div>
-<div class="fixed bottom-0 w-full max-w-[420px] bg-white border-t flex justify-around py-2 z-30">
-<button onclick="showPage('home')" class="navBtn flex flex-col items-center text-[#7c5cff]"><span class="text-xl">⌂</span><span class="text-[11px]">Home</span></button>
-<button onclick="showPage('explore')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">◎</span><span class="text-[11px]">Explore</span></button>
-<button onclick="showPage('create')" class="navBtn flex flex-col items-center"><span class="bg-[#7c5cff] text-white w-9 h-9 rounded-full flex items-center justify-center text-xl">+</span><span class="text-[11px] mt-1">Create</span></button>
-<button onclick="showPage('notif')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">🔔</span><span class="text-[11px]">Notifications</span></button>
-<button onclick="showPage('profile')" class="navBtn flex flex-col items-center opacity-60"><span class="text-xl">👤</span><span class="text-[11px]">Profile</span></button>
-</div>
-</div>
-<script>
-// --- CONFIG - FIXED ---
+
+<!-- FEED -->
+<main id="feed" class="max-w-xl mx-auto p-4 space-y-4"></main>
+
+<!-- PROFILE BOX -->
+<div id="profileBox" class="max-w-xl mx-auto p-4 text-center text-gray-400">Login karo profile dekhne ke liye</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// 👇 TUMHARA CONFIG YAHI RAHEGA - CHANGE MAT KARNA
 const firebaseConfig = {
-  apiKey: "AIzaSyDu1BzhS8Thx5TxGFnlP93oQuI8Whl7Yjc",
+  apiKey: "AIzaSy... (tumhara wala hi rahega)",
   authDomain: "apexteen-5.firebaseapp.com",
   projectId: "apexteen-5",
-  storageBucket: "apexteen-5.firebasestorage.app",
-  messagingSenderId: "428961039333",
-  appId: "1:428961039333:web:5dc05aae6f4fbe6c60250c"
+  storageBucket: "apexteen-5.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
 };
-try{ firebase.initializeApp(firebaseConfig); }catch(e){}
-const auth = firebase.auth ? firebase.auth() : null;
-const db = firebase.firestore ? firebase.firestore() : null;
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const provider = new GoogleAuthProvider();
+
 let currentUser = null;
-let timeFilter='all', catFilter='All', worldData=[];
-let ideas = JSON.parse(localStorage.getItem('apex_ideas')||'null') || [
- {id:1,title:"AI Study Buddy for Teens",desc:"An AI tutor that helps teens study smarter with quiz mode, flashcards, and 24/7 homework help.",cat:"AI",author:"Alex",time:"2h ago",upvotes:42,comments:[{t:"Great idea!"}],collab:5,country:"India",state:"Madhya Pradesh",city:"Singrauli",verified:true},
- {id:2,title:"Local Study Group Finder",desc:"Connect with teens nearby for in-person study sessions. Join safe group study meetups at libraries, cafes, or parks.",cat:"Social",author:"Maya",time:"5h ago",upvotes:28,comments:[],collab:7,country:"USA",state:"California",city:"Downtown Library",verified:true,dist:"0.8mi away"}
-];
-let notifs=[];
-function doLogin(){
- if(!auth){ alert("Firebase config add karo"); return; }
- const p = new firebase.auth.GoogleAuthProvider();
- auth.signInWithPopup(p).then(r=>{
-  currentUser=r.user;
-  document.getElementById('authBox').innerHTML=`<span class="text-xs">✅ ${r.user.displayName}</span>`;
-  document.getElementById('profileBox').innerHTML=`<img src="${r.user.photoURL}" class="w-16 h-16 rounded-full mx-auto"><div class="font-bold mt-2">${r.user.displayName}</div><div class="text-xs">${r.user.email}</div><div class="mt-2 text-xs bg-violet-600 text-white px-3 py-1 rounded-full inline-block">✓ Parent Verified</div>`;
-  addNotif("Logged in successfully!");
- }).catch(e=>alert(e.message+"\n\nFix: Firebase > Authentication > Authorized domains me apna github.io domain add karo"));
-}
-if(auth){ auth.onAuthStateChanged(u=>{ if(u){ currentUser=u; document.getElementById('authBox').innerHTML=`✅ ${u.displayName}`; } }); }
-let map, exploreMap;
-setTimeout(()=>{
- map = L.map('map',{zoomControl:false,attributionControl:false}).setView([24.07,82.64],13);
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
- L.marker([24.07,82.64]).addTo(map).bindPopup("You are here - Vindhyanagar").openPopup();
-},500);
-fetch('https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries%2Bstates%2Bcities.json').then(r=>r.json()).then(d=>{
- worldData=d;
- const opts = (id)=>{ let el=document.getElementById(id); el.innerHTML='<option value="">All/Select</option>'; d.forEach(c=>{ el.innerHTML+=`<option value="${c.id}" data-name="${c.name}">${c.name}</option>`; }); };
- opts('f_country'); opts('c_country');
- document.getElementById('f_country').innerHTML='<option value="">All World</option>'+d.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
- let sel=document.getElementById('c_country'); for(let o of sel.options) if(o.text=='India') sel.value=o.value; loadStates2();
+
+const authBox = document.getElementById('authBox');
+const createBox = document.getElementById('createBox');
+const profileBox = document.getElementById('profileBox');
+const feed = document.getElementById('feed');
+
+document.getElementById('loginBtn')?.addEventListener('click', () => signInWithPopup(auth, provider));
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  if(user){
+    authBox.innerHTML = `<span class="text-sm">✅ ${user.displayName}</span> <button id="logoutBtn" class="ml-2 bg-gray-800 px-3 py-1 rounded-full text-sm">Logout</button>`;
+    document.getElementById('logoutBtn').onclick = () => signOut(auth);
+    createBox.classList.remove('hidden');
+    profileBox.innerHTML = `<div class="bg-gray-900 p-4 rounded-xl"><p class="font-bold">${user.displayName}</p><p class="text-sm">${user.email}</p></div>`;
+  } else {
+    authBox.innerHTML = `<button id="loginBtn" class="bg-white text-black px-4 py-2 rounded-full font-bold">Login with Google</button>`;
+    document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
+    createBox.classList.add('hidden');
+    profileBox.innerHTML = `Login karo profile dekhne ke liye`;
+  }
 });
-function loadStates2(){ 
- let cid=document.getElementById('c_country').value; let co=worldData.find(c=>c.id==cid);
- let s=document.getElementById('c_state'); s.innerHTML='<option>Select State</option>';
- if(co) co.states.forEach(st=>s.innerHTML+=`<option value="${st.id}" data-name="${st.name}">${st.name}</option>`);
- document.getElementById('locInfo').innerText = co?co.name:'';
-}
-function loadCities2(){
- let cid=document.getElementById('c_country').value; let sid=document.getElementById('c_state').value;
- let co=worldData.find(c=>c.id==cid); let st=co?.states.find(s=>s.id==sid);
- let ci=document.getElementById('c_city'); ci.innerHTML='<option>Select District</option>';
- if(st) st.cities.forEach(ct=>ci.innerHTML+=`<option>${ct.name}</option>`);
-}
-function renderIdeas(){
- let search=document.getElementById('searchBox').value.toLowerCase();
- let fCountry=document.getElementById('f_country')?.value||'';
- let list = ideas.filter(i=>{
-  if(catFilter!='All' && i.cat!=catFilter) return false;
-  if(search && ! (i.title.toLowerCase().includes(search) || i.desc.toLowerCase().includes(search))) return false;
-  if(fCountry && i.country!=fCountry) return false;
-  if(timeFilter=='mine' && currentUser && i.author!=currentUser.displayName) return false;
-  return true;
- });
- if(timeFilter=='new') list = [...list].reverse();
- if(timeFilter=='trending') list = [...list].sort((a,b)=>b.upvotes-a.upvotes);
- document.getElementById('ideasList').innerHTML = list.map(i=>`
- <div class="bg-white rounded-2xl shadow-sm border p-4">
-  <div class="flex justify-between">
-   <div class="flex gap-2">
-    <div class="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center font-bold text-violet-600">${i.author[0]}</div>
-    <div><div class="text-[13px]">${i.author} • ${i.time} • ${i.verified?'<span class="bg-violet-100 text-violet-700 text-[10px] px-2 py-0.5 rounded-full">✓ Parent Verified</span>':''}</div><div class="font-bold text-[15px]">${i.title}</div></div>
-   </div>
-   <button onclick="report(${i.id})" class="text-[10px] text-gray-400">Report</button>
-  </div>
-  <p class="text-[13px] text-gray-600 mt-2">${i.desc}</p>
-  <div class="flex gap-2 mt-2"><span class="bg-violet-50 text-violet-600 text-[11px] px-2 py-1 rounded">#${i.cat}</span><span class="bg-gray-50 text-[11px] px-2 py-1 rounded">${i.city||''} ${i.dist||''}</span></div>
-  <div class="flex justify-between text-[12px] mt-3 text-gray-700"><span>👍 ${i.upvotes} upvotes</span><span>💬 ${i.comments.length} comments</span><span>👥 ${i.collab} collaborators</span></div>
-  <div class="flex gap-2 mt-3">
-   <button onclick="upvote(${i.id})" class="flex-1 border border-violet-200 rounded-full py-2 text-xs font-medium">↑ Upvote</button>
-   <button onclick="addComment(${i.id})" class="flex-1 bg-gray-100 rounded-full py-2 text-xs font-medium">Comment</button>
-   <button onclick="joinTeam(${i.id})" class="flex-1 bg-[#7c5cff] text-white rounded-full py-2 text-xs font-medium">Join Team</button>
-  </div>
- </div>
- `).join('') || '<div class="text-center text-sm text-gray-400 py-10">No ideas found</div>';
- localStorage.setItem('apex_ideas', JSON.stringify(ideas));
-}
-function upvote(id){ let i=ideas.find(x=>x.id==id); i.upvotes++; addNotif(`You upvoted ${i.title}`); renderIdeas(); }
-function addComment(id){ let txt=prompt("Comment likho:"); if(!txt) return; if(isBad(txt)){ alert("Unsafe word blocked!"); return;} let i=ideas.find(x=>x.id==id); i.comments.push({t:txt}); addNotif(`New comment on ${i.title}`); renderIdeas(); }
-function joinTeam(id){ let i=ideas.find(x=>x.id==id); i.collab++; addNotif(`Joined team: ${i.title}`); renderIdeas(); }
-function report(id){ if(confirm("Report this idea?")){ addNotif("Reported - we will review (Teen Safety)"); } }
-function isBad(t){ let bad=["abuse","sex","drug"]; return bad.some(b=>t.toLowerCase().includes(b)); }
-function createIdea(){
- let title=document.getElementById('newTitle').value.trim();
- let desc=document.getElementById('newDesc').value.trim();
- let cat=document.getElementById('newCat').value;
- let cSel=document.getElementById('c_country'); let cName=cSel.options[cSel.selectedIndex]?.dataset?.name||'';
- let sSel=document.getElementById('c_state'); let sName=sSel.options[sSel.selectedIndex]?.dataset?.name||'';
- let city=document.getElementById('c_city').value;
- if(!title || !desc) return alert("Title + Description likho");
- if(isBad(title+desc)) return alert("Unsafe content blocked!");
- ideas.unshift({id:Date.now(),title,desc,cat,author:currentUser?.displayName||'You',time:"now",upvotes:0,comments:[],collab:1,country:cName,state:sName,city,verified:!!currentUser});
- document.getElementById('newTitle').value=''; document.getElementById('newDesc').value='';
- addNotif("Idea posted!"); showPage('home'); renderIdeas();
-}
-function setTimeFilter(el,v){ document.querySelectorAll('.timeFilter').forEach(b=>b.classList.remove('active-pill')); el.classList.add('active-pill'); timeFilter=v; renderIdeas(); }
-function setCat(el,v){ document.querySelectorAll('.catFilter').forEach(b=>b.classList.remove('active-pill')); el.classList.add('active-pill'); catFilter=v; renderIdeas(); }
-function showPage(p){
- ['home','explore','create','notif','profile'].forEach(x=>document.getElementById(x+'Page').style.display='none');
- document.getElementById(p+'Page').style.display='block';
- if(p=='explore' && !exploreMap){ setTimeout(()=>{ exploreMap=L.map('exploreMap').setView([24.07,82.64],3); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(exploreMap); },200); }
-}
-function addNotif(t){ notifs.unshift(t); document.getElementById('notifList').innerHTML=notifs.map(n=>`<div class="bg-white border rounded-xl p-3">${n}</div>`).join(''); }
-renderIdeas();
+
+document.getElementById('postBtn').onclick = async () => {
+  const text = document.getElementById('postText').value.trim();
+  const file = document.getElementById('postImage').files[0];
+  if(!text && !file) return alert('Kuch likho ya photo lagao!');
+  document.getElementById('postBtn').innerText = 'Posting...';
+  let imageUrl = "";
+  if(file){
+    const storageRef = ref(storage, `posts/${Date.now()}_${file.name}`);
+    await uploadBytes(storageRef, file);
+    imageUrl = await getDownloadURL(storageRef);
+  }
+  await addDoc(collection(db, "posts"), { text, imageUrl, uid: currentUser.uid, name: currentUser.displayName, email: currentUser.email, createdAt: serverTimestamp() });
+  document.getElementById('postText').value = "";
+  document.getElementById('postImage').value = "";
+  document.getElementById('postBtn').innerText = 'Post Idea';
+};
+
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+onSnapshot(q, (snap) => {
+  feed.innerHTML = "";
+  snap.forEach(doc => {
+    const p = doc.data();
+    feed.innerHTML += `<div class="bg-gray-900 rounded-xl p-4"><p class="font-bold text-sm mb-1">${p.name}</p><p class="mb-2">${p.text || ''}</p>${p.imageUrl ? `<img src="${p.imageUrl}" class="rounded-xl w-full">` : ''}</div>`;
+  });
+});
 </script>
 </body>
 </html>
