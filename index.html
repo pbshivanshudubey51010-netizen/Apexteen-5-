@@ -1,94 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen 5.0</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>ApexTeen5</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#f8f7ff;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:90px}
+.header{position:sticky;top:0;background:#fff;z-index:20;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}
+.header h1{font-size:22px;font-weight:800}
+.header .login{font-size:13px;background:#7c5cff;color:#fff;padding:8px 14px;border-radius:20px;border:none;font-weight:600;cursor:pointer}
+.search-wrap{padding:12px 16px;position:sticky;top:57px;background:#f8f7ff;z-index:10}
+.search{width:100%;background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:12px 16px;display:flex;gap:10px;align-items:center}
+.search input{border:none;outline:none;width:100%;font-size:15px}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:6px 16px}
+.chip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid #e5e7eb;background:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.chip.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
+.subfilters{display:flex;gap:8px;overflow-x:auto;padding:6px 16px 12px}
+.subchip{white-space:nowrap;padding:7px 14px;border-radius:16px;background:#ede9ff;color:#6b5b9a;font-size:12.5px;font-weight:600;border:none;cursor:pointer}
+.subchip.active{background:#7c5cff;color:#fff}
+.card{background:#fff;margin:12px 16px;border-radius:20px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.card-top{display:flex;gap:10px;align-items:center}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#a78bfa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.badge{font-size:11px;background:#eef2ff;color:#4338ca;padding:3px 8px;border-radius:12px;font-weight:700}
+.card h2{font-size:16px;margin:12px 0 6px;font-weight:700}
+.card p{font-size:13.5px;color:#4b5563;line-height:1.5}
+.card-img{width:86px;height:86px;border-radius:14px;object-fit:cover;float:right;margin:0 0 8px 12px}
+.tags{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;background:#f3f0ff;color:#6d5acd;padding:5px 9px;border-radius:8px;font-weight:600}
+.stats{display:flex;gap:16px;margin-top:14px;font-size:12px;color:#6b7280;font-weight:600}
+.actions{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;padding:10px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.btn.primary{background:#7c5cff;color:#fff;border-color:#7c5cff}
+.btn.liked{background:#ede9ff;border-color:#7c5cff;color:#7c5cff}
+.map-card{background:linear-gradient(135deg,#7c5cff,#a78bfa);border-radius:18px;margin:12px 16px;height:108px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:8px 0 14px;z-index:30}
+.nav-item{text-align:center;font-size:11px;color:#9ca3af;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 12px}
+.nav-item.active{color:#7c5cff}
+.plus{width:54px;height:54px;background:#5b21b6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;margin-top:-28px;box-shadow:0 8px 20px rgba(124,92,255,.4)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:#fff;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px 16px 30px;max-height:85vh;overflow-y:auto}
+.modal-box h3{font-size:18px;margin-bottom:12px}
+.modal-box input,.modal-box textarea,.modal-box select{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;margin:8px 0;font-size:14px;outline:none}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;font-size:13px;z-index:100;display:none}
+.clear{clear:both}
+</style>
 </head>
-<body class="bg-black text-white min-h-screen">
-<header class="p-4 flex justify-between items-center border-b border-zinc-800 sticky top-0 bg-black">
-  <h1 class="font-bold text-xl">ApexTeen 5.0</h1>
-  <div id="authBox"><button id="loginBtn" class="bg-white text-black px-5 py-2 rounded-full font-bold text-sm">Login with Google</button></div>
-</header>
-
-<div id="createBox" class="hidden max-w-[600px] mx-auto p-4 border-b border-zinc-800">
-  <textarea id="postText" placeholder="What's your idea?" class="w-full bg-zinc-900 rounded-2xl p-4 outline-none min-h-[90px]"></textarea>
-  <input type="file" id="postImage" accept="image/*" class="mt-2 text-sm">
-  <button id="postBtn" class="mt-3 bg-white text-black px-6 py-2 rounded-full font-bold">Post Idea</button>
-  <p id="postStatus" class="text-xs text-zinc-500 mt-2"></p>
+<body>
+<div class="header"><h1>ApexTeen5</h1><button id="loginBtn" class="login" onclick="handleAuth()">Login</button></div>
+<div class="search-wrap"><div class="search">🔍<input id="searchInput" placeholder="Search ideas, projects..." oninput="render()"></div></div>
+<div class="filters">
+<button class="chip" data-f="trending" onclick="setMainFilter(this)">Trending</button>
+<button class="chip active" data-f="today" onclick="setMainFilter(this)">Today</button>
+<button class="chip" data-f="new" onclick="setMainFilter(this)">New</button>
+<button class="chip" data-f="my" onclick="setMainFilter(this)">My Ideas</button>
 </div>
-
-<main id="feed" class="max-w-[600px] mx-auto p-4 space-y-4"></main>
-<div id="profileBox" class="max-w-[600px] mx-auto p-4 text-center text-zinc-500 text-sm">Login karo profile dekhne ke liye</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-// YAHAN APNA PURANA CONFIG PASTE KARO
+<div class="subfilters">
+<button class="subchip active" data-c="all" onclick="setCat(this)">All Ideas</button>
+<button class="subchip" data-c="AI" onclick="setCat(this)">AI Projects</button>
+<button class="subchip" data-c="Tech" onclick="setCat(this)">Tech</button>
+<button class="subchip" data-c="Gaming" onclick="setCat(this)">Gaming</button>
+<button class="subchip" data-c="Social" onclick="setCat(this)">Social</button>
+</div>
+<div id="feed"></div>
+<div class="bottom">
+<div class="nav-item active" onclick="toast('Home feed')">🏠 Home</div>
+<div class="nav-item" onclick="toast('Explore coming soon')">🧭 Explore</div>
+<div class="nav-item" onclick="openCreate()"><div class="plus">+</div>Create</div>
+<div class="nav-item" onclick="toast('No new notifications')">🔔 Notifications</div>
+<div class="nav-item" onclick="handleAuth()">👤 Profile</div>
+</div>
+<div id="createModal" class="modal" onclick="if(event.target==this)closeCreate()"><div class="modal-box">
+<h3>Create New Idea 💡</h3>
+<input id="cTitle" placeholder="Title - ex: AI Study Buddy">
+<textarea id="cDesc" placeholder="Describe your idea..."></textarea>
+<select id="cCat"><option>AI Projects</option><option>Tech</option><option>Gaming</option><option>Social</option></select>
+<input id="cTags" placeholder="Tags - AI, EdTech">
+<button class="btn primary" style="width:100%;margin-top:12px;padding:14px" onclick="createIdea()">Post Idea</button>
+</div></div>
+<div id="commentModal" class="modal" onclick="if(event.target==this)closeComment()"><div class="modal-box">
+<h3 id="commentTitle">Comments</h3>
+<div id="commentList" style="margin:12px 0"></div>
+<div style="display:flex;gap:8px"><input id="commentInput" placeholder="Write a comment..."><button class="btn primary" onclick="postComment()">Send</button></div>
+</div></div>
+<div id="toast" class="toast"></div>
+<script>
 const firebaseConfig = {
-  apiKey: "TUMHARA_API_KEY",
+  apiKey: "AIzaSyC-Your-Key-Here",
   authDomain: "apexteen-5.firebaseapp.com",
   projectId: "apexteen-5",
   storageBucket: "apexteen-5.appspot.com",
-  messagingSenderId: "ID",
-  appId: "APP_ID"
+  messagingSenderId: "123456789",
+  appId: "1:123456:web:abcdef"
 };
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const provider = new GoogleAuthProvider();
-let currentUser = null;
-
-function attachLogin(){
-  document.getElementById('loginBtn').onclick = () => signInWithPopup(auth, provider);
+try{firebase.initializeApp(firebaseConfig)}catch(e){}
+const auth = firebase.auth ? firebase.auth() : null;
+const db = firebase.firestore ? firebase.firestore() : null;
+let currentUser=null;let mainFilter='today';let catFilter='all';
+let ideas=[
+ {id:'1',user:'Alex',time:'2h ago',verified:true,title:'AI Study Buddy for Teens',desc:'An AI tutor that helps teens study smarter with quiz mode, flashcards, and 24/7 homework help.',cat:'AI',tags:['AI','EdTech'],up:42,comments:12,collab:5,img:'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200',liked:false},
+ {id:'2',user:'Maya',time:'5h ago',verified:true,title:'Local Study Group Finder',desc:'Connect with teens nearby for in-person study sessions at libraries, cafes, or parks.',cat:'Social',tags:['Social','Community'],up:28,comments:9,collab:7,img:'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=200',liked:false}
+];
+let activeCommentId=null;let commentsData={'1':[{user:'Sam',text:'This is amazing!'}],'2':[]};
+if(auth){auth.onAuthStateChanged(u=>{currentUser=u;document.getElementById('loginBtn').innerText=u?(u.displayName?.split(' ')[0]||'Profile'):'Login'})}
+function handleAuth(){if(!auth){toast('Add Firebase config');return} if(currentUser){if(confirm('Logout?'))auth.signOut()}else{auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>toast(e.message))}}
+function setMainFilter(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');mainFilter=el.dataset.f;render()}
+function setCat(el){document.querySelectorAll('.subchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');catFilter=el.dataset.c;render()}
+function render(){
+ const q=document.getElementById('searchInput').value.toLowerCase();
+ let list=[...ideas];
+ if(catFilter!='all')list=list.filter(i=>i.cat.includes(catFilter)||i.tags.join('').toLowerCase().includes(catFilter.toLowerCase()));
+ if(q)list=list.filter(i=>(i.title+i.desc+i.tags.join('')).toLowerCase().includes(q));
+ if(mainFilter=='trending')list.sort((a,b)=>b.up-a.up);
+ const feed=document.getElementById('feed');feed.innerHTML='';
+ list.forEach((idea,idx)=>{
+   if(idx==1)feed.innerHTML+=`<div class="map-card" onclick="toast('Map view coming soon')">🗺️ Nearby Study Spots</div>`;
+   feed.innerHTML+=`<div class="card"><div class="card-top"><div class="avatar">${idea.user[0]}</div><div><b style="font-size:14px">${idea.user} • ${idea.time} ${idea.verified?'<span class=badge>✓ Parent Verified</span>':''}</b></div></div>${idea.img?`<img class="card-img" src="${idea.img}">`:''}<h2>${idea.title}</h2><p>${idea.desc}</p><div class="tags">${idea.tags.map(t=>`<span class=tag>#${t}</span>`).join('')}</div><div class="clear"></div><div class="stats"><span>👍 ${idea.up} upvotes</span><span>💬 ${idea.comments} comments</span><span>👥 ${idea.collab} collaborators</span></div><div class="actions"><button class="btn ${idea.liked?'liked':''}" onclick="upvote('${idea.id}')">${idea.liked?'♥':'↑'} Upvote</button><button class="btn" onclick="openComment('${idea.id}')">Comment</button><button class="btn primary" onclick="joinTeam('${idea.id}')">Join Team</button></div></div>`;
+ });
 }
-attachLogin();
-
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  if(user){
-    document.getElementById('authBox').innerHTML = `<span>✅ ${user.displayName}</span> <button id="logoutBtn" class="ml-2 bg-zinc-800 px-3 py-1 rounded-full">Logout</button>`;
-    document.getElementById('logoutBtn').onclick = () => signOut(auth);
-    document.getElementById('createBox').classList.remove('hidden');
-    document.getElementById('profileBox').innerHTML = `<div class="bg-zinc-900 p-4 rounded-xl"><p class="font-bold">${user.displayName}</p><p>${user.email}</p></div>`;
-  } else {
-    document.getElementById('authBox').innerHTML = `<button id="loginBtn" class="bg-white text-black px-4 py-2 rounded-full">Login with Google</button>`;
-    attachLogin();
-    document.getElementById('createBox').classList.add('hidden');
-  }
-});
-
-document.getElementById('postBtn').onclick = async () => {
-  const text = document.getElementById('postText').value;
-  const file = document.getElementById('postImage').files[0];
-  if(!text && !file) return alert('Kuch likho');
-  document.getElementById('postBtn').innerText = 'Posting...';
-  let imageUrl = "";
-  if(file){
-    const r = ref(storage, `posts/${Date.now()}_${file.name}`);
-    await uploadBytes(r, file);
-    imageUrl = await getDownloadURL(r);
-  }
-  await addDoc(collection(db, "posts"), { text, imageUrl, uid: currentUser.uid, name: currentUser.displayName, createdAt: serverTimestamp() });
-  document.getElementById('postText').value = "";
-  document.getElementById('postBtn').innerText = 'Post Idea';
-};
-
-const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-onSnapshot(q, (snap) => {
-  const feed = document.getElementById('feed');
-  feed.innerHTML = "";
-  snap.forEach(d => {
-    const p = d.data();
-    feed.innerHTML += `<div class="bg-zinc-900 rounded-xl p-4"><p class="font-bold text-sm">${p.name}</p><p>${p.text||''}</p>${p.imageUrl?`<img src="${p.imageUrl}" class="rounded-xl mt-2 w-full">`:''}</div>`;
-  });
-});
+function upvote(id){const i=ideas.find(x=>x.id===id);if(i.liked){i.up--;i.liked=false}else{i.up++;i.liked=true}render();toast(i.liked?'Upvoted!':'Removed')}
+function openComment(id){activeCommentId=id;document.getElementById('commentTitle').innerText=ideas.find(x=>x.id===id).title;const list=document.getElementById('commentList');const cmts=commentsData[id]||[];list.innerHTML=cmts.length?cmts.map(c=>`<div style="padding:8px 0;border-bottom:1px solid #f3f4f6"><b style="font-size:13px">${c.user}</b><div style="font-size:13px;color:#4b5563">${c.text}</div></div>`).join(''):'<div style="color:#9ca3af;font-size:13px">No comments yet</div>';document.getElementById('commentModal').classList.add('open')}
+function closeComment(){document.getElementById('commentModal').classList.remove('open')}
+function postComment(){const txt=document.getElementById('commentInput').value.trim();if(!txt)return;if(!commentsData[activeCommentId])commentsData[activeCommentId]=[];commentsData[activeCommentId].push({user:currentUser?.displayName||'You',text:txt});ideas.find(x=>x.id===activeCommentId).comments++;document.getElementById('commentInput').value='';openComment(activeCommentId);render();toast('Comment added!')}
+function joinTeam(id){if(!currentUser){toast('Login to join');handleAuth();return}ideas.find(x=>x.id===id).collab++;render();toast('Joined team! 🎉')}
+function openCreate(){if(!currentUser){toast('Login to create');handleAuth();return}document.getElementById('createModal').classList.add('open')}
+function closeCreate(){document.getElementById('createModal').classList.remove('open')}
+function createIdea(){const title=document.getElementById('cTitle').value.trim();const desc=document.getElementById('cDesc').value.trim();const cat=document.getElementById('cCat').value;const tags=document.getElementById('cTags').value.split(',').map(t=>t.trim()).filter(Boolean);if(!title||!desc){toast('Title + desc needed');return}ideas.unshift({id:Date.now().toString(),user:currentUser?.displayName||'You',time:'Just now',verified:true,title,desc,cat,tags:tags.length?tags:[cat],up:0,comments:0,collab:1,img:'',liked:false});closeCreate();render();toast('Posted! 🚀');document.getElementById('cTitle').value='';document.getElementById('cDesc').value=''}
+function toast(m){const t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',2500)}
+render();
 </script>
 </body>
 </html>
