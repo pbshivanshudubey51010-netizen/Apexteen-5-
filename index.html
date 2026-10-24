@@ -3,104 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexTeen - World Teen Hub</title>
+<title>ApexTeen5</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <style>
-body{font-family:Arial;margin:0;background:#f5f7ff}
-header{background:#6c5ce7;color:white;padding:12px;display:flex;justify-content:space-between;align-items:center}
-button{background:#6c5ce7;color:white;border:none;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer}
-#map{height:300px;border-radius:12px;margin:10px}
-.card{background:white;margin:10px;padding:15px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-select,input,textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
+.pill-active{background:#7c5cff;color:white}
+.scroll-hide::-webkit-scrollbar{display:none}
 </style>
 </head>
-<body>
-<header>
-<b>🚀 ApexTeen-5</b>
-<div id="userBox"><button onclick="login()">Login with Google</button></div>
-</header>
+<body class="bg-gray-50 pb-20">
+<div class="max-w-md mx-auto bg-white min-h-screen">
 
-<div class="card">
-<h3>📍 Real Google Map</h3>
-<div id="map"></div>
-<p>Vindhyanagar, MP - Live Location</p>
+<!-- HEADER -->
+<div class="p-4 text-center">
+<h1 class="text-xl font-bold">ApexTeen5</h1>
+<div id="loginArea" class="mt-2"><button onclick="login()" class="bg-[#7c5cff] text-white px-4 py-1 rounded-full text-sm">Login with Google</button></div>
+<div class="mt-3 relative">
+<input placeholder="Search ideas, projects..." class="w-full border rounded-full py-3 px-12 bg-gray-50">
+<span class="absolute left-4 top-3.5">🔍</span>
+</div>
 </div>
 
-<div class="card">
-<h3>🌍 World Location</h3>
-<select id="country" onchange="loadStates()"><option>Loading Countries...</option></select>
-<select id="state" onchange="loadCities()"><option>Select State</option></select>
-<select id="city"><option>Select District/City</option></select>
+<!-- FILTERS -->
+<div class="flex gap-2 px-4 overflow-x-auto scroll-hide pb-2">
+<button class="px-5 py-2 rounded-full border bg-gray-100 whitespace-nowrap">Trending</button>
+<button class="px-6 py-2 rounded-full pill-active whitespace-nowrap">Today</button>
+<button class="px-5 py-2 rounded-full border bg-gray-100 whitespace-nowrap">New</button>
+<button class="px-5 py-2 rounded-full border bg-gray-100 whitespace-nowrap">My Ideas</button>
+</div>
+<div class="flex gap-2 px-4 overflow-x-auto scroll-hide pb-3">
+<button class="px-4 py-2 rounded-full pill-active text-sm">All Ideas</button>
+<button class="px-4 py-2 rounded-full bg-gray-100 text-sm whitespace-nowrap">AI Projects</button>
+<button class="px-4 py-2 rounded-full bg-gray-100 text-sm">Tech</button>
+<button class="px-4 py-2 rounded-full bg-gray-100 text-sm">Gaming</button>
+<button class="px-4 py-2 rounded-full bg-gray-100 text-sm">Social</button>
 </div>
 
-<div class="card">
-<h3>💡 Post Your Teen Idea</h3>
-<input id="title" placeholder="Idea Title">
-<textarea id="desc" placeholder="Describe your idea..."></textarea>
-<button onclick="postIdea()">Post Idea</button>
-<div id="ideas"></div>
+<!-- CARD 1 - Alex -->
+<div class="mx-3 bg-white rounded-2xl shadow p-4 border">
+<div class="flex justify-between">
+<div class="flex gap-2">
+<img src="https://i.pravatar.cc/40?img=3" class="w-10 h-10 rounded-full">
+<div>
+<div class="text-sm flex items-center gap-1">Alex • 2h ago • <span class="bg-violet-100 text-violet-700 text-[10px] px-2 py-0.5 rounded-full">✓ Parent Verified</span></div>
+<div class="font-bold">AI Study Buddy for Teens</div>
+</div>
+</div>
+<img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" class="w-16 h-16">
+</div>
+<p class="text-[13px] mt-2 text-gray-600">An AI tutor that helps teens study smarter with quiz mode, flashcards, and 24/7 homework help. Designed for highschoolers to stay focused and learn faster.</p>
+<div class="flex gap-2 mt-2"><span class="bg-violet-50 text-violet-600 text-xs px-2 py-1 rounded">#AI</span><span class="bg-violet-50 text-violet-600 text-xs px-2 py-1 rounded">#EdTech</span></div>
+<div class="flex justify-between text-sm mt-3"><span>👍 42 upvotes</span><span>💬 12 comments</span><span>👥 5 collaborators</span></div>
+<div class="flex gap-2 mt-3">
+<button class="flex-1 border-violet-300 rounded-full py-2 text-sm">↑ Upvote</button>
+<button class="flex-1 bg-gray-100 rounded-full py-2 text-sm">Comment</button>
+<button class="flex-1 bg-[#7c5cff] text-white rounded-full py-2 text-sm">Join Team</button>
+</div>
+</div>
+
+<!-- MAP CARD - REAL MAP -->
+<div class="mx-3 mt-4 rounded-2xl overflow-hidden h-36 relative bg-[#8b7cff]">
+<div id="map" class="h-full w-full"></div>
+</div>
+
+<!-- CREATE LOCATION -->
+<div class="mx-3 mt-4 bg-white rounded-2xl shadow p-3 border">
+<h3 class="font-bold text-sm mb-2">🌍 Select Location (World Wide)</h3>
+<select id="country" onchange="loadStates()" class="w-full border rounded-lg p-2 mb-2 text-sm"><option>Loading Countries...</option></select>
+<select id="state" onchange="loadCities()" class="w-full border rounded-lg p-2 mb-2 text-sm"><option>Select State</option></select>
+<select id="city" class="w-full border rounded-lg p-2 text-sm"><option>Select District</option></select>
+</div>
+
+<!-- CARD 2 - Maya -->
+<div class="mx-3 mt-4 bg-white rounded-2xl shadow p-4 border">
+<div class="flex gap-2">
+<img src="https://i.pravatar.cc/40?img=5" class="w-10 h-10 rounded-full">
+<div>
+<div class="text-sm flex items-center gap-1">Maya • 5h ago • <span class="bg-violet-100 text-violet-700 text-[10px] px-2 py-0.5 rounded-full">✓ Parent Verified</span></div>
+<div class="font-bold">Local Study Group Finder</div>
+</div>
+</div>
+<p class="text-[13px] mt-2 text-gray-600">Connect with teens nearby for in-person study sessions. Join safe group study meetups at libraries, cafes, or parks.</p>
+<div class="flex gap-2 mt-2"><span class="bg-gray-100 text-xs px-2 py-1 rounded">#Social</span><span class="bg-gray-100 text-xs px-2 py-1 rounded">#Community</span></div>
+<div class="text-center text-sm mt-3 font-medium">28 upvotes • 9 comments • 7 collaborators</div>
+<div class="flex gap-2 mt-3">
+<button class="flex-1 border border-violet-300 rounded-full py-2 text-sm">Upvote</button>
+<button class="flex-1 bg-gray-100 rounded-full py-2 text-sm">Comment</button>
+<button class="flex-1 border border-violet-300 text-violet-600 rounded-full py-2 text-sm">Join Team</button>
+</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="fixed bottom-0 w-full max-w-md bg-white border-t flex justify-around py-2">
+<div class="text-center text-violet-600"><div>🏠</div><div class="text-[11px]">Home</div></div>
+<div class="text-center"><div>⌂</div><div class="text-[11px]">Explore</div></div>
+<div class="text-center"><div class="bg-violet-600 text-white w-8 h-8 rounded-full flex items-center justify-center mx-auto">+</div><div class="text-[11px]">Create</div></div>
+<div class="text-center"><div>🔔</div><div class="text-[11px]">Notifications</div></div>
+<div class="text-center"><div>💬</div><div class="text-[11px]">Profile</div></div>
+</div>
+
 </div>
 
 <script>
-// Firebase - Tumhara Project
-const firebaseConfig = {
-  apiKey: "AIzaSyC9bSj1yB4o5nqX1k5e9g5a7b2c3d4e5f6g",
-  authDomain: "apexteen-5.firebaseapp.com",
-  projectId: "apexteen-5",
-};
+// Firebase
+const firebaseConfig = { apiKey: "AIzaSyDummy", authDomain: "apexteen-5.firebaseapp.com", projectId: "apexteen-5" };
 firebase.initializeApp(firebaseConfig);
-
 function login(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider).then(r=>{
-    document.getElementById('userBox').innerHTML = `<img src="${r.user.photoURL}" width="30" style="border-radius:50%"> ${r.user.displayName}`;
-  }).catch(e=>alert(e.message));
+  const p = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(p).then(r=>{
+    document.getElementById('loginArea').innerHTML = `✅ ${r.user.displayName}`;
+  }).catch(e=>alert("Enable Google Login in Firebase + Add your domain"));
 }
-
-// Map
-const map = L.map('map').setView([24.07, 82.64], 13);
+// Real Map - Vindhyanagar
+const map = L.map('map',{zoomControl:false}).setView([24.07,82.64],12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.marker([24.07, 82.64]).addTo(map).bindPopup("Vindhyanagar, You are here!").openPopup();
+L.marker([24.07,82.64]).addTo(map).bindPopup("Vindhyanagar").openPopup();
 
 // World Countries
-let cscData = [];
-fetch('https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries%2Bstates%2Bcities.json')
-.then(r=>r.json()).then(data=>{
-  cscData = data;
-  const cSel = document.getElementById('country');
-  cSel.innerHTML = '<option>Select Country</option>';
-  data.forEach(c=>{ cSel.innerHTML+=`<option value="${c.id}">${c.name}</option>` });
-  // Default India
-  cSel.value = 101;
-  loadStates();
+let all=[];
+fetch('https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries%2Bstates%2Bcities.json').then(r=>r.json()).then(d=>{
+  all=d;
+  let c=document.getElementById('country');
+  c.innerHTML='<option>Select Country</option>';
+  d.forEach(x=>c.innerHTML+=`<option value="${x.id}">${x.name}</option>`);
+  c.value=101; loadStates();
 });
-
 function loadStates(){
-  const cid = document.getElementById('country').value;
-  const country = cscData.find(c=>c.id==cid);
-  const sSel = document.getElementById('state');
-  sSel.innerHTML='<option>Select State</option>';
-  if(country) country.states.forEach(s=>{ sSel.innerHTML+=`<option value="${s.id}">${s.name}</option>` });
+  let cid=document.getElementById('country').value;
+  let co=all.find(c=>c.id==cid);
+  let s=document.getElementById('state');
+  s.innerHTML='<option>Select State</option>';
+  if(co) co.states.forEach(st=>s.innerHTML+=`<option value="${st.id}">${st.name}</option>`);
 }
 function loadCities(){
-  const cid = document.getElementById('country').value;
-  const sid = document.getElementById('state').value;
-  const country = cscData.find(c=>c.id==cid);
-  const state = country?.states.find(s=>s.id==sid);
-  const citySel = document.getElementById('city');
-  citySel.innerHTML='<option>Select District</option>';
-  if(state) state.cities.forEach(ct=>{ citySel.innerHTML+=`<option>${ct.name}</option>` });
-}
-
-function postIdea(){
-  const t=document.getElementById('title').value;
-  const d=document.getElementById('desc').value;
-  if(!t) return alert('Title likho!');
-  document.getElementById('ideas').innerHTML += `<div class="card"><b>${t}</b><br>${d}</div>`;
-  alert('Idea Posted!');
+  let cid=document.getElementById('country').value;
+  let sid=document.getElementById('state').value;
+  let co=all.find(c=>c.id==cid);
+  let st=co?.states.find(s=>s.id==sid);
+  let ci=document.getElementById('city');
+  ci.innerHTML='<option>Select District</option>';
+  if(st) st.cities.forEach(ct=>ci.innerHTML+=`<option>${ct.name}</option>`);
 }
 </script>
 </body>
