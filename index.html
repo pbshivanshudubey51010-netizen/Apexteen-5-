@@ -1,315 +1,284 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexTeen5 - Production Ready Student Innovation App</title>
-    
-    <!-- Firebase SDKs (App, Auth, Realtime Database, Storage) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background 0.3s, color 0.3s; }
-        body { background-color: #f0f2f5; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 420px; background: #ffffff; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); overflow: hidden; border: 1px solid #e4e6eb; position: relative; }
-        .screen { display: none; padding: 25px; }
-        .screen.active { display: block; }
-        h2 { text-align: center; color: #111827; margin-bottom: 20px; font-size: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; color: #374151; font-size: 13px; font-weight: 600; }
-        input, select, textarea { width: 100%; padding: 11px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: #f9fafb; outline: none; color: #111; }
-        input:focus, select:focus, textarea:focus { border-color: #4f46e5; background: #fff; }
-        textarea { resize: none; height: 90px; }
-        .btn { width: 100%; padding: 12px; background-color: #4f46e5; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .btn:hover { background-color: #4338ca; }
-        
-        /* Feed & Card Styles */
-        .card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 15px; border: 1px solid #e4e6eb; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; }
-        .user-profile { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .user-info h4 { font-size: 14px; color: #050505; }
-        .user-info span { font-size: 11px; color: #65676b; display: block; }
-        .bookmark-btn { background: none; border: none; font-size: 18px; cursor: pointer; }
-        .category-tag { display: inline-block; background: #eef2ff; color: #4f46e5; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-bottom: 6px; }
-        .idea-title { font-size: 15px; color: #111; margin-bottom: 4px; }
-        .idea-desc { font-size: 12px; color: #4b4b4b; line-height: 1.4; margin-bottom: 10px; }
-        .idea-image { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
-        .card-actions { display: flex; gap: 5px; border-top: 1px solid #f0f2f5; padding-top: 8px; flex-wrap: wrap; }
-        .action-btn { flex: 1; min-width: 70px; padding: 7px 4px; border: none; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 2px; }
-        .btn-upvote { background-color: #eef2ff; color: #4f46e5; }
-        .btn-comment { background-color: #f3f4f6; color: #374151; }
-        .btn-dm { background-color: #10b981; color: white; }
-        .btn-collab { background-color: #8b5cf6; color: white; }
-        .btn-delete { background-color: #fee2e2; color: #dc2626; }
-        .nav-links { text-align: center; margin-top: 15px; font-size: 13px; color: #4f46e5; cursor: pointer; font-weight: 600; }
-        .user-header { display: flex; justify-content: space-between; align-items: center; background: #eef2ff; padding: 10px 14px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; color: #4f46e5; font-weight: 600; }
-        .img-preview { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-top: 8px; display: none; }
-        .search-box { margin-bottom: 12px; }
-
-        /* Category Filter Tabs */
-        .category-tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
-        .tab-btn { background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; color: #4b5563; cursor: pointer; white-space: nowrap; }
-        .tab-btn.active-tab { background: #4f46e5; color: white; }
-
-        /* Comments Section */
-        .comments-container { margin-top: 10px; border-top: 1px dashed #e5e7eb; padding-top: 10px; display: none; }
-        .comments-list { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
-        .comment-item { background: #f9fafb; padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #111; }
-        .comment-user { font-weight: 700; color: #4f46e5; }
-
-        /* Real-time Chat Styles */
-        .chat-box { height: 250px; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px; overflow-y: auto; background: #f9fafb; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .chat-bubble { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 13px; word-wrap: break-word; }
-        .chat-sent { background: #4f46e5; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-received { background: #e5e7eb; color: #111827; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .chat-sender-name { font-size: 10px; display: block; margin-bottom: 2px; opacity: 0.8; }
-
-        /* Profile Styles */
-        .profile-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 15px; }
-        .profile-info { margin-bottom: 8px; font-size: 13px; color: #374151; }
-        .profile-info strong { color: #111827; }
-
-        /* Leaderboard & Polls Styles */
-        .leaderboard-item { display: flex; align-items: center; justify-content: space-between; background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; color: #111; }
-        .leaderboard-rank { font-weight: 700; color: #4f46e5; width: 25px; }
-        .poll-option { display: block; width: 100%; padding: 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; text-align: left; margin-bottom: 8px; font-size: 13px; font-weight: 600; cursor: pointer; color: #1f2937; }
-        .poll-option:hover { background: #eef2ff; border-color: #4f46e5; }
-
-        /* Toast Notification Styles */
-        #toast { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; display: none; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; white-space: nowrap; }
-
-        /* DARK MODE OVERRIDES */
-        body.dark { background-color: #111827; }
-        body.dark .app-container { background: #1f2937; border-color: #374151; color: #f3f4f6; }
-        body.dark h2 { color: #f9fafb; }
-        body.dark label { color: #9ca3af; }
-        body.dark input, body.dark select, body.dark textarea { background: #374151; border-color: #4b5563; color: #f9fafb; }
-        body.dark .card { background: #111827; border-color: #374151; color: #f9fafb; }
-        body.dark .user-info h4 { color: #f9fafb; }
-        body.dark .user-info span { color: #9ca3af; }
-        body.dark .idea-title { color: #f9fafb; }
-        body.dark .idea-desc { color: #9ca3af; }
-        body.dark .user-header { background: #374151; color: #818cf8; }
-        body.dark .tab-btn { background: #374151; color: #d1d5db; }
-        body.dark .tab-btn.active-tab { background: #6366f1; color: #fff; }
-        body.dark .comments-container { border-color: #374151; }
-        body.dark .comment-item { background: #374151; color: #f9fafb; }
-        body.dark .chat-box { background: #111827; border-color: #374151; }
-        body.dark .chat-received { background: #374151; color: #f9fafb; }
-        body.dark .profile-card { background: #111827; border-color: #374151; }
-        body.dark .profile-info { color: #9ca3af; }
-        body.dark .profile-info strong { color: #f9fafb; }
-        body.dark .leaderboard-item { background: #111827; border-color: #374151; color: #f9fafb; }
-        body.dark .leaderboard-item strong { color: #f9fafb; }
-        body.dark .poll-option { background: #374151; border-color: #4b5563; color: #f9fafb; }
-        body.dark .poll-option:hover { background: #4f46e5; border-color: #6366f1; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6D4AFF">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<title>ApexTeen5</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+:root{--p:#6D4AFF;--s:#F0EBFF;--bg:#F3F0FB;--card:#fff;--tx:#1d1736;--mu:#6b6488;--bd:#e2dcf5;--ok:#17855a;--er:#d12f4b}
+@media (prefers-color-scheme:dark){:root{--s:#2a2252;--bg:#14102a;--card:#1d1838;--tx:#f1eeff;--mu:#a49cc8;--bd:#352d62;--ok:#4cd39b;--er:#ff7a93}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif;font-size:15px}
+#app{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:80px;padding-top:env(safe-area-inset-top,0px)}
+h1,h2,h3{margin:0}button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--p);outline-offset:2px}
+input,select,textarea{width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:11px 12px;margin-top:5px}
+textarea{min-height:90px;resize:vertical}
+label{display:block;font-weight:600;font-size:13px;margin-top:12px}
+.btn{background:var(--p);color:#fff;border:0;border-radius:12px;padding:12px 16px;font-weight:700;width:100%;margin-top:14px}
+.btn.alt{background:var(--s);color:var(--p)}.btn.sm{width:auto;margin:0;padding:8px 12px;font-size:13px}
+.btn[disabled]{opacity:.5}
+.wrap{padding:16px}.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
+.av{width:40px;height:40px;border-radius:50%;background:var(--s);display:grid;place-items:center;font-weight:800;color:var(--p);flex:none}
+.badge{background:var(--s);color:var(--p);border-radius:99px;padding:3px 9px;font-size:12px;font-weight:600;display:inline-block}
+.ok{color:var(--ok)}.mu{color:var(--mu);font-size:13px}.err{color:var(--er);font-size:13px;margin-top:8px}
+.hero{background:var(--p);color:#fff;padding:26px 18px 28px;border-radius:0 0 26px 26px}
+.hero h1{font-size:30px;font-weight:800;letter-spacing:-.5px}.hero p{margin:6px 0 0;opacity:.9}
+.top{position:sticky;top:0;background:var(--bg);z-index:5;padding:12px 16px 8px}.logo{font-weight:800;font-size:20px;color:var(--p)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
+.chip{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:7px 13px;white-space:nowrap;font-weight:600;font-size:13px}
+.chip.on{background:var(--p);color:#fff;border-color:var(--p)}
+.hi{width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-top:10px}
+.stats{display:flex;gap:12px;margin-top:12px;align-items:center}
+.act{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:7px 11px;font-weight:600;font-size:13px}
+.act.on{background:var(--s);color:var(--p);border-color:var(--p)}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--bd);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:10}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:6px;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:20px}nav button.on{color:var(--p)}
+nav button.plus span{background:var(--p);color:#fff;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;margin-top:-22px;font-size:26px;box-shadow:0 4px 12px rgba(109,74,255,.4)}
+.sheet-bg{position:fixed;inset:0;background:rgba(20,10,50,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:430px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.msg{background:var(--s);border-radius:12px;padding:8px 11px;margin-top:8px;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.note{background:var(--s);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:99px;z-index:30;font-weight:600;font-size:14px;max-width:90%}
+.tabs{display:flex;gap:8px;margin-bottom:6px}.tabs .chip{flex:1}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px;font-weight:500}.chk input{width:auto;margin:3px 0 0}
+</style>
 </head>
-<body id="main-body">
-
-<div class="app-container">
-    
-    <!-- Toast Notification Container -->
-    <div id="toast">Notification Message</div>
-
-    <!-- SCREEN 1: Secure Firebase Authentication -->
-    <div id="screen-auth" class="screen active">
-        <h2>ApexTeen5 Secure Login</h2>
-        <form id="auth-form">
-            <div class="form-group"><label>Email Address</label><input type="email" id="auth-email" placeholder="Enter student email" required></div>
-            <div class="form-group"><label>Password</label><input type="password" id="auth-password" placeholder="Enter secure password" required></div>
-            <button type="submit" class="btn" id="auth-btn">Login / Register</button>
-        </form>
-    </div>
-
-    <!-- SCREEN 2: Student Idea Feed -->
-    <div id="screen-feed" class="screen">
-        <div class="user-header">
-            <span id="welcome-user" style="cursor:pointer;" onclick="openProfile()">👤 Hello, Student</span>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <span id="theme-toggle-btn" style="cursor:pointer; font-size:14px;" onclick="toggleTheme()">🌙</span>
-                <span style="cursor:pointer; font-size:11px; color:#dc2626;" onclick="logoutUser()">Logout</span>
-            </div>
-        </div>
-        <h2>ApexTeen5 Feed</h2>
-        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:4px; margin-bottom:12px;">
-            <button class="btn" style="background:#10b981; margin-top:0; font-size:11px; padding:8px 4px;" onclick="goToScreen('screen-post-idea')">+ Post</button>
-            <button class="btn" style="background:#4f46e5; margin-top:0; font-size:11px; padding:8px 4px;" onclick="openProfile()">Profile</button>
-            <button class="btn" style="background:#f59e0b; margin-top:0; font-size:11px; padding:8px 4px;" onclick="openLeaderboard()">Rank</button>
-            <button class="btn" style="background:#ec4899; margin-top:0; font-size:11px; padding:8px 4px;" onclick="openPolls()">📊 Polls</button>
-        </div>
-        
-        <!-- Category Filter Tabs -->
-        <div class="category-tabs">
-            <button class="tab-btn active-tab" onclick="filterByCategory('All', this)">All</button>
-            <button class="tab-btn" onclick="filterByCategory('AI & TECH', this)">AI & Tech</button>
-            <button class="tab-btn" onclick="filterByCategory('GAMING', this)">Gaming</button>
-            <button class="tab-btn" onclick="filterByCategory('SOCIAL GOOD', this)">Social Good</button>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="🔍 Search by keyword or title..." oninput="filterIdeasLocally()">
-        </div>
-
-        <!-- Dynamic Feed Container -->
-        <div id="feed-container">
-            <p style="text-align:center; color:#65676b; font-size:13px;">Loading live ideas...</p>
-        </div>
-
-        <div class="nav-links" onclick="goToScreen('screen-filters')">🔍 Location Filter</div>
-    </div>
-
-    <!-- SCREEN 3: Post Idea Screen -->
-    <div id="screen-post-idea" class="screen">
-        <h2>Share Your Innovation</h2>
-        <form id="idea-form">
-            <div class="form-group"><label>Your Name</label><input type="text" id="idea-author" readonly style="background:#e5e7eb; color:#6b7280;"></div>
-            <div class="form-group"><label>Category</label>
-                <select id="idea-category" required><option value="AI & TECH">AI & Tech</option><option value="GAMING">Gaming</option><option value="SOCIAL GOOD">Social Good</option></select>
-            </div>
-            <div class="form-group"><label>Idea Title</label><input type="text" id="idea-title" placeholder="e.g. Smart Study App" required></div>
-            <div class="form-group">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <label style="margin-bottom:0;">Description</label>
-                    <span style="font-size:11px; color:#4f46e5; cursor:pointer; font-weight:700;" onclick="enhanceIdeaWithAI()">✨ Enhance with AI</span>
-                </div>
-                <textarea id="idea-desc" placeholder="Describe your idea..." required></textarea>
-            </div>
-            <div class="form-group">
-                <label>Upload Banner (Cloud Storage)</label>
-                <input type="file" id="idea-file" accept="image/*" onchange="previewSelectedImage(this)">
-                <img id="upload-preview" class="img-preview" alt="Preview">
-            </div>
-            <button type="submit" class="btn" id="publish-btn">Publish to Feed</button>
-        </form>
-        <div class="nav-links" onclick="goToScreen('screen-feed')">Back to Feed</div>
-    </div>
-
-    <!-- SCREEN 4: Enhanced Profile with Customization & Bios -->
-    <div id="screen-profile" class="screen">
-        <h2>My Student Profile</h2>
-        <div class="profile-card">
-            <div class="form-group" style="margin-bottom:10px;"><label>Full Name</label><input type="text" id="profile-fullname" placeholder="Enter full name"></div>
-            <div class="form-group" style="margin-bottom:10px;"><label>School / College</label><input type="text" id="profile-school" placeholder="Enter institution"></div>
-            <div class="form-group" style="margin-bottom:10px;"><label>Short Bio</label><textarea id="profile-bio" placeholder="Tell us about yourself..." style="height:60px;"></textarea></div>
-            <div class="profile-info" style="margin-top:10px;"><strong>Badge:</strong> <span id="prof-badge">🌱 Novice Innovator</span></div>
-            <button class="btn" onclick="saveUserProfile()" style="margin-top:8px;">Save Profile</button>
-        </div>
-        
-        <h3 style="font-size:15px; margin-bottom:10px;">🔖 Saved Ideas</h3>
-        <div id="saved-ideas-container" style="margin-bottom:20px;">
-            <p style="text-align:center; color:#6b7280; font-size:12px;">No saved ideas.</p>
-        </div>
-
-        <h3 style="font-size:15px; margin-bottom:10px;">📝 My Posted Ideas</h3>
-        <div id="my-ideas-container">
-            <p style="text-align:center; color:#6b7280; font-size:12px;">Loading posts...</p>
-        </div>
-        
-        <div class="nav-links" onclick="goToScreen('screen-feed')">Back to Feed</div>
-    </div>
-
-    <!-- SCREEN 5: Leaderboard Screen -->
-    <div id="screen-leaderboard" class="screen">
-        <h2>🏆 Top Ideas Leaderboard</h2>
-        <div id="leaderboard-list">
-            <p style="text-align:center; color:#6b7280; font-size:12px;">Loading rankings...</p>
-        </div>
-        <div class="nav-links" onclick="goToScreen('screen-feed')">Back to Feed</div>
-    </div>
-
-    <!-- SCREEN 6: Polls & Surveys Screen -->
-    <div id="screen-polls" class="screen">
-        <h2>📊 Weekly Innovation Poll</h2>
-        <div class="card" style="margin-bottom:15px;">
-            <h3 class="idea-title" style="margin-bottom:8px;">Which emerging technology interests you most for your next project?</h3>
-            <p class="idea-desc" style="margin-bottom:12px;">Cast your vote and shape the community focus!</p>
-            <button class="poll-option" onclick="votePoll('AI Agents & LLMs')">🤖 AI Agents & LLMs (<span id="poll-1">0</span>)</button>
-            <button class="poll-option" onclick="votePoll('Web3 & Decentralization')">⛓️ Web3 & Decentralization (<span id="poll-2">0</span>)</button>
-            <button class="poll-option" onclick="votePoll('Green Energy / CleanTech')">🌱 Green Energy / CleanTech (<span id="poll-3">0</span>)</button>
-        </div>
-        <div class="nav-links" onclick="goToScreen('screen-feed')">Back to Feed</div>
-    </div>
-
-    <!-- SCREEN 7: Direct Messaging / Live Chat Screen -->
-    <div id="screen-chat" class="screen">
-        <h2 id="chat-with-title">Chat with Student</h2>
-        <div class="chat-box" id="chat-messages">
-            <p style="text-align:center; color:#6b7280; font-size:12px;">Loading chat history...</p>
-        </div>
-        <form onsubmit="sendMessage(); return false;" style="display:flex; gap:6px;">
-            <input type="text" id="chat-input" placeholder="Type a message..." required style="flex:1;">
-            <button type="submit" class="btn" style="width: auto; padding: 0 16px; margin-top:0;">Send</button>
-        </form>
-        <div class="nav-links" onclick="goToScreen('screen-feed')">Back to Feed</div>
-    </div>
-
-    <!-- SCREEN 8: Location & Filters -->
-    <div id="screen-filters" class="screen">
-        <h2>Find Peers & Ideas</h2>
-        <form onsubmit="applyFilters(); return false;">
-            <div class="form-group"><label>Country</label><input type="text" id="filter-country" placeholder="e.g. India"></div>
-            <div class="form-group"><label>State / Province</label><input type="text" id="filter-state" placeholder="Enter state"></div>
-            <div class="form-group"><label>District / City</label><input type="text" id="filter-city" placeholder="Enter district"></div>
-            <button type="submit" class="btn">Apply Filters</button>
-        </form>
-        <div class="nav-links" onclick="goToScreen('screen-feed')">Back to Feed</div>
-    </div>
-
-</div>
-
-<!-- Firebase & Application Script -->
+<body>
+<div id="app"></div>
+<datalist id="countries"><option>India</option><option>USA</option><option>UK</option><option>UAE</option><option>Canada</option><option>Australia</option><option>Nepal</option></datalist>
+<datalist id="states"><option>Delhi</option><option>Maharashtra</option><option>Uttar Pradesh</option><option>Bihar</option><option>Gujarat</option><option>Karnataka</option><option>Tamil Nadu</option><option>Rajasthan</option><option>West Bengal</option><option>Madhya Pradesh</option></datalist>
 <script>
-  if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js')
-              .then(() => console.log('Service Worker Registered'))
-              .catch(err => console.log('Service Worker Failed', err));
-      });
-  }
+/* Firebase web config: ye secret nahi hota. Asli suraksha database.rules.json se aati hai. */
+firebase.initializeApp({
+  apiKey:"AIzaSyD0E3rkvkP8Sf8VpvLmf0-O5YUldjCLDZA",
+  authDomain:"apexteen-5-a5c17.firebaseapp.com",
+  databaseURL:"https://apexteen-5-a5c17-default-rtdb.firebaseio.com",
+  projectId:"apexteen-5-a5c17",
+  storageBucket:"apexteen-5-a5c17.firebasestorage.app",
+  messagingSenderId:"322620785774",
+  appId:"1:322620785774:web:29b6f575c25584b0e3127f"
+});
+var auth=firebase.auth(),db=firebase.database(),TS=firebase.database.ServerValue.TIMESTAMP;
+var CAT={ai:'🤖 AI & tech',game:'🎮 Gaming & design',social:'👥 Social good & science'};
+var S={u:null,me:null,ok:false,adm:false,ideas:{},votes:{},users:{},inbox:{},outbox:{},pend:{},tab:'home',cat:'all',q:'',fc:'',fs:'',mode:'in',err:'',busy:false};
+var L=[],pendOn=false;
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function safeUrl(u){u=(u||'').trim();return /^https:\/\/[^\s"'<>]+$/i.test(u)?u:''}
+function toast(t){var e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
+function av(n){return '<div class="av">'+esc((n||'?').charAt(0).toUpperCase())+'</div>'}
+function listen(path,fn,q){var r=db.ref(path);if(q)r=q(r);r.on('value',fn,function(){});L.push(r)}
+function detach(){L.forEach(function(r){r.off()});L=[]}
+function ago(t){if(!t)return'';var m=Math.floor((Date.now()-t)/60000);return m<1?'abhi':m<60?m+' min pehle':m<1440?Math.floor(m/60)+' ghante pehle':Math.floor(m/1440)+' din pehle'}
+var ERR={'auth/email-already-in-use':'Ye email pehle se registered hai. Login karein.','auth/invalid-email':'Email sahi nahi hai.','auth/weak-password':'Password kam se kam 8 akshar ka rakhein.','auth/wrong-password':'Email ya password galat hai.','auth/user-not-found':'Email ya password galat hai.','auth/invalid-credential':'Email ya password galat hai.','auth/invalid-login-credentials':'Email ya password galat hai.','auth/too-many-requests':'Bahut koshishein ho gayi. Thodi der baad try karein.','auth/network-request-failed':'Internet check karein.'};
+function emsg(e){return ERR[e&&e.code]||('Kuch gadbad hui: '+((e&&e.message)||'dobara try karein'))}
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyD0E3rkvkP8Sf8VpvLmf0-O5YUldjCLDZA",
-    authDomain: "apexteen-5-a5c17.firebaseapp.com",
-    databaseURL: "https://apexteen-5-a5c17-default-rtdb.firebaseio.com",
-    projectId: "apexteen-5-a5c17",
-    storageBucket: "apexteen-5-a5c17.firebasestorage.app",
-    messagingSenderId: "322620785774",
-    appId: "1:322620785774:web:29b6f575c25584b0e3127f"
+/* ---------- session ---------- */
+auth.onAuthStateChanged(function(u){
+  detach();pendOn=false;S.u=u;S.me=null;S.ok=false;S.adm=false;S.ideas={};S.votes={};S.users={};S.inbox={};S.outbox={};S.pend={};
+  if(!u){render();return}
+  var id=u.uid;
+  listen('users/'+id,function(s){S.me=s.val();render()});
+  listen('approved/'+id,function(s){S.ok=s.val()===true;render()});
+  listen('admins/'+id,function(s){S.adm=s.val()===true;if(S.adm&&!pendOn){pendOn=true;listen('pending',function(p){S.pend=p.val()||{};refresh()})}refresh()});
+  listen('ideas',function(s){S.ideas=s.val()||{};refresh()},function(r){return r.orderByChild('ts').limitToLast(100)});
+  listen('votes',function(s){S.votes=s.val()||{};refresh()});
+  listen('users',function(s){S.users=s.val()||{};refresh()});
+  listen('inbox/'+id,function(s){S.inbox=s.val()||{};refresh()});
+  listen('outbox/'+id,function(s){S.outbox=s.val()||{};refresh()});
+});
+function render(){
+  if(!S.u){authView();return}
+  if(!S.me){$('app').innerHTML='<div class="wrap mu" style="padding-top:40px;text-align:center">Profile load ho raha hai…</div>';return}
+  ({home:home,find:findTab,me:meTab})[S.tab]();
+}
+function refresh(){if(!S.u||!S.me)return;if(S.tab==='me'){meTab();return}if($('list'))fillList()}
+
+/* ---------- login / signup ---------- */
+function authView(){
+  var up=S.mode==='up';
+  $('app').innerHTML='<div class="hero"><h1>ApexTeen5</h1><p>Teen innovators ka idea hub. Parent ki approval ke baad hi posting.</p></div><div class="wrap"><div class="card"><div class="tabs"><button class="chip'+(!up?' on':'')+'" id="t1">Login</button><button class="chip'+(up?' on':'')+'" id="t2">Naya account</button></div>'+
+  (up?'<label>Full name</label><input id="fn" maxlength="40" autocomplete="name"><label>Email</label><input id="em" type="email" autocomplete="email"><label>Password (8+ akshar)</label><input id="pw" type="password" autocomplete="new-password"><label>Mobile number</label><input id="mb" inputmode="numeric" maxlength="10"><label>Class</label><select id="cl"><option>9th</option><option>10th</option><option>11th</option><option>12th</option></select><label>Field of interest</label><select id="fi"><option value="ai">'+CAT.ai+'</option><option value="game">'+CAT.game+'</option><option value="social">'+CAT.social+'</option></select><label>Country</label><input id="co" list="countries" value="India"><label>State</label><input id="sa" list="states"><label>District / city</label><input id="ct" maxlength="40"><label>Parent ka mobile ya email</label><input id="pe" maxlength="60"><label class="chk"><input id="cs" type="checkbox"><span>Mere parent ko pata hai aur wo mere is app use karne ke liye sahmat hain.</span></label>'
+  :'<label>Email</label><input id="em" type="email" autocomplete="email"><label>Password</label><input id="pw" type="password" autocomplete="current-password">')+
+  '<div class="err" id="er">'+esc(S.err)+'</div><button class="btn" id="go">'+(up?'Account banao':'Login')+'</button></div></div>';
+  $('t1').onclick=function(){S.mode='in';S.err='';authView()};$('t2').onclick=function(){S.mode='up';S.err='';authView()};
+  $('go').onclick=up?signup:login;
+}
+function fail(m){S.err=m;var e=$('er');if(e)e.textContent=m;var b=$('go');if(b)b.disabled=false}
+function login(){
+  var b=$('go');b.disabled=true;
+  auth.signInWithEmailAndPassword($('em').value.trim(),$('pw').value).catch(function(e){fail(emsg(e))});
+}
+function signup(){
+  var v=function(i){return $(i).value.trim()},name=v('fn'),mob=v('mb'),pe=v('pe');
+  if(name.length<2)return fail('Apna naam likhein.');
+  if(!/^\d{10}$/.test(mob))return fail('10 digit ka mobile number daalein.');
+  if($('pw').value.length<8)return fail('Password kam se kam 8 akshar ka rakhein.');
+  if(!v('sa'))return fail('State likhein.');
+  if(pe.length<5)return fail('Parent ka mobile ya email likhein.');
+  if(!$('cs').checked)return fail('Parent ki sahmati wala box tick karein.');
+  $('go').disabled=true;
+  auth.createUserWithEmailAndPassword(v('em'),$('pw').value).then(function(c){
+    var id=c.user.uid,up={};
+    up['users/'+id]={name:name,cls:v('cl'),interest:v('fi'),country:v('co')||'India',state:v('sa'),city:v('ct')};
+    up['private/'+id]={mobile:mob,email:v('em'),parentContact:pe};
+    up['pending/'+id]={name:name,parentContact:pe,ts:TS};
+    return db.ref().update(up);
+  }).catch(function(e){fail(emsg(e))});
+}
+
+/* ---------- shell ---------- */
+function shell(inner){
+  var t=[['home','🏠','Home'],['find','🔍','Find'],['create','➕','Create'],['me','👤','Profile']];
+  $('app').innerHTML=(S.ok?'':'<div class="note" style="margin:10px 16px 0">⏳ Parent approval pending. Tab tak aap ideas dekh sakte ho, par post, vote ya message nahi kar sakte.</div>')+inner+
+  '<nav>'+t.map(function(x){return '<button data-t="'+x[0]+'" class="'+(S.tab===x[0]?'on ':'')+(x[0]==='create'?'plus':'')+'" aria-label="'+x[2]+'"><span>'+x[1]+'</span>'+(x[0]==='create'?'':x[2])+'</button>'}).join('')+'</nav>';
+  Array.prototype.forEach.call(document.querySelectorAll('nav button'),function(b){b.onclick=function(){if(b.dataset.t==='create'){createSheet()}else{S.tab=b.dataset.t;render()}}});
+}
+function sheet(html){var bg=document.createElement('div');bg.className='sheet-bg';bg.innerHTML='<div class="sheet" role="dialog">'+html+'</div>';document.body.appendChild(bg);return bg}
+function needOk(){if(S.ok)return true;toast('Pehle parent approval chahiye.');return false}
+
+/* ---------- ideas list ---------- */
+function allIdeas(){return Object.keys(S.ideas).map(function(k){var o=S.ideas[k];o.id=k;return o}).sort(function(a,b){return(b.ts||0)-(a.ts||0)})}
+function votesOf(id){return S.votes[id]||{}}
+function card(i){
+  var vs=votesOf(i.id),n=Object.keys(vs).length,has=!!vs[S.u.uid],img=safeUrl(i.img);
+  return '<article class="card" data-id="'+esc(i.id)+'"><div class="row">'+av(i.author)+'<div style="flex:1"><b>'+esc(i.author)+'</b><div class="mu">'+esc(ago(i.ts))+'</div></div><span class="badge">'+esc((CAT[i.cat]||'').split(' ')[0])+'</span></div>'+
+  '<h3 style="margin-top:10px">'+esc(i.title)+'</h3>'+(img?'<img class="hi" alt="" src="'+esc(img)+'" onerror="this.remove()">':'')+
+  '<p style="margin:8px 0 0;color:var(--mu);line-height:1.5">'+esc(i.summary)+'</p>'+
+  '<div class="stats"><button class="act'+(has?' on':'')+'" data-up="'+esc(i.id)+'">👍 '+n+'</button><span class="mu">📍 '+esc(i.state||'')+'</span><span style="flex:1"></span><button class="btn sm" data-open="'+esc(i.id)+'">Dekho</button></div></article>';
+}
+function bindCards(root){
+  Array.prototype.forEach.call(root.querySelectorAll('[data-up]'),function(b){b.onclick=function(e){e.stopPropagation();vote(b.dataset.up)}});
+  Array.prototype.forEach.call(root.querySelectorAll('[data-open]'),function(b){b.onclick=function(){detail(b.dataset.open)}});
+}
+function vote(id){
+  if(!needOk())return;var r=db.ref('votes/'+id+'/'+S.u.uid),has=!!votesOf(id)[S.u.uid];
+  r.set(has?null:true).catch(function(e){toast(emsg(e))});
+}
+function home(){
+  var c=[['all','✨ All ideas'],['ai','🤖 AI & tech'],['game','🎮 Gaming'],['social','👥 Social']];
+  shell('<div class="top"><div class="row sp"><span class="logo">ApexTeen5</span><span class="badge">📍 '+esc(S.me.country)+', '+esc(S.me.state)+'</span></div><input id="sq" placeholder="🔎 Ideas aur keywords search karein" value="'+esc(S.q)+'"><div class="row" style="margin-top:6px"><input id="fc" list="countries" placeholder="Country filter" value="'+esc(S.fc)+'"><input id="fs" list="states" placeholder="State filter" value="'+esc(S.fs)+'"></div><div class="chips">'+c.map(function(x){return '<button class="chip'+(S.cat===x[0]?' on':'')+'" data-c="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div></div><div class="wrap" id="list" style="padding-top:4px"></div>');
+  $('sq').oninput=function(e){S.q=e.target.value;fillList()};
+  $('fc').oninput=function(e){S.fc=e.target.value;fillList()};$('fs').oninput=function(e){S.fs=e.target.value;fillList()};
+  Array.prototype.forEach.call(document.querySelectorAll('.chip[data-c]'),function(b){b.onclick=function(){S.cat=b.dataset.c;home()}});
+  fillList();
+}
+function fillList(){
+  var el=$('list');if(!el)return;
+  if(S.tab==='find'){fillPeople(el);return}
+  var q=S.q.toLowerCase(),fc=S.fc.toLowerCase(),fs=S.fs.toLowerCase();
+  var l=allIdeas().filter(function(i){return(S.cat==='all'||i.cat===S.cat)&&(!fc||(i.country||'').toLowerCase()===fc)&&(!fs||(i.state||'').toLowerCase().indexOf(fs)>-1)&&(!q||((i.title||'')+' '+(i.summary||'')+' '+(i.author||'')).toLowerCase().indexOf(q)>-1)});
+  el.innerHTML=l.length?l.map(card).join(''):'<div class="card mu">Koi idea nahi mila. Filter badlein ya ➕ se pehla idea post karein.</div>';
+  bindCards(el);
+}
+
+/* ---------- create idea ---------- */
+function createSheet(){
+  if(!needOk())return;
+  var s=sheet('<h2>Naya idea post karein</h2><div class="note" style="margin-top:10px">Feed mein sirf title aur chhota summary dikhta hai. Poori detail sirf unhe dikhti hai jinhe aap approve karte ho.</div><label>Idea title</label><input id="ti" maxlength="90"><label>Chhota summary (feed mein sabko dikhega)</label><textarea id="su" maxlength="300"></textarea><label>Poori detail (sirf approved collaborator ko)</label><textarea id="de" maxlength="5000" style="min-height:120px"></textarea><label>Category</label><select id="ca"><option value="ai">'+CAT.ai+'</option><option value="game">'+CAT.game+'</option><option value="social">'+CAT.social+'</option></select><label>Image link (https, optional)</label><input id="iu" placeholder="https://..."><div class="err" id="er"></div><button class="btn" id="go">Post idea now</button><button class="btn alt" id="cn">Cancel</button>');
+  s.onclick=function(e){if(e.target===s)s.remove()};
+  s.querySelector('#ca').value=S.me.interest||'ai';
+  s.querySelector('#cn').onclick=function(){s.remove()};
+  s.querySelector('#go').onclick=function(){
+    var q=function(x){return s.querySelector(x)},t=q('#ti').value.trim(),su=q('#su').value.trim(),de=q('#de').value.trim(),iu=q('#iu').value.trim();
+    if(t.length<3||su.length<10||de.length<20){q('#er').textContent='Title, summary (10+ akshar) aur detail (20+ akshar) likhein.';return}
+    if(iu&&!safeUrl(iu)){q('#er').textContent='Image link https:// se shuru hona chahiye.';return}
+    var id=db.ref('ideas').push().key,up={};
+    up['ideas/'+id]={uid:S.u.uid,author:S.me.name,title:t,summary:su,cat:q('#ca').value,country:S.me.country,state:S.me.state,img:iu,ts:TS};
+    up['ideaSecret/'+id]={owner:S.u.uid,detail:de};
+    q('#go').disabled=true;
+    db.ref().update(up).then(function(){s.remove();S.tab='home';render();toast('Idea post ho gaya')}).catch(function(e){q('#go').disabled=false;q('#er').textContent=emsg(e)});
   };
+}
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const auth = firebase.auth();
-  const storage = firebase.storage();
-  
-  let selectedFileObject = null;
-  let allIdeasCache = [];
-  let currentCategory = 'All';
-  let currentChatIdeaId = "";
-  let currentChatTargetUser = "";
+/* ---------- idea detail + private requests ---------- */
+function detail(id){
+  var i=S.ideas[id];if(!i)return;
+  var mine=i.uid===S.u.uid,cm={},secret=null,denied=false,cref=db.ref('comments/'+id).orderByChild('ts').limitToLast(50);
+  var s=sheet('<div id="dt"></div>');
+  function close(){cref.off();s.remove()}
+  s.onclick=function(e){if(e.target===s)close()};
+  function draw(){
+    var d=s.querySelector('#dt'),q=function(x){return d.querySelector(x)};
+    var reqs=Object.keys(S.outbox).map(function(k){return S.outbox[k]}).filter(function(m){return m.ideaId===id});
+    var cmh=Object.keys(cm).map(function(k){return cm[k]}).sort(function(a,b){return a.ts-b.ts}).map(function(c){return '<div class="msg"><b>'+esc(c.name)+'</b><br>'+esc(c.text)+'</div>'}).join('');
+    var img=safeUrl(i.img);
+    d.innerHTML='<div class="row sp"><h2 style="font-size:19px">'+esc(i.title)+'</h2><button class="act" id="x" aria-label="Band karein">✕</button></div><div class="row" style="margin-top:8px">'+av(i.author)+'<div><b>'+esc(i.author)+'</b><div class="mu">📍 '+esc(i.state||'')+', '+esc(i.country||'')+'</div></div></div>'+(img?'<img class="hi" alt="" src="'+esc(img)+'" onerror="this.remove()">':'')+
+    '<p style="line-height:1.6">'+esc(i.summary)+'</p>'+
+    '<div class="card" style="background:var(--s)"><h3>🔒 Poori detail</h3>'+
+    (secret?'<div class="msg" style="background:var(--card)">'+esc(secret.detail)+'</div>':
+     denied?(reqs.length?reqs.map(function(m){return '<div class="msg">Aapki request: <b>'+esc(m.status==='approved'?'approved':m.status==='declined'?'decline hui':'owner ke jawab ka intezar')+'</b>'+(m.reply?'<br>Owner: '+esc(m.reply):'')+'</div>'}).join(''):'')+
+       (S.ok?'<p class="mu" style="margin:8px 0 0">Owner approve karega to detail yahan khul jayegi. Apna skill aur judne ka tareeka likhein.</p><textarea id="rq" maxlength="600" placeholder="Apna message"></textarea><button class="btn" id="sr">Owner ko private request bhejo</button>':'<p class="mu">Parent approval ke baad request bhej sakte ho.</p>')
+     :'<p class="mu">Load ho raha hai…</p>')+'</div>'+
+    '<div class="row" style="gap:8px">'+(mine?'<button class="act" id="dl">🗑 Idea hatao</button>':'<button class="act" id="rp">🚩 Report</button>')+'</div>'+
+    '<h3 style="margin-top:14px">Public comments</h3>'+cmh+'<div class="row" style="margin-top:8px"><input id="cmt" maxlength="300" placeholder="Comment (idea ki private detail yahan na likhein)" style="margin:0"><button class="btn sm" id="pc">Post</button></div>';
+    q('#x').onclick=close;
+    if(q('#sr'))q('#sr').onclick=function(){
+      var t=q('#rq').value.trim();if(t.length<5)return toast('Thoda detail mein likhein.');
+      var mid=db.ref('inbox/'+i.uid).push().key,up={},base={ideaId:id,ideaTitle:i.title,text:t,ts:TS,status:'pending'};
+      up['inbox/'+i.uid+'/'+mid]=Object.assign({from:S.u.uid,fromName:S.me.name},base);
+      up['outbox/'+S.u.uid+'/'+mid]=Object.assign({to:i.uid},base);
+      db.ref().update(up).then(function(){toast('Request bhej di')}).catch(function(e){toast(emsg(e))});
+    };
+    if(q('#dl'))q('#dl').onclick=function(){if(!confirm('Ye idea hamesha ke liye hata dein?'))return;var up={};up['ideas/'+id]=null;up['ideaSecret/'+id]=null;db.ref().update(up).then(close).catch(function(e){toast(emsg(e))})};
+    if(q('#rp'))q('#rp').onclick=function(){db.ref('reports').push({idea:id,by:S.u.uid,ts:TS}).then(function(){toast('Report bhej di. Shukriya.')}).catch(function(e){toast(emsg(e))})};
+    q('#pc').onclick=function(){
+      var t=q('#cmt').value.trim();if(!t)return;if(!needOk())return;
+      db.ref('comments/'+id).push({uid:S.u.uid,name:S.me.name,text:t,ts:TS}).catch(function(e){toast(emsg(e))});
+    };
+  }
+  cref.on('value',function(sn){cm=sn.val()||{};draw()});
+  db.ref('ideaSecret/'+id).once('value').then(function(sn){secret=sn.val();draw()}).catch(function(){denied=true;draw()});
+}
 
-  auth.onAuthStateChanged((user) => {
-      const savedTheme = localStorage.getItem('apexteen_theme');
-      if(savedTheme === 'dark') {
-          document.getElementById('main-body').classList.add('dark');
-          document.getElementById('theme-toggle-btn').innerText = '☀️';
-      }
+/* ---------- find ---------- */
+function findTab(){
+  shell('<div class="top"><span class="logo">Find co-founders</span><input id="sq" placeholder="Naam, state ya field search karein" value="'+esc(S.q)+'"></div><div class="wrap" id="list" style="padding-top:4px"></div>');
+  $('sq').oninput=function(e){S.q=e.target.value;fillList()};fillList();
+}
+function fillPeople(el){
+  var q=S.q.toLowerCase();
+  var l=Object.keys(S.users).filter(function(k){return k!==S.u.uid}).map(function(k){var u=S.users[k];u.id=k;return u}).filter(function(u){return!q||((u.name||'')+' '+(u.state||'')+' '+(u.city||'')+' '+(CAT[u.interest]||'')).toLowerCase().indexOf(q)>-1});
+  el.innerHTML=l.length?l.map(function(u){return '<div class="card row">'+av(u.name)+'<div style="flex:1"><b>'+esc(u.name)+'</b><div class="mu">Class '+esc(u.cls)+' · 📍 '+esc(u.state)+' · '+esc(CAT[u.interest]||'')+'</div></div><button class="btn sm" data-by="'+esc(u.name)+'">Ideas</button></div>'}).join(''):'<div class="card mu">Abhi koi aur student nahi mila.</div>';
+  Array.prototype.forEach.call(el.querySelectorAll('[data-by]'),function(b){b.onclick=function(){S.q=b.dataset.by;S.tab='home';render()}});
+}
 
-      if (user) {
-          const defaultName = user.email.split('@')[0];
-          document.getElementById('welcome-user').innerText = "👤 Hello, " + defaultName;
-          document.getElementById('idea-author').value = defaultName;
-          goToScreen('screen-feed');
-          loadFeed();
-          loadPollData();
-          loadUserProfileData();
-      } else {
-          goToScreen('screen-auth');
-      }
-  });
-
-  document.getElementById('auth-form').addEventListener('submit', function(
+/* ---------- profile, inbox, admin ---------- */
+function meTab(){
+  var uid=S.u.uid,mine=allIdeas().filter(function(i){return i.uid===uid});
+  var inb=Object.keys(S.inbox).map(function(k){var m=S.inbox[k];m.id=k;return m}).sort(function(a,b){return b.ts-a.ts});
+  var out=Object.keys(S.outbox).map(function(k){var m=S.outbox[k];m.id=k;return m}).sort(function(a,b){return b.ts-a.ts});
+  var pend=Object.keys(S.pend).map(function(k){var p=S.pend[k];p.id=k;return p});
+  shell('<div class="hero"><div class="row">'+av(S.me.name)+'<div><h1 style="font-size:22px">'+esc(S.me.name)+'</h1><p>Class '+esc(S.me.cls)+' · '+esc(S.me.city||S.me.state)+'</p></div></div><p style="margin-top:12px">'+(S.ok?'✓ Parent verified':'⏳ Parent approval pending')+' · '+esc(CAT[S.me.interest]||'')+'</p></div><div class="wrap">'+
+  (S.adm?'<h3 style="margin:0 0 8px">Admin: approval ka intezar ('+pend.length+')</h3>'+(pend.length?pend.map(function(p){return '<div class="card"><b>'+esc(p.name)+'</b><div class="mu">Parent: '+esc(p.parentContact)+'</div><button class="btn sm" style="margin-top:8px" data-ap="'+esc(p.id)+'">Parent se baat hui, approve karo</button></div>'}).join(''):'<div class="card mu">Koi pending nahi.</div>'):'')+
+  '<h3 style="margin:6px 0 8px">Mujhe aayi private requests ('+inb.length+')</h3>'+(inb.length?inb.map(function(m){return '<div class="card"><b>'+esc(m.fromName)+'</b> · <span class="mu">'+esc(m.ideaTitle)+'</span><div class="msg">'+esc(m.text)+'</div>'+(m.reply?'<div class="msg">Aapka jawab: '+esc(m.reply)+'</div>':'')+(m.status==='pending'?'<input data-rp="'+esc(m.id)+'" placeholder="Jawab (optional)" maxlength="300"><div class="row" style="margin-top:8px"><button class="btn sm" data-ac="'+esc(m.id)+'">Approve, detail dikhao</button><button class="btn sm alt" data-dc="'+esc(m.id)+'">Decline</button></div>':'<div class="mu" style="margin-top:6px">Status: '+esc(m.status)+'</div>')+'</div>'}).join(''):'<div class="card mu">Abhi koi request nahi.</div>')+
+  '<h3 style="margin:6px 0 8px">Meri bheji requests ('+out.length+')</h3>'+(out.length?out.map(function(m){return '<div class="card"><span class="mu">'+esc(m.ideaTitle)+'</span><div class="msg">'+esc(m.text)+'</div><div class="mu" style="margin-top:6px">Status: '+esc(m.status)+'</div>'+(m.reply?'<div class="msg">Owner: '+esc(m.reply)+'</div>':'')+'</div>'}).join(''):'<div class="card mu">Koi request nahi bheji.</div>')+
+  '<h3 style="margin:6px 0 8px">Mere ideas ('+mine.length+')</h3>'+(mine.length?mine.map(card).join(''):'<div class="card mu">Abhi koi idea post nahi kiya.</div>')+
+  '<button class="btn alt" id="lo">Log out</button></div>');
+  bindCards($('app'));
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ap]'),function(b){b.onclick=function(){var up={};up['approved/'+b.dataset.ap]=true;up['pending/'+b.dataset.ap]=null;db.ref().update(up).then(function(){toast('Approve ho gaya')}).catch(function(e){toast(emsg(e))})}});
+  function respond(mid,status){
+    var m=S.inbox[mid],inp=document.querySelector('[data-rp="'+mid+'"]'),rep=inp?inp.value.trim():'',up={};
+    up['inbox/'+uid+'/'+mid+'/status']=status;up['outbox/'+m.from+'/'+mid+'/status']=status;
+    if(rep){up['inbox/'+uid+'/'+mid+'/reply']=rep;up['outbox/'+m.from+'/'+mid+'/reply']=rep}
+    if(status==='approved')up['ideaAccess/'+m.ideaId+'/'+m.from]=true;
+    db.ref().update(up).then(function(){toast(status==='approved'?'Approve ho gaya':'Decline ho gaya')}).catch(function(e){toast(emsg(e))});
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ac]'),function(b){b.onclick=function(){respond(b.dataset.ac,'approved')}});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-dc]'),function(b){b.onclick=function(){respond(b.dataset.dc,'declined')}});
+  $('lo').onclick=function(){if(confirm('Log out karna hai?'))auth.signOut()};
+}
+if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+</script>
+</body>
+</html>
